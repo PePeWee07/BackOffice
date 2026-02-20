@@ -5,9 +5,8 @@ import { from, of } from 'rxjs';
 import { AuthenticationService } from '../../core/services/auth.service';
 import { login, loginSuccess, loginFailure, logout, logoutSuccess, Register, RegisterSuccess, RegisterFailure } from './authentication.actions';
 import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
-import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
 import { UserProfileService } from '../../core/services/user.service';
+import { TokenStorageService } from '../../core/services/token-storage.service';
 @Injectable()
 export class AuthenticationEffects {
 
@@ -15,22 +14,12 @@ export class AuthenticationEffects {
     this.actions$.pipe(
       ofType(Register),
       exhaustMap(({ email, username, password }) => {
-        if (environment.defaultauth === 'fakebackend') {
-          return this.userService.register({ email, username, password }).pipe(
-            map((user) => {
-              this.router.navigate(['/auth/login']);
-              return RegisterSuccess({ user })
-            }),
-            catchError((error) => of(RegisterFailure({ error })))
-          );
-        } else {
           return this.AuthenticationService.register( email, username, password).pipe(
             map((user) => {
               this.router.navigate(['/auth/login']);
               return RegisterSuccess({ user })
             })
           )
-        }
       })
     )
   );
@@ -41,30 +30,18 @@ export class AuthenticationEffects {
   this.actions$.pipe(
     ofType(login),
     exhaustMap(({ email, password }) => {
-      if (environment.defaultauth === "fakebackend") {
-        return this.AuthfakeService.login(email, password).pipe(
-          map((user) => {
-            if (user) {
-              sessionStorage.setItem('currentUser', JSON.stringify(user));
-              sessionStorage.setItem('token', user.token);
-              this.router.navigate(['/']);
-            }
-            return loginSuccess({ user });
-          }),
-          catchError((error) => of(loginFailure({ error })))
-        );
-      } else if (environment.defaultauth === "firebase") {
-        return this.AuthenticationService.login(email, password).pipe(
-          map((user) => {
+      return this.AuthenticationService.login(email, password).pipe(
+        map((user) => {
+          if (user) {
+            this.tokenStorage.saveUser(user);
+            this.tokenStorage.saveToken(user.jwt!);
+            this.tokenStorage.saveRefreshToken(user.refreshToken!);
             this.router.navigate(['/']);
-            return loginSuccess({ user });
-          }),
-          catchError((error) => of(loginFailure({ error })))
-        );
-      }
-
-      // Handle the case where none of the conditions match
-      return of(loginFailure({ error: 'Unsupported authentication method' }));
+          }
+          return loginSuccess({ user });
+        }),
+        catchError((error) => of(loginFailure({ error })))
+      );
     })
   )
 );
@@ -83,8 +60,8 @@ export class AuthenticationEffects {
   constructor(
     @Inject(Actions) private actions$: Actions,
     private AuthenticationService: AuthenticationService,
-    private AuthfakeService: AuthfakeauthenticationService,
     private userService: UserProfileService,
+    private tokenStorage: TokenStorageService,
     private router: Router) { }
 
 }

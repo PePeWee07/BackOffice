@@ -8,13 +8,28 @@ import { ProductsStatisticsData } from '../../../data/dashboard';
 import { CommonModule } from '@angular/common';
 import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
 import { NGXPagination } from '../../../Component/pagination';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-analytics',
   standalone: true,
-  imports: [CommonModule, PageTitleComponent, CountUpModule, NgApexchartsModule, MnDropdownComponent, LucideAngularModule, NGXPagination],
+  imports: [
+    CommonModule,
+    PageTitleComponent,
+    CountUpModule,
+    NgApexchartsModule,
+    MnDropdownComponent,
+    LucideAngularModule,
+    NGXPagination,
+  ],
   templateUrl: './analytics.component.html',
-  providers: [{ provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons) }]
+  providers: [
+    {
+      provide: LUCIDE_ICONS,
+      multi: true,
+      useValue: new LucideIconProvider(icons),
+    },
+  ],
 })
 export class AnalyticsComponent {
   platformPerspective: any;
@@ -32,24 +47,33 @@ export class AnalyticsComponent {
   totalItems: number = 0;
   startIndex: number = 0;
   endIndex: any;
-  allproducts: any
+  allproducts: any;
+
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this._platformPerspective('["bg-custom-500"]');
     this._responseTimes('["bg-red-500"]');
     this._pagesInteraction('["bg-custom-500", "bg-purple-500"]');
-    this._userDeviceCharts('["bg-custom-500", "bg-green-500", "bg-orange-500"]');
+    this._userDeviceCharts(
+      '["bg-custom-500", "bg-green-500", "bg-orange-500"]'
+    );
     this._satisfactionRate('["bg-custom-500"]');
     this._dailyVisitInsightsChart('["bg-green-500", "bg-purple-500"]');
     this._lineWithDataLabel('["bg-custom-500", "bg-green-500"]');
-    this._subscriptionDistribution('["bg-custom-500", "bg-orange-500", "bg-green-500", "bg-yellow-500", "bg-purple-500"]');
+    this._subscriptionDistribution(
+      '["bg-custom-500", "bg-orange-500", "bg-green-500", "bg-yellow-500", "bg-purple-500"]'
+    );
 
     // Fetch Data
     this.products = ProductsStatisticsData;
     this.allproducts = ProductsStatisticsData;
     this.totalItems = this.products.length;
-  }
 
+    this.http.get('/back-end/v2/user/profile').subscribe((data) => {
+      console.log('API GET response:', data);
+    });
+  }
 
   // Pagination
   onPageChange(pageNumber: number): void {
@@ -58,7 +82,7 @@ export class AnalyticsComponent {
   }
 
   getEndIndex() {
-    return Math.min(this.startIndex + this.itemsPerPage, this.totalItems)
+    return Math.min(this.startIndex + this.itemsPerPage, this.totalItems);
   }
 
   updatePagedOrders(): void {
@@ -76,84 +100,86 @@ export class AnalyticsComponent {
           data: [
             {
               x: 'React',
-              y: 218
+              y: 218,
             },
             {
               x: 'TailwindCSS',
-              y: 187
+              y: 187,
             },
             {
               x: 'Angular',
-              y: 134
+              y: 134,
             },
             {
               x: 'Vue Js',
-              y: 55
+              y: 55,
             },
             {
               x: 'Laravel',
-              y: 99
+              y: 99,
             },
             {
               x: 'PHP',
-              y: 34
+              y: 34,
             },
             {
               x: 'ASP.Net',
-              y: 86
+              y: 86,
             },
             {
               x: 'Django',
-              y: 30
+              y: 30,
             },
             {
               x: 'CI',
-              y: 44
-            }
-          ]
-        }
+              y: 44,
+            },
+          ],
+        },
       ],
       legend: {
-        show: false
+        show: false,
       },
       chart: {
         height: 270,
         type: 'treemap',
         toolbar: {
           show: false,
-        }
+        },
       },
       grid: {
         show: false,
         padding: {
           top: -15,
           bottom: 0,
-          right: -20
+          right: -20,
         },
       },
       colors: colors,
-    }
+    };
   }
 
   // Location-Based Response Times Chart
   private _responseTimes(colors: any) {
     colors = getChartColorsArray(colors);
     this.responseTimes = {
-      series: [{
-        name: "Response Times",
-        data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
-      }],
+      series: [
+        {
+          name: 'Response Times',
+          data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+        },
+      ],
       chart: {
         height: 350,
         type: 'line',
         zoom: {
-          enabled: false
+          enabled: false,
         },
         margin: {
           left: 0,
           right: 0,
           top: 0,
-          bottom: 0
+          bottom: 0,
         },
         toolbar: {
           show: false,
@@ -167,30 +193,41 @@ export class AnalyticsComponent {
         dashArray: 0,
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       colors: colors,
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
-      }
-    }
+        categories: [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+        ],
+      },
+    };
   }
 
   // Pages Interaction Chart
   private _pagesInteraction(colors: any) {
     colors = getChartColorsArray(colors);
     this.pagesInteraction = {
-      series: [{
-        name: 'Viewers',
-        data: [20, 13, 19, 23, 29, 42, 33, 29, 37, 46, 40, 49]
-      },
+      series: [
+        {
+          name: 'Viewers',
+          data: [20, 13, 19, 23, 29, 42, 33, 29, 37, 46, 40, 49],
+        },
       ],
       chart: {
         height: 350,
         type: 'bar',
         toolbar: {
           show: false,
-        }
+        },
       },
       plotOptions: {
         bar: {
@@ -198,25 +235,38 @@ export class AnalyticsComponent {
           dataLabels: {
             position: 'top', // top, center, bottom
           },
-        }
+        },
       },
       dataLabels: {
         enabled: true,
         offsetY: -20,
         style: {
           fontSize: '12px',
-          colors: ["#304758"]
-        }
+          colors: ['#304758'],
+        },
       },
 
       xaxis: {
-        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        categories: [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ],
         position: 'bottom',
         axisBorder: {
-          show: false
+          show: false,
         },
         axisTicks: {
-          show: false
+          show: false,
         },
         crosshairs: {
           fill: {
@@ -227,28 +277,28 @@ export class AnalyticsComponent {
               stops: [0, 100],
               opacityFrom: 0.4,
               opacityTo: 0.5,
-            }
-          }
+            },
+          },
         },
         tooltip: {
           enabled: true,
-        }
+        },
       },
       yaxis: {
         axisBorder: {
-          show: false
+          show: false,
         },
         axisTicks: {
           show: false,
         },
         labels: {
           show: false,
-        }
+        },
       },
       stroke: {
         show: true,
         width: 4,
-        colors: ['transparent']
+        colors: ['transparent'],
       },
       grid: {
         show: false,
@@ -256,27 +306,31 @@ export class AnalyticsComponent {
           top: 0,
           right: 0,
           bottom: 0,
-          left: -10
+          left: -10,
         },
       },
       colors: colors,
-    }
+    };
   }
 
   // User Device Chart
   private _userDeviceCharts(colors: any) {
     colors = getChartColorsArray(colors);
     this.userDeviceCharts = {
-      series: [{
-        name: 'Desktop',
-        data: [80, 50, 30, 40, 100, 20],
-      }, {
-        name: 'Mobile',
-        data: [20, 30, 40, 80, 20, 80],
-      }, {
-        name: 'Others',
-        data: [44, 76, 78, 13, 43, 10],
-      }],
+      series: [
+        {
+          name: 'Desktop',
+          data: [80, 50, 30, 40, 100, 20],
+        },
+        {
+          name: 'Mobile',
+          data: [20, 30, 40, 80, 20, 80],
+        },
+        {
+          name: 'Others',
+          data: [44, 76, 78, 13, 43, 10],
+        },
+      ],
       chart: {
         height: 240,
         type: 'radar',
@@ -284,29 +338,31 @@ export class AnalyticsComponent {
           enabled: true,
           blur: 1,
           left: 1,
-          top: 1
+          top: 1,
         },
         toolbar: {
           show: false,
-        }
+        },
       },
       stroke: {
-        width: 2
+        width: 2,
       },
       fill: {
-        opacity: 0.1
+        opacity: 0.1,
       },
       markers: {
-        size: 0
+        size: 0,
       },
-      responsive: [{
-        breakpoint: 480,
-        options: {
-          legend: {
-            show: false
-          }
-        }
-      }],
+      responsive: [
+        {
+          breakpoint: 480,
+          options: {
+            legend: {
+              show: false,
+            },
+          },
+        },
+      ],
       colors: colors,
       legend: {
         position: 'right',
@@ -314,9 +370,9 @@ export class AnalyticsComponent {
         height: 230,
       },
       xaxis: {
-        categories: ['2018', '2019', '2020', '2021', '2022', '2023']
-      }
-    }
+        categories: ['2018', '2019', '2020', '2021', '2022', '2023'],
+      },
+    };
   }
 
   // Satisfaction Level  Chart
@@ -329,8 +385,8 @@ export class AnalyticsComponent {
         height: 450,
         offsetY: -20,
         sparkline: {
-          enabled: true
-        }
+          enabled: true,
+        },
       },
       plotOptions: {
         radialBar: {
@@ -351,20 +407,20 @@ export class AnalyticsComponent {
           },
           dataLabels: {
             name: {
-              show: false
+              show: false,
             },
             value: {
               offsetY: -5,
               fontSize: '22px',
-              fontWeight: '600'
-            }
-          }
-        }
+              fontWeight: '600',
+            },
+          },
+        },
       },
       grid: {
         padding: {
-          top: -10
-        }
+          top: -10,
+        },
       },
       colors: colors,
       fill: {
@@ -375,14 +431,14 @@ export class AnalyticsComponent {
           inverseColors: false,
           opacityFrom: 1,
           opacityTo: 1,
-          stops: [0, 50, 53, 91]
+          stops: [0, 50, 53, 91],
         },
       },
       stroke: {
-        dashArray: 4
+        dashArray: 4,
       },
       labels: ['Average Results'],
-    }
+    };
   }
 
   // Daily Visit Insights   Chart
@@ -392,27 +448,29 @@ export class AnalyticsComponent {
       series: [
         {
           name: 'Male',
-          data: [55, 41, 67, 22, 43, 21, 33, 45]
+          data: [55, 41, 67, 22, 43, 21, 33, 45],
         },
         {
           name: 'Female',
-          data: [55, 41, 67, 22, 43, 21, 33, 45]
-        }
+          data: [55, 41, 67, 22, 43, 21, 33, 45],
+        },
       ],
       annotations: {
-        points: [{
-          x: 'Bananas',
-          seriesIndex: 0,
-          label: {
-            borderColor: colors[1],
-            offsetY: 0,
-            style: {
-              color: '#fff',
-              background: colors[1],
+        points: [
+          {
+            x: 'Bananas',
+            seriesIndex: 0,
+            label: {
+              borderColor: colors[1],
+              offsetY: 0,
+              style: {
+                color: '#fff',
+                background: colors[1],
+              },
+              text: 'Bananas are good',
             },
-            text: 'Bananas are good',
-          }
-        }]
+          },
+        ],
       },
       colors: colors,
       chart: {
@@ -420,61 +478,61 @@ export class AnalyticsComponent {
         type: 'bar',
         toolbar: {
           show: false,
-        }
+        },
       },
       plotOptions: {
         bar: {
           borderRadius: 10,
           columnWidth: '70%',
-        }
+        },
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       stroke: {
-        width: 2
+        width: 2,
       },
       xaxis: {
         labels: {
-          rotate: -45
+          rotate: -45,
         },
         categories: ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        tickPlacement: 'on'
+        tickPlacement: 'on',
       },
       fill: {
         type: 'gradient',
         gradient: {
           shade: 'light',
-          type: "horizontal",
+          type: 'horizontal',
           shadeIntensity: 0.25,
           gradientToColors: undefined,
           inverseColors: true,
           opacityFrom: 0.85,
           opacityTo: 0.85,
-          stops: [50, 0, 100]
+          stops: [50, 0, 100],
         },
       },
       grid: {
         xaxis: {
           lines: {
-            show: true
-          }
+            show: true,
+          },
         },
         yaxis: {
           lines: {
-            show: true
-          }
+            show: true,
+          },
         },
         padding: {
           top: -10,
           right: -10,
-          left: -10
-        }
+          left: -10,
+        },
       },
       yaxis: {
         show: false,
-      }
-    }
+      },
+    };
   }
 
   // Analytics Reports Chart
@@ -483,13 +541,13 @@ export class AnalyticsComponent {
     this.lineWithDataLabel = {
       series: [
         {
-          name: "Income - 2023",
-          data: [28, 29, 33, 36, 32]
+          name: 'Income - 2023',
+          data: [28, 29, 33, 36, 32],
         },
         {
-          name: "Expense - 2023",
-          data: [20, 17, 21, 29, 23]
-        }
+          name: 'Expense - 2023',
+          data: [20, 17, 21, 29, 23],
+        },
       ],
       chart: {
         height: 235,
@@ -500,11 +558,11 @@ export class AnalyticsComponent {
           top: 18,
           left: 7,
           blur: 10,
-          opacity: 0.2
+          opacity: 0.2,
         },
         toolbar: {
-          show: false
-        }
+          show: false,
+        },
       },
       colors: colors,
       dataLabels: {
@@ -515,10 +573,10 @@ export class AnalyticsComponent {
         size: 2,
       },
       markers: {
-        size: 1
+        size: 1,
       },
       yaxis: {
-        show: false
+        show: false,
       },
       xaxis: {
         categories: ['Mar', 'Apr', 'May', 'Jun', 'Jul'],
@@ -528,24 +586,24 @@ export class AnalyticsComponent {
         horizontalAlign: 'right',
         floating: true,
         offsetY: -25,
-        offsetX: -5
+        offsetX: -5,
       },
       grid: {
         xaxis: {
           lines: {
-            show: false
-          }
+            show: false,
+          },
         },
         yaxis: {
           lines: {
-            show: false
-          }
+            show: false,
+          },
         },
         padding: {
           top: -25,
-        }
+        },
       },
-    }
+    };
   }
 
   // Analytics Reports Chart
@@ -562,21 +620,20 @@ export class AnalyticsComponent {
         pie: {
           startAngle: -90,
           donut: {
-            size: '75%'
-          }
-        }
+            size: '75%',
+          },
+        },
       },
       dataLabels: {
-        enabled: false
+        enabled: false,
       },
       fill: {
         type: 'gradient',
       },
       colors: colors,
       legend: {
-        position: 'bottom'
+        position: 'bottom',
       },
-    }
+    };
   }
-
 }

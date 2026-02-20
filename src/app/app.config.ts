@@ -6,7 +6,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideStore } from '@ngrx/store';
 import { rootReducer } from './store';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LucideAngularModule, icons } from 'lucide-angular';
 import { provideEffects } from '@ngrx/effects';
@@ -23,9 +23,12 @@ import { CalendarEffects } from './store/Calendar/calendar.effects';
 // Auth
 import { initFirebaseBackend } from './authUtils';
 
+// Interceptors
 import { JwtInterceptor } from './core/helpers/jwt.interceptor';
+import { RefreshTokenInterceptor } from './core/helpers/refreshToken.interceptor';
 import { ErrorInterceptor } from './core/helpers/error.interceptor';
 import { FakeBackendInterceptor } from './core/helpers/fake-backend';
+
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { environment } from '../environments/environment.prod';
@@ -49,36 +52,54 @@ const scrollConfig: InMemoryScrollingOptions = {
 
 const inMemoryScrollingFeature: InMemoryScrollingFeature = withInMemoryScrolling(scrollConfig);
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes, inMemoryScrollingFeature),
-  { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-  { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
-  { provide: HTTP_INTERCEPTORS, useClass: FakeBackendInterceptor, multi: true },
-  provideClientHydration(),
-  provideStore(rootReducer),
-  provideEffects(EcommerceEffects, HRManagementEffects, NotesEffects, SocialEffects, UserEffects, CalendarEffects, AuthenticationEffects),
-  provideToastr({
-    timeOut: 10000,
-    positionClass: 'toast-bottom-right',
-    preventDuplicates: false,
-  }),
-  provideStoreDevtools(),
-  provideEnvironmentNgxMask(),
-  provideHttpClient(withFetch()),
+  providers: [
+    provideRouter(routes, inMemoryScrollingFeature),
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RefreshTokenInterceptor,
+      multi: true,
+    },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: FakeBackendInterceptor,
+      multi: true,
+    },
+    provideClientHydration(),
+    provideStore(rootReducer),
+    provideEffects(
+      EcommerceEffects,
+      HRManagementEffects,
+      NotesEffects,
+      SocialEffects,
+      UserEffects,
+      CalendarEffects,
+      AuthenticationEffects
+    ),
+    provideToastr({
+      timeOut: 10000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: false,
+    }),
+    provideStoreDevtools(),
+    provideEnvironmentNgxMask(),
+    provideHttpClient(withInterceptorsFromDi()),
     TranslateService,
-  importProvidersFrom(
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireAuthModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    LucideAngularModule.pick(icons),
-    TranslateModule.forRoot({
-      defaultLanguage: 'en',
-      loader: {
-        provide: TranslateLoader,
-        useFactory: createTranslateLoader,
-        deps: [HttpClient]
-      }
-    })
-  )
-  ]
+    importProvidersFrom(
+      AngularFireModule.initializeApp(environment.firebaseConfig),
+      AngularFireAuthModule,
+      HttpClientModule,
+      BrowserAnimationsModule,
+      LucideAngularModule.pick(icons),
+      TranslateModule.forRoot({
+        defaultLanguage: 'en',
+        loader: {
+          provide: TranslateLoader,
+          useFactory: createTranslateLoader,
+          deps: [HttpClient],
+        },
+      })
+    ),
+  ],
 };

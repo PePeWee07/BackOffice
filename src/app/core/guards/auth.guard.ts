@@ -1,40 +1,43 @@
-import { Injectable } from '@angular/core';
-import { Router, CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-
-// Auth Services
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthenticationService } from '../services/auth.service';
-import { AuthfakeauthenticationService } from '../services/authfake.service';
-import { environment } from '../../../environments/environment';
+import { TokenStorageService } from '../services/token-storage.service';
+import { JwtToken } from './jwt.model';
 
-@Injectable({ providedIn: 'root' })
-export class AuthGuard implements CanActivate {
-    constructor(
-        private router: Router,
-        private authenticationService: AuthenticationService,
-        private authFackservice: AuthfakeauthenticationService
-    ) { }
+export const AuthGuard: CanActivateFn = (route) => {
+  const authService = inject(AuthenticationService);
+  const router = inject(Router);
+  const tokenStorage = inject(TokenStorageService);
 
-    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+  const currentUser = authService.currentUserValue;
 
-        if (environment.defaultauth === 'firebase') {
-            const currentUser = this.authenticationService.currentUser();
-            if (currentUser) {
-                // logged in so return true
-                return true;
-            }
-        } else {
-            const currentUser = this.authFackservice.currentUserValue;
-            if (currentUser) {
-                // logged in so return true
-                return true;
-            }
-            // check if user data is in storage is logged in via API.
-            if (sessionStorage.getItem('currentUser')) {
-                return true;
-            }
-        }
-        // not logged in so redirect to login page with the return url
-        this.router.navigate(['/account-login'], { queryParams: { returnUrl: state.url } });
-        return false;
-    }
-}
+  if (!currentUser) {
+    router.navigate(['/account-login']);
+    return false;
+  }
+
+  const requiredRoles = route.data?.['roles'] as string[];
+
+  if (!requiredRoles || requiredRoles.length === 0) {
+    return true; // solo requiere login
+  }
+
+  const token: JwtToken = tokenStorage.getDataToken(
+    tokenStorage.getToken() || ''
+  );
+
+  if (!token?.authorities) {
+    return router.navigate(['/account-unauthorized']);
+  }
+
+  const authoritiesArray = token.authorities.split(',');
+  const userRoles = authoritiesArray.filter((auth) => auth.startsWith('ROLE_'));
+
+  const hasRole = requiredRoles.some((role) => userRoles.includes(role));
+
+  if (!hasRole) {
+    return router.navigate(['/account-unauthorized']);
+  }
+
+  return true;
+};

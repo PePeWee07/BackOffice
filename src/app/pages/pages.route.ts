@@ -44,13 +44,28 @@ import { MultiMonthStackComponent } from './calendar/multi-month-stack/multi-mon
 import { Error404Component } from './extrapages/errorpages/error404/error404.component';
 import { OfflineComponent } from './extrapages/errorpages/offline/offline.component';
 import { MaintenanceComponent } from './extrapages/maintenance/maintenance.component';
+import { AuthGuard } from '../core/guards/auth.guard';
 
 export const PAGE_ROUTES: Route[] = [
   { path: '', component: IndexComponent },
-  { path: 'dashboards-analytics', component: AnalyticsComponent },
+  {
+    path: 'dashboards-analytics',
+    component: AnalyticsComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['ROLE_ADMIN'],
+    }
+  },
   { path: 'dashboards-hr', component: HrComponent },
   { path: 'apps-chat', component: ChatComponent },
-  { path: 'apps-calendar', component: CalendarComponent },
+  {
+    path: 'apps-calendar',
+    component: CalendarComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['ROLE_ADMIN'],
+    },
+  },
   { path: 'apps-calendar-month-grid', component: MonthGridComponent },
   {
     path: 'apps-calendar-multi-month-stack',

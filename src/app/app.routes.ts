@@ -7,6 +7,7 @@ import { LogoutComponent } from './account/logout/logout.component';
 import { LoginComponent } from './account/login/login.component';
 import { RegisterComponent } from './account/register/register.component';
 import { ResetPassComponent } from './account/reset-pass/reset-pass-modern.component';
+import { UnauthorizedComponent } from './account/unauthorized/unauthorized.component';
 
 export const routes: Routes = [
   {
@@ -15,6 +16,9 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./pages/pages.route').then((mod) => mod.PAGE_ROUTES),
     canActivate: [AuthGuard],
+    data: {
+      roles: ['ROLE_USER'],
+    },
   },
 
   // Offical auth
@@ -22,5 +26,5 @@ export const routes: Routes = [
   { path: 'account-register', component: RegisterComponent },
   { path: 'account-logout', component: LogoutComponent },
   { path: 'account-reset-password', component: ResetPassComponent },
-
+  { path: 'account-unauthorized', component: UnauthorizedComponent },
 ];

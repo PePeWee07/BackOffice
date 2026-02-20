@@ -60,8 +60,8 @@ export class LoginComponent {
      * Form Validatyion
      */
     this.loginForm = this.formBuilder.group({
-      email: ['admin@themesbrand.com', [Validators.required, Validators.email]],
-      password: ['123456', [Validators.required]],
+      email: ['pepewee07@gmail.com', [Validators.required, Validators.email]],
+      password: ['1234', [Validators.required]],
     });
   }
 

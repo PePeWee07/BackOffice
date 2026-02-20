@@ -7,9 +7,6 @@ import {
   icons,
 } from 'lucide-angular';
 import { AuthenticationService } from '../../core/services/auth.service';
-import { environment } from '../../../environments/environment';
-import { AuthfakeauthenticationService } from '../../core/services/authfake.service';
-import { CutomDropdownComponent } from '../../Component/customdropdown';
 
 @Component({
   selector: 'app-logout',
@@ -28,18 +25,13 @@ import { CutomDropdownComponent } from '../../Component/customdropdown';
 export class LogoutComponent {
   constructor(
     private router: Router,
-    private authService: AuthenticationService,
-    private authFackservice: AuthfakeauthenticationService
+    private authService: AuthenticationService
   ) {}
 
   year = new Date().getFullYear();
 
   logout() {
-    if (environment.defaultauth === 'firebase') {
-      this.authService.logout();
-    } else {
-      this.authFackservice.logout();
-    }
+    this.authService.logout();
     this.router.navigate(['/account-login']);
   }
 }

@@ -14,33 +14,10 @@ export class FakeBackendInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
         // tslint:disable-next-line: max-line-length
-        const users: any[] = JSON.parse(sessionStorage.getItem('users')!) || [{ username: 'admin', email: 'admin@themesbrand.com', password: '123456' }];
+        const users: any[] = JSON.parse(localStorage.getItem('users')!) || [{ username: 'admin', email: 'admin@themesbrand.com', password: '123456' }];
 
         // wrap in delayed observable to simulate server api call
         return of(null).pipe(mergeMap(() => {
-
-            // authenticate
-            if (request.url.endsWith('/users/authenticate') && request.method === 'POST') {
-                const filteredUsers = users.filter(user => {
-                    return user.email === request.body.email && user.password === request.body.password;
-                });
-                if (filteredUsers.length) {
-                    // if login details are valid return 200 OK with user details and fake jwt token
-                    const user = filteredUsers[0];
-                    const body = {
-                        id: user.id,
-                        email: user.email,
-                        username: user.username,
-                        firstName: user.firstName,
-                        lastName: user.lastName,
-                        token: 'fake-jwt-token'
-                    };
-                    return of(new HttpResponse({ status: 200, body }));
-                } else {
-                    // else return 400 bad request
-                    return throwError({ error: { message: 'Username or password is incorrect' } });
-                }
-            }
 
             // get users
             if (request.url.endsWith('/users') && request.method === 'GET') {
@@ -89,7 +66,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                 // save new user
                 newUser.id = users.length + 1;
                 users.push(newUser);
-                sessionStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('users', JSON.stringify(users));
 
                 // respond 200 OK
                 return of(new HttpResponse({ status: 200 }));
@@ -109,7 +86,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                         if (user.id === id) {
                             // delete user
                             users.splice(i, 1);
-                            sessionStorage.setItem('users', JSON.stringify(users));
+                            localStorage.setItem('users', JSON.stringify(users));
                             break;
                         }
                     }
