@@ -1,4 +1,5 @@
 export interface JwtToken {
+  type: string;
   iss: string;
   sub: string;
   authorities: string;

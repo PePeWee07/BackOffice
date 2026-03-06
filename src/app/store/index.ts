@@ -6,12 +6,10 @@ import { NotesReducer, NotesState } from "./Note/notes-reducer";
 import { SocialReducer, SocialState } from "./Social/social-reducer";
 import { UserReducer, UserState } from "./User/user-reducer";
 import { CalendarState, calendarReducer } from "./Calendar/calendar.reducer";
-import { AuthenticationState, authenticationReducer } from "./Authentication/authentication.reducer";
 
 
 export interface RootReducerState {
     layout: LayoutState,
-    // authentication: AuthenticationState;
     Ecommerce: EcommerceState,
     HR: HRManagementState,
     Notes: NotesState,
@@ -22,7 +20,6 @@ export interface RootReducerState {
 
 export const rootReducer: ActionReducerMap<RootReducerState> = {
     layout: layoutReducer,
-    // authentication: authenticationReducer,
     Ecommerce: EcommerceReducer,
     HR: HRManagementReducer,
     Notes: NotesReducer,

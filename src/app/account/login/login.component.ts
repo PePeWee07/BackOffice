@@ -1,11 +1,10 @@
+import { TokenStorageService } from './../../core/services/auth/token-storage.service';
 import { Component } from '@angular/core';
 import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
-import { Store } from '@ngrx/store';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { login } from '../../store/Authentication/authentication.actions';
-import { AuthenticationService } from '../../core/services/auth.service';
+import { AuthenticationService } from '../../core/services/auth/auth.service';
 import { CutomDropdownComponent } from '../../Component/customdropdown';
 
 @Component({
@@ -32,11 +31,6 @@ export class LoginComponent {
   loginForm!: UntypedFormGroup;
   submitted = false;
   fieldTextType!: boolean;
-  error = '';
-  returnUrl!: string;
-  a: any = 10;
-  b: any = 20;
-  toast!: false;
 
   // set the current year
   year: number = new Date().getFullYear();
@@ -45,15 +39,16 @@ export class LoginComponent {
   constructor(
     private formBuilder: UntypedFormBuilder,
     private router: Router,
-    private store: Store,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private tokenStorage: TokenStorageService
   ) {
     if (this.authenticationService.user) {
       this.router.navigate(['/']);
     }
   }
+
   ngOnInit(): void {
-    if (sessionStorage.getItem('currentUser')) {
+    if (this.tokenStorage.getUser()) {
       this.router.navigate(['/']);
     }
     /**
@@ -73,14 +68,29 @@ export class LoginComponent {
   /**
    * Form submit
    */
+  loading = false;
   onSubmit() {
+    if (this.tokenStorage.getToken()) {
+      this.router.navigate(['/']);
+      return;
+    }
+
+    if (this.loading) return; // Evita doble clic
+    this.loading = true;
+
     this.submitted = true;
+    const email = this.f['email'].value;
+    const password = this.f['password'].value;
 
-    const email = this.f['email'].value; // Get the username from the form
-    const password = this.f['password'].value; // Get the password from the form
-
-    // Login Api
-    this.store.dispatch(login({ email: email, password: password }));
+    this.authenticationService.login(email, password).subscribe({
+      next: () => {
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.log('LOGIN ERROR', err);
+        this.loading = false;
+      },
+    });
   }
 
   /**

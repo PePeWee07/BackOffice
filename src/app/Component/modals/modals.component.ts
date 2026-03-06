@@ -14,7 +14,7 @@ import { ModalService } from './modal.service';
         <ng-content></ng-content>
       </div>
     </ng-container>
-    
+
     <div class="fixed inset-0 bg-slate-900/40 dark:bg-zink-800/70 z-[1049] backdrop-overlay" [ngClass]="{'hidden': !isOpen}"id="backDropDiv" ></div>
 `,
   encapsulation: ViewEncapsulation.None,
@@ -53,8 +53,9 @@ export class MDModalsComponent {
   }
 
   @HostListener('document:keydown.escape', ['$event'])
-  onEscKeydown(event: KeyboardEvent) {
-    if (this.escDismiss) {
+  onEscKeydown(event: Event) {
+    const keyboardEvent = event as KeyboardEvent;
+    if (this.escDismiss && keyboardEvent.key === 'Escape') {
       this.close();
     }
   }

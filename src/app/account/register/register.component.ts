@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
-import { Register } from '../../store/Authentication/authentication.actions';
 
 
 @Component({
@@ -50,7 +49,7 @@ export class RegisterComponent {
     const password = this.f['password'].value;
 
     //Dispatch Action
-    this.store.dispatch(Register({ email: email, username: name, password: password }));
+    // this.store.dispatch(Register({ email: email, username: name, password: password }));
   }
 
 }

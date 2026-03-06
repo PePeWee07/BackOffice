@@ -6,7 +6,7 @@ import {
   LucideIconProvider,
   icons,
 } from 'lucide-angular';
-import { AuthenticationService } from '../../core/services/auth.service';
+import { AuthenticationService } from '../../core/services/auth/auth.service';
 
 @Component({
   selector: 'app-logout',
@@ -31,7 +31,15 @@ export class LogoutComponent {
   year = new Date().getFullYear();
 
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/account-login']);
+    this.authService.logout().subscribe({
+      next: () => {
+        this.authService.tokenStorage.signOut();
+        this.authService.currentUserSubject.next(null);
+        this.router.navigate(['/account-login']);
+      },
+      error: (err) => {
+        console.log("ERROR LOGOUT: ", err)
+      }
+    });
   }
 }

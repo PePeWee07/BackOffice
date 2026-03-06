@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { jwtDecode } from 'jwt-decode';
+
 
 const USER_KEY = 'currentUser';
 const TOKEN_KEY = 'token';
@@ -16,13 +18,9 @@ export class TokenStorageService {
   }
 
   // Método para obtener los datos del usuario almacenados
-  public getUser(): any {
+  public getUser(): any | null {
     const user = localStorage.getItem(USER_KEY);
-    if (user) {
-      return JSON.parse(user);
-    }
-
-    return {};
+    return user ? JSON.parse(user) : null;
   }
 
   // Método para guardar los datos del usuario
@@ -55,10 +53,10 @@ export class TokenStorageService {
 
   // Método para decodificar el token JWT y obtener los datos del payload
   public getDataToken(token: string): any {
-    if (token != null) {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload;
+    try {
+      return token ? jwtDecode(token) : null;
+    } catch (error) {
+      return null;
     }
-    return null;
   }
 }

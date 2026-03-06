@@ -1,3 +1,4 @@
+import { UserService } from './../../../core/services/administration/user.service';
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { fetchUserGridData } from '../../../store/User/user-action';
@@ -13,39 +14,61 @@ import { NGXPagination } from '../../../Component/pagination';
 @Component({
   selector: 'app-users-grid',
   standalone: true,
-  imports: [PageTitleComponent, LucideAngularModule, NGXPagination, RouterModule,FlatpickrModule, MnDropdownComponent, MDModalModule,RouterLink],
+  imports: [
+    PageTitleComponent,
+    LucideAngularModule,
+    NGXPagination,
+    RouterModule,
+    FlatpickrModule,
+    MnDropdownComponent,
+    MDModalModule,
+    RouterLink,
+  ],
   templateUrl: './users-grid.component.html',
-  providers: [{ provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons) }],
-  styles: ``
+  providers: [
+    {
+      provide: LUCIDE_ICONS,
+      multi: true,
+      useValue: new LucideIconProvider(icons),
+    },
+  ],
+  styles: ``,
 })
 export class UsersGridComponent {
-  griddata: any;
 
-  currentPage: number = 1;
-  itemsPerPage: number = 6;
-  totalItems: number = 0;
-  startIndex: number = 0;
-  endIndex: any;
-  allgriddata: any
-  private store = inject(Store)
+  constructor(private userService: UserService) {}
+
+  // Variables de tabla
+  isFirst: boolean | null = null; //? first
+  isEmpty: boolean | null = null; //? empty
+  itemsPerPage: number = 6; // numberOfElements
+  currentPage: number = 1; // number or pageable.pageNumber
+  sizePage: number = 5; // size or pageable.pageSize
+  isLast: boolean | null = null; //? last
+  totalItems: number = 0; // totalElements
+  totalPages: number = 0; //? totalPages
+  startIndex: number = 0; //! xxx
+  endIndex: any; //! xxx
+  offset: number = 0; //? Numero de saltos or size
+  griddata: any;
+  private store = inject(Store);
 
   ngOnInit(): void {
+    this.getUsers();
+  }
 
-    // Fetch Data
-    setTimeout(() => {
-      this.store.dispatch(fetchUserGridData());
-      this.store.select(selectUserLoading).subscribe(data => {
-        if (data == false) {
-          document.getElementById('elmLoader')?.classList.add('d-none')
-        }
+  // Consultar Usuarios
+  getUsers() {
+    this.userService
+      .getUsers({
+        page: 0,
+        pageSize: 2,
+        // dni: '070473713619',
       })
-      this.store.select(selectUserGrid).subscribe(data => {
-        this.griddata = data
-        this.allgriddata = data
-        this.totalItems = this.griddata.length;
+      .subscribe((page) => {
+        this.griddata = page.content;
+        console.log('USERS:', this.griddata);
       });
-
-    }, 500)
   }
 
   // Pagination
@@ -55,12 +78,12 @@ export class UsersGridComponent {
   }
 
   getEndIndex() {
-    return Math.min(this.startIndex + this.itemsPerPage, this.totalItems)
+    return Math.min(this.startIndex + this.itemsPerPage, this.totalItems);
   }
 
   updatePagedOrders(): void {
     this.startIndex = (this.currentPage - 1) * this.itemsPerPage;
     this.endIndex = this.startIndex + this.itemsPerPage;
-    this.griddata = this.allgriddata.slice(this.startIndex, this.endIndex);
+    this.griddata = this.griddata.slice(this.startIndex, this.endIndex);
   }
 }

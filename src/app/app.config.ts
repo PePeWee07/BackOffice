@@ -6,7 +6,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideStore } from '@ngrx/store';
 import { rootReducer } from './store';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule, provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LucideAngularModule, icons } from 'lucide-angular';
 import { provideEffects } from '@ngrx/effects';
@@ -21,28 +21,19 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CalendarEffects } from './store/Calendar/calendar.effects';
 
 // Auth
-import { initFirebaseBackend } from './authUtils';
 
 // Interceptors
-import { JwtInterceptor } from './core/helpers/jwt.interceptor';
-import { RefreshTokenInterceptor } from './core/helpers/refreshToken.interceptor';
+import { jwtInterceptor } from './core/helpers/jwt.interceptor';
 import { ErrorInterceptor } from './core/helpers/error.interceptor';
 import { FakeBackendInterceptor } from './core/helpers/fake-backend';
 
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { environment } from '../environments/environment.prod';
-import { AuthenticationEffects } from './store/Authentication/authentication.effects';
 import { provideToastr } from 'ngx-toastr';
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/');
-}
-
-if (environment.defaultauth === 'firebase') {
-  initFirebaseBackend(environment.firebaseConfig);
-} else {
-  FakeBackendInterceptor;
 }
 
 const scrollConfig: InMemoryScrollingOptions = {
@@ -54,13 +45,6 @@ const inMemoryScrollingFeature: InMemoryScrollingFeature = withInMemoryScrolling
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes, inMemoryScrollingFeature),
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: RefreshTokenInterceptor,
-      multi: true,
-    },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     {
       provide: HTTP_INTERCEPTORS,
       useClass: FakeBackendInterceptor,
@@ -74,8 +58,7 @@ export const appConfig: ApplicationConfig = {
       NotesEffects,
       SocialEffects,
       UserEffects,
-      CalendarEffects,
-      AuthenticationEffects
+      CalendarEffects
     ),
     provideToastr({
       timeOut: 10000,
@@ -84,7 +67,10 @@ export const appConfig: ApplicationConfig = {
     }),
     provideStoreDevtools(),
     provideEnvironmentNgxMask(),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(
+      withInterceptorsFromDi(),
+      withInterceptors([jwtInterceptor])
+    ),
     TranslateService,
     importProvidersFrom(
       AngularFireModule.initializeApp(environment.firebaseConfig),
@@ -101,5 +87,6 @@ export const appConfig: ApplicationConfig = {
         },
       })
     ),
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
   ],
 };

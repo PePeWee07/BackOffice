@@ -47,24 +47,23 @@ import { MaintenanceComponent } from './extrapages/maintenance/maintenance.compo
 import { AuthGuard } from '../core/guards/auth.guard';
 
 export const PAGE_ROUTES: Route[] = [
-  { path: '', component: IndexComponent },
+  {
+    path: '',
+    component: IndexComponent,
+  },
   {
     path: 'dashboards-analytics',
     component: AnalyticsComponent,
     canActivate: [AuthGuard],
     data: {
       roles: ['ROLE_ADMIN'],
-    }
+    },
   },
   { path: 'dashboards-hr', component: HrComponent },
   { path: 'apps-chat', component: ChatComponent },
   {
     path: 'apps-calendar',
     component: CalendarComponent,
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['ROLE_ADMIN'],
-    },
   },
   { path: 'apps-calendar-month-grid', component: MonthGridComponent },
   {
@@ -99,7 +98,14 @@ export const PAGE_ROUTES: Route[] = [
   { path: 'apps-invoice-add-new', component: AddNewComponent },
   { path: 'apps-invoice-overview', component: InvoiceOverviewComponent },
   { path: 'apps-users-list', component: UsersListComponent },
-  { path: 'apps-users-grid', component: UsersGridComponent },
+  {
+    path: 'apps-users-grid',
+    component: UsersGridComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['ROLE_ADMIN'],
+    },
+  },
 
   // extrapages
   { path: 'pages-account', component: AccountComponent },
