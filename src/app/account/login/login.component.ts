@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthenticationService } from '../../core/services/auth/auth.service';
 import { CutomDropdownComponent } from '../../Component/customdropdown';
+import { ToastrService } from 'ngx-toastr';
+import { ApiErrorModel } from '../../store/Authentication/apiError.model';
 
 @Component({
   selector: 'app-login',
@@ -27,20 +29,20 @@ import { CutomDropdownComponent } from '../../Component/customdropdown';
   ],
 })
 export class LoginComponent {
+
+  // set the current year
+  year: number = new Date().getFullYear();
   // Login Form
   loginForm!: UntypedFormGroup;
   submitted = false;
   fieldTextType!: boolean;
 
-  // set the current year
-  year: number = new Date().getFullYear();
-
-  // tslint:disable-next-line: max-line-length
   constructor(
     private formBuilder: UntypedFormBuilder,
     private router: Router,
     private authenticationService: AuthenticationService,
-    private tokenStorage: TokenStorageService
+    private tokenStorage: TokenStorageService,
+    private toastr: ToastrService
   ) {
     if (this.authenticationService.user) {
       this.router.navigate(['/']);
@@ -51,9 +53,7 @@ export class LoginComponent {
     if (this.tokenStorage.getUser()) {
       this.router.navigate(['/']);
     }
-    /**
-     * Form Validatyion
-     */
+
     this.loginForm = this.formBuilder.group({
       email: ['pepewee07@gmail.com', [Validators.required, Validators.email]],
       password: ['1234', [Validators.required]],
@@ -65,9 +65,6 @@ export class LoginComponent {
     return this.loginForm.controls;
   }
 
-  /**
-   * Form submit
-   */
   loading = false;
   onSubmit() {
     if (this.tokenStorage.getToken()) {
@@ -86,16 +83,23 @@ export class LoginComponent {
       next: () => {
         this.router.navigate(['/']);
       },
-      error: (err) => {
-        console.log('LOGIN ERROR', err);
+      error: (err: any) => {
+        const resp: ApiErrorModel = err.error
+        const mensaje =
+          resp?.message ||
+          resp?.errors?.[0]?.message ||
+          'Error inesperado';
+        const titulo = resp.errors?.[0].error || 'ERROR';
+
+        this.toastr.error(mensaje, titulo, {
+          // toastClass: '',
+        });
         this.loading = false;
-      },
+      }
     });
   }
 
-  /**
-   * Password Hide/Show
-   */
+
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;
   }

@@ -49,9 +49,7 @@ export class AuthenticationService {
 
   logout() {
     let email = this.currentUserValue?.username;
-
     const params = new HttpParams().set('email', email ?? 'Anonymus');
-
     return this.http.post(`/back-end-auth/log-out`, null, { params });
   }
 

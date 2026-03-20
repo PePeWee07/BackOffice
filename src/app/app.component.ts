@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { Router } from '@angular/router';
+import { TokenStorageService } from './core/services/auth/token-storage.service';
 
 @Component({
   selector: 'app-root',
@@ -13,20 +14,13 @@ import { Router } from '@angular/router';
 export class AppComponent {
   title = 'Tailwick';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private tokenStorage:TokenStorageService) {}
 
   ngOnInit() {
     // Escuchar cambios en el LocalStorage desde OTRAS pestañas/iframes
     window.addEventListener('storage', (event) => {
-      // Si el evento dice que se guardó el 'token' (nombre que usa en TokenStorageService)
       if (event.key === 'token' && event.newValue) {
-        console.log('Detectado login en otra ventana, redirigiendo...');
-        this.router.navigate(['/']);
-      }
-
-      // Si cierras sesión en una, que se cierren todas
-      if (event.key === 'token' && !event.newValue) {
-        this.router.navigate(['/login']);
+        console.log('Detectado login en otra ventana');
       }
     });
   }

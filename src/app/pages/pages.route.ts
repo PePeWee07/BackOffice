@@ -2,7 +2,7 @@ import { Route } from '@angular/router';
 import { IndexComponent } from './dashboard/index/index.component';
 import { AnalyticsComponent } from './dashboard/analytics/analytics.component';
 import { HrComponent } from './dashboard/hr/hr.component';
-import { ChatComponent } from './apps/chat/chat.component';
+import { ChatComponent } from './apps/catia/chat/chat.component';
 import { ListComponent } from './ecommerce/products/list/list.component';
 import { GridComponent } from './ecommerce/products/grid/grid.component';
 import { OverviewComponent } from './ecommerce/products/overview/overview.component';
@@ -31,8 +31,7 @@ import { CreatePayslipComponent } from './hr/payroll/create-payslip/create-paysl
 import { ListViewComponent } from './invoice/list-view/list-view.component';
 import { AddNewComponent } from './invoice/add-new/add-new.component';
 import { InvoiceOverviewComponent } from './invoice/invoice-overview/invoice-overview.component';
-import { UsersListComponent } from './user/users-list/users-list.component';
-import { UsersGridComponent } from './user/users-grid/users-grid.component';
+import { UsersGridComponent } from './user/users-grid.component';
 import { CalendarComponent } from './calendar/calendar/calendar.component';
 import { AccountComponent } from './extrapages/account/account.component';
 
@@ -97,7 +96,6 @@ export const PAGE_ROUTES: Route[] = [
   { path: 'apps-invoice-list', component: ListViewComponent },
   { path: 'apps-invoice-add-new', component: AddNewComponent },
   { path: 'apps-invoice-overview', component: InvoiceOverviewComponent },
-  { path: 'apps-users-list', component: UsersListComponent },
   {
     path: 'apps-users-grid',
     component: UsersGridComponent,

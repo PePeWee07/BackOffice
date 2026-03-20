@@ -12,7 +12,7 @@ export class ModalService {
     this.modals[id] = true;
   }
 
-    close(id: string) {
+  close(id: string) {
     this.modals[id] = false;
   }
 

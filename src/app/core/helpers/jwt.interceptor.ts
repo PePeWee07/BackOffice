@@ -45,7 +45,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
         error.status === 401 &&
         !isAuthPath
       ) {
-        return handle401Error(authReq, next, authService, tokenStorage);
+        return handle401Error(authReq, next, authService);
       }
       return throwError(() => error);
     })
@@ -55,8 +55,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 function handle401Error(
   request: HttpRequest<any>,
   next: HttpHandlerFn,
-  authService: AuthenticationService,
-  tokenStorage: TokenStorageService
+  authService: AuthenticationService
 ) {
   if (!isRefreshing) {
     isRefreshing = true;
@@ -66,7 +65,6 @@ function handle401Error(
       switchMap((response) => {
         isRefreshing = false;
         const newToken = (response as { jwt: string }).jwt;
-        console.log('Nuevo Token: ', newToken);
         refreshTokenSubject.next(newToken);
 
         // Reintentamos la petición original con el nuevo token
@@ -79,7 +77,7 @@ function handle401Error(
       catchError((err) => {
         isRefreshing = false;
         authService.tokenStorage.signOut();
-        location.reload(); // O redirigir a login
+        location.reload();
         return throwError(() => err);
       })
     );

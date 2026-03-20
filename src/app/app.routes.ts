@@ -6,7 +6,6 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { LogoutComponent } from './account/logout/logout.component';
 import { LoginComponent } from './account/login/login.component';
 import { RegisterComponent } from './account/register/register.component';
-import { ResetPassComponent } from './account/reset-pass/reset-pass-modern.component';
 import { UnauthorizedComponent } from './account/unauthorized/unauthorized.component';
 
 export const routes: Routes = [
@@ -25,6 +24,5 @@ export const routes: Routes = [
   { path: 'account-login', component: LoginComponent },
   { path: 'account-register', component: RegisterComponent },
   { path: 'account-logout', component: LogoutComponent },
-  { path: 'account-reset-password', component: ResetPassComponent },
   { path: 'account-unauthorized', component: UnauthorizedComponent },
 ];

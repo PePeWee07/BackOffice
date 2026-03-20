@@ -40,21 +40,8 @@ export const MENU: MenuItem[] = [
     id: 2.48,
     label: 'users',
     icon: 'user',
-    parentId: 2,
-    subItems: [
-      {
-        id: 2.49,
-        label: 'list-view',
-        link: '/apps-users-list',
-        parentId: 2.48,
-      },
-      {
-        id: 2.5,
-        label: 'grid-view',
-        link: '/apps-users-grid',
-        parentId: 2.48,
-      },
-    ],
+    link: '/apps-users-grid',
+    parentId: 1.5,
   },
   {
     id: 1.6,
@@ -66,7 +53,7 @@ export const MENU: MenuItem[] = [
     label: 'chat',
     icon: 'messages-square',
     link: '/apps-chat',
-    parentId: 2,
+    parentId: 1.6,
   },
   {
     id: 2,
@@ -321,29 +308,9 @@ export const MENU: MenuItem[] = [
     ],
   },
   {
-    id: 2.100,
+    id: 2.1,
     label: 'pages',
     isTitle: true,
-  },
-  {
-    id: 3,
-    label: 'authentication',
-    icon: 'award',
-    subItems: [
-      {
-        id: 3.25,
-        label: 'reset-password',
-        parentId: 3,
-        subItems: [
-          {
-            id: 3.29,
-            label: 'modern',
-            link: '/auth-reset-password-modern',
-            parentId: 3.25,
-          },
-        ],
-      },
-    ],
   },
   {
     id: 4,
@@ -394,51 +361,51 @@ export const MENU: MenuItem[] = [
         parentId: 4,
       },
     ],
-  },
-  {
-    id: 5,
-    label: 'components',
-    isTitle: true,
-  },
-  {
-    id: 13,
-    label: 'multi-level',
-    icon: 'share-2',
-    subItems: [
-      {
-        id: 13.1,
-        label: 'level-1.1',
-        parentId: 13,
-      },
-      {
-        id: 13.2,
-        label: 'level-1.2',
-        parentId: 13,
-        subItems: [
-          {
-            id: 13.3,
-            label: 'level-2.1',
-            parentId: 13.2,
-          },
-          {
-            id: 13.4,
-            label: 'level-2.2',
-            parentId: 13.2,
-            subItems: [
-              {
-                id: 13.5,
-                label: 'level-3.1',
-                parentId: 13.4,
-              },
-              {
-                id: 13.6,
-                label: 'level-3.2',
-                parentId: 13.4,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
+  }
+  // {
+  //   id: 5,
+  //   label: 'components',
+  //   isTitle: true,
+  // },
+  // {
+  //   id: 13,
+  //   label: 'multi-level',
+  //   icon: 'share-2',
+  //   subItems: [
+  //     {
+  //       id: 13.1,
+  //       label: 'level-1.1',
+  //       parentId: 13,
+  //     },
+  //     {
+  //       id: 13.2,
+  //       label: 'level-1.2',
+  //       parentId: 13,
+  //       subItems: [
+  //         {
+  //           id: 13.3,
+  //           label: 'level-2.1',
+  //           parentId: 13.2,
+  //         },
+  //         {
+  //           id: 13.4,
+  //           label: 'level-2.2',
+  //           parentId: 13.2,
+  //           subItems: [
+  //             {
+  //               id: 13.5,
+  //               label: 'level-3.1',
+  //               parentId: 13.4,
+  //             },
+  //             {
+  //               id: 13.6,
+  //               label: 'level-3.2',
+  //               parentId: 13.4,
+  //             },
+  //           ],
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
 ];

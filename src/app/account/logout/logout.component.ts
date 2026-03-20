@@ -7,6 +7,8 @@ import {
   icons,
 } from 'lucide-angular';
 import { AuthenticationService } from '../../core/services/auth/auth.service';
+import { ApiErrorModel } from '../../store/Authentication/apiError.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-logout',
@@ -25,7 +27,8 @@ import { AuthenticationService } from '../../core/services/auth/auth.service';
 export class LogoutComponent {
   constructor(
     private router: Router,
-    private authService: AuthenticationService
+    private authService: AuthenticationService,
+    private toastr: ToastrService
   ) {}
 
   year = new Date().getFullYear();
@@ -38,8 +41,15 @@ export class LogoutComponent {
         this.router.navigate(['/account-login']);
       },
       error: (err) => {
-        console.log("ERROR LOGOUT: ", err)
-      }
+        const resp: ApiErrorModel = err.error;
+        const mensaje =
+          resp?.message || resp?.errors?.[0]?.message || 'Error inesperado';
+        const titulo = resp.errors?.[0].error || 'ERROR';
+
+        this.toastr.error(mensaje, titulo, {
+          // toastClass: '',
+        });
+      },
     });
   }
 }

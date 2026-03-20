@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Page, UserModel, UserQueryParams } from '../../../store/User/user-page';
+import { Page, UserModel, UserQueryParams, UserRequest } from '../../../store/User/user-model';
 
 @Injectable({
   providedIn: 'root',
@@ -30,6 +30,25 @@ export class UserService {
     });
 
     return params;
+  }
+
+  getUserByEmail(email: string): Observable<UserModel> {
+    return this.http.get<UserModel>(`/back-end/v2/manager/user/email/${email}`);
+  }
+
+  getUserById(userId: string): Observable<UserModel> {
+    return this.http.get<UserModel>(`/back-end/v2/manager/user/${userId}`);
+  }
+
+  createUser(body: UserRequest): Observable<UserModel> {
+    return this.http.post<UserModel>(`/back-end/v2/manager/user`, body);
+  }
+
+  updateUser(userId: number, body: UserRequest) {
+    return this.http.patch<UserModel>(
+      `/back-end/v2/manager/user/${userId}`,
+      body
+    );
   }
 }
 

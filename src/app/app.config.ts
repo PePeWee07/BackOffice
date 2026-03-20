@@ -16,9 +16,10 @@ import { HRManagementEffects } from './store/HR/hr-effects';
 import { provideEnvironmentNgxMask } from 'ngx-mask';
 import { NotesEffects } from './store/Note/notes-effect';
 import { SocialEffects } from './store/Social/social-effect';
-import { UserEffects } from './store/User/user-effect';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CalendarEffects } from './store/Calendar/calendar.effects';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideToastr } from 'ngx-toastr';
 
 // Auth
 
@@ -30,7 +31,6 @@ import { FakeBackendInterceptor } from './core/helpers/fake-backend';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { environment } from '../environments/environment.prod';
-import { provideToastr } from 'ngx-toastr';
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/');
@@ -57,13 +57,18 @@ export const appConfig: ApplicationConfig = {
       HRManagementEffects,
       NotesEffects,
       SocialEffects,
-      UserEffects,
       CalendarEffects
     ),
+    provideAnimations(),
     provideToastr({
-      timeOut: 10000,
-      positionClass: 'toast-bottom-right',
-      preventDuplicates: false,
+      maxOpened: 5,
+      timeOut: 5000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+      countDuplicates: true,
+      resetTimeoutOnDuplicate: false,
+      progressBar: true,
+      closeButton: true,
     }),
     provideStoreDevtools(),
     provideEnvironmentNgxMask(),
