@@ -21,6 +21,7 @@ import { TooltipModule, TooltipOptions } from 'ng2-tooltip-directive';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { RoleService } from '../../core/services/administration/role.service';
 import { Options } from 'flatpickr/dist/types/options';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-users-grid',
@@ -38,6 +39,7 @@ import { Options } from 'flatpickr/dist/types/options';
     NgClass,
     TooltipModule,
     NgSelectModule,
+    TranslateModule,
   ],
   templateUrl: './users-grid.component.html',
   providers: [
@@ -55,7 +57,8 @@ export class UsersGridComponent {
     private fb: FormBuilder,
     private modalService: ModalService,
     private toastr: ToastrService,
-    private roleService: RoleService
+    private roleService: RoleService,
+    public translate: TranslateService
   ) {}
 
   filterForm!: FormGroup;
@@ -79,6 +82,22 @@ export class UsersGridComponent {
 
   roles: any[] = [];
   selectedRoles: number[] = [];
+
+  currentFilters: any = {};
+  activeFilterChips: { key: string; value: any }[] = [];
+
+  flatpickrOptions: Options = {
+    mode: 'single',
+    enableTime: true,
+    time_24hr: true,
+    altInput: true,
+    altFormat: 'Y-m-d\\TH:i:S',
+    dateFormat: 'Y-m-d\\TH:i:S',
+    minuteIncrement: 5,
+    position: 'auto',
+    closeOnSelect: true,
+  };
+  showPassword = false;
 
   ngAfterViewInit() {
     const observer = new IntersectionObserver((entries) => {
@@ -145,13 +164,13 @@ export class UsersGridComponent {
       enabled: this.fb.nonNullable.control(false),
       accountNonExpired: this.fb.nonNullable.control(true),
       accountNonLocked: this.fb.nonNullable.control(true),
-      credentialsNonExpired: this.fb.nonNullable.control(true),
+      credentialsNonExpired: true,
       accountExpiryDate: this.fb.control<string | null>(null),
     });
   }
 
   // Consultar Usuarios
-  getUsers(filters: any = {}) {
+  getUsers() {
     if (this.loading || this.isLast) return;
     this.loading = true;
 
@@ -159,7 +178,7 @@ export class UsersGridComponent {
       .getUsers({
         page: this.currentPage,
         pageSize: this.sizePage,
-        ...filters,
+        ...this.currentFilters,
       })
       .subscribe({
         next: (page) => {
@@ -192,7 +211,6 @@ export class UsersGridComponent {
     return Math.min(this.griddata.length, this.totalItems);
   }
 
-  activeFilterChips: { key: string; value: any }[] = [];
   applyFilters(idFilter: string) {
     const filters = this.filterForm.value;
 
@@ -210,13 +228,15 @@ export class UsersGridComponent {
         value,
       })
     );
+
     console.log('FILTER: ', cleanedFilters);
+    this.currentFilters = cleanedFilters;
 
     this.currentPage = 0;
     this.griddata = [];
     this.isLast = false;
 
-    this.getUsers(cleanedFilters);
+    this.getUsers();
     this.modalService.close(idFilter);
   }
 
@@ -234,6 +254,7 @@ export class UsersGridComponent {
   cleanFilters() {
     this.filterForm.reset();
     this.activeFilterChips = [];
+    this.currentFilters = {};
 
     this.currentPage = 0;
     this.griddata = [];
@@ -270,28 +291,44 @@ export class UsersGridComponent {
     accountNonLocked: boolean,
     credentialsNonExpired: boolean
   ): string {
-    var html = `
+    const title = this.translate.instant('users-grid.tooltips.accountStatus.title');
+
+    const accountExpiredLabel = this.translate.instant(
+      accountNonExpired
+        ? 'users-grid.common.accountNonExpired'
+        : 'users-grid.tooltips.accountStatus.accountExpired'
+    );
+
+    const accountLockedLabel = this.translate.instant(
+      accountNonLocked
+        ? 'users-grid.common.accountNonLocked'
+        : 'users-grid.tooltips.accountStatus.accountLocked'
+    );
+
+    const credentialsLabel = this.translate.instant(
+      credentialsNonExpired
+        ? 'users-grid.common.credentialsNonExpired'
+        : 'users-grid.tooltips.accountStatus.credentialsExpired'
+    );
+
+    const html = `
       <div>
-        <h6 class="text-center"> Account Status </h6>
+        <h6 class="text-center">${title}</h6>
         <div class="grid grid-cols-1 gap-2 place-content-center">
-          <span class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border border-transparent ${this.getColorClassAccountStatus(
-            accountNonLocked
-          )} dark:border-transparent">
-            ${accountNonLocked ? 'Account Non Locked' : 'Account Locked'}
-          </span>
           <span class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border border-transparent ${this.getColorClassAccountStatus(
             accountNonExpired
           )} dark:border-transparent">
-            ${accountNonExpired ? 'Account Non Expired' : 'Account Expired'}
+            ${accountExpiredLabel}
+          </span>
+          <span class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border border-transparent ${this.getColorClassAccountStatus(
+            accountNonLocked
+          )} dark:border-transparent">
+            ${accountLockedLabel}
           </span>
           <span class="px-2.5 py-0.5 inline-block text-xs font-medium rounded border border-transparent ${this.getColorClassAccountStatus(
             credentialsNonExpired
           )} dark:border-transparent">
-            ${
-              credentialsNonExpired
-                ? 'Credentials Non Expired'
-                : 'Credentials Expired'
-            }
+            ${credentialsLabel}
           </span>
         </div>
       </div>
@@ -299,18 +336,6 @@ export class UsersGridComponent {
 
     return html;
   }
-
-  flatpickrOptions: Options = {
-    mode: 'single',
-    enableTime: true,
-    time_24hr: true,
-    altInput: true,
-    altFormat: 'Y-m-d\\TH:i:S',
-    dateFormat: 'Y-m-d\\TH:i:S',
-    minuteIncrement: 5,
-    position: 'auto',
-    closeOnSelect: true,
-  };
 
   getRoles() {
     this.roles = [];
@@ -353,8 +378,6 @@ export class UsersGridComponent {
     });
     this.getRoles();
   }
-
-  showPassword = false;
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
@@ -402,6 +425,7 @@ export class UsersGridComponent {
         this.isLast = false;
 
         this.getUsers();
+        this.addUserForm.reset();
         this.modalService.close(idModal);
       },
       error: (err: any) => {
