@@ -125,5 +125,10 @@ export interface UserQueryParams {
   phoneNumber?: string;
   address?: string;
   dni?: string;
+  enabled: Boolean;
+  accountNonExpired: Boolean;
+  accountNonLocked: Boolean;
+  credentialsNonExpired: Boolean;
+  accountExpiryDate: string;
 }
 

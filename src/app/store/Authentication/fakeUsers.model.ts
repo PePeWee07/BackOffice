@@ -1,6 +1,4 @@
-export interface FakeUsers {
-
-}
+export interface FakeUsers {}
 
 [
   {
@@ -182,5 +180,50 @@ export interface FakeUsers {
     address: 'Reino Helado',
     dni: '0102030405',
     password: 'gunter_no_toques',
+  },
+  {
+    name: 'Ash',
+    lastName: 'Ketchum de Pueblo Paleta',
+    email: 'pika_master@kanto.com',
+    phoneNumber: '0915151515',
+    address: 'Ruta 1, Casa de Delia',
+    dni: '0900000151',
+    password: 'hazte_con_todos_123',
+  },
+  {
+    name: 'Brock',
+    lastName: 'Harrison de Ciudad Plateada',
+    email: 'onix_rock@pewtercity.gym',
+    phoneNumber: '0987654321',
+    address: 'Gimnasio Roca s/n',
+    dni: '0900000095',
+    password: 'amo_las_enfermeras_joy',
+  },
+  {
+    name: 'Misty',
+    lastName: 'Williams de Ciudad Celeste',
+    email: 'water_star@ceruleancity.gym',
+    phoneNumber: '0998877665',
+    address: 'Gimnasio Agua, Calle Cascada',
+    dni: '0900000120',
+    password: 'odio_los_tipo_bicho',
+  },
+  {
+    name: 'Gary',
+    lastName: 'Oak El Campeón',
+    email: 'el_mejor_gary@pallet.com',
+    phoneNumber: '0900000001',
+    address: 'Mansión Oak, Avenida Victoria',
+    dni: '0900000150',
+    password: 'huelelo_luego_abuelo',
+  },
+  {
+    name: 'James',
+    lastName: 'Morgan del Team Rocket',
+    email: 'preparense_para_los_problemas@meowth.com',
+    phoneNumber: '0966666666',
+    address: 'Globo Meowth, El Cielo',
+    dni: '0912345678',
+    password: 'el_equipo_rocket_vence_otra_vez',
   },
 ];

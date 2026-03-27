@@ -36,7 +36,7 @@ export class UserService {
     return this.http.get<UserModel>(`/back-end/v2/manager/user/email/${email}`);
   }
 
-  getUserById(userId: string): Observable<UserModel> {
+  getUserById(userId: number): Observable<UserModel> {
     return this.http.get<UserModel>(`/back-end/v2/manager/user/${userId}`);
   }
 

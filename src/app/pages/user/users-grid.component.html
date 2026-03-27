@@ -1,21 +1,42 @@
-<app-page-title [title]="'User System'" [pagetitle]="'Users'" class="border-b-red-600"></app-page-title>
+<app-page-title [title]="'Users System'" [pagetitle]="'Users'" class="border-b-red-600"></app-page-title>
 
 <form action="javascript:void(0);" class="mb-5">
-    <div class="grid grid-cols-1 gap-9 lg:grid-cols-12">
-      <div class="lg:col-span-4 xl:col-span-3">
-          <button [appModalTrigger]="'filterModal'" type="button" class="flex items-center justify-center size-[37.5px] px-16 text-white btn bg-slate-500 border-slate-500 hover:text-white hover:bg-slate-600 hover:border-slate-600 focus:text-white focus:bg-slate-600 focus:border-slate-600 focus:ring focus:ring-slate-100 active:text-white active:bg-slate-600 active:border-slate-600 active:ring active:ring-slate-100 dark:ring-slate-400/10">
-            <lucide-angular name="sliders-horizontal" class="size-4 me-1"></lucide-angular> Filter
-          </button>
-      </div><!--end col-->
-      <div class="lg:col-span-3 lg:col-start-10">
-          <div class="flex gap-2 lg:justify-end">
-              <button [appModalTrigger]="'addUserModal'" type="button" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
-                <lucide-angular name="plus" [class]="'inline-block size-4'"></lucide-angular>
-                <span class="align-middle"> Add User</span>
-              </button>
-          </div>
-      </div><!--end col-->
-    </div><!--end grid-->
+  <div class="mb-2 lg:col-span-9 flex flex-wrap items-center gap-2">
+    <button [appModalTrigger]="'filterModal'" type="button"
+        class="flex text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+        <lucide-angular name="sliders-horizontal" class="size-4 me-2"></lucide-angular>
+        Filter
+    </button>
+    <div class="flex flex-wrap gap-2 items-center">
+        @for (filter of activeFilterChips; track filter.key) {
+            <span class="flex items-center px-2.5 py-1 text-xs font-medium rounded border bg-custom-100 border-custom-200 text-custom-600 dark:bg-custom-500/20 dark:text-custom-400">
+                <span class="opacity-70 mr-1 capitalize">{{filter.key}}:</span>
+                <strong>{{filter.value}}</strong>
+
+                <button (click)="removeSingleFilter(filter.key)"
+                        class="ms-2 transition text-custom-400 hover:text-red-500">
+                    <lucide-angular name="x" class="size-3"></lucide-angular>
+                </button>
+            </span>
+        }
+        @if (activeFilterChips.length > 0) {
+            <button (click)="cleanFilters()"
+                    class="text-xs text-slate-500 hover:text-red-500 underline ml-2">
+                Clear all
+            </button>
+        }
+    </div>
+</div>
+<hr>
+<div class="mt-2 lg:col-span-3">
+    <div class="flex justify-end">
+      <button [appModalTrigger]="'addUserModal'" (click)="getRoles()" type="button" class="text-white bg-green-500 border-green-500 btn hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/10">
+        <lucide-angular name="plus" [class]="'inline-block size-4'"></lucide-angular>
+        <span class="align-middle"> Add User</span>
+      </button>
+    </div>
+</div>
+
 </form>
 
 <div class="flex flex-col items-center mb-5 md:flex-row">
@@ -42,7 +63,7 @@
             </div>
             <div class="mt-4 text-center">
                 <h5 class="mb-1 text-16"><a routerLink="/pages-account">{{data.name}} {{data.lastName}}</a></h5>
-                <p class="mb-3 text-slate-500 dark:text-zink-200">{{data.username}}</p>
+                <p class="mb-3 text-slate-500 dark:text-zink-200 break-words overflow-hidden">{{data.username}}</p>
                 <div class="grid grid-cols-3 gap-2 place-content-center" [tooltip]="getDynamicTooltipAccount(data.accountNonExpired, data.accountNonLocked, data.credentialsNonExpired)"
                 [options]="toolOptionAccountStatus">
                 <div class="my-1 flex items-center justify-center">
@@ -81,7 +102,7 @@
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-1 my-1">
                   @for (rol of data.roles; track $index) {
-                    <div class="w-1/4">
+                    <div class="w-1/3">
                       <span class="px-2.5 py-0.5 text-xs inline-block font-medium rounded-full border bg-white border-custom-400 text-custom-500 dark:bg-zink-700 dark:border-custom-700">
                         {{rol.name}}
                       </span>
@@ -147,7 +168,7 @@
 </div>
 
 <ng-modals id="filterModal" [placement]="'modal-center'" className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4">
-  <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600">
+  <div class="w-screen md:w-[60rem] bg-white shadow rounded-md dark:bg-zink-600">
       <div class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500">
           <h5 class="text-16">Filter User</h5>
           <button dismissModal [ModalDismiss]="'filterModal'" class="transition-all duration-200 ease-linear text-slate-500 hover:text-red-500">
@@ -156,10 +177,11 @@
       </div>
       <div class="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
           <form action="javascript:void(0);" [formGroup]="filterForm" (ngSubmit)="applyFilters('filterModal')">
-              <div class="mb-3">
-                  <label for="userIdInput" class="inline-block mb-2 text-base font-medium">User ID</label>
-                  <input type="text" id="userIdInput" formControlName="id" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="0000">
-              </div>
+            <div class="mb-4 max-w-24">
+                <label for="userIdInput" class="inline-block mb-2 text-base font-medium">User ID</label>
+                <input type="number" id="userIdInput" formControlName="id" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="0000">
+            </div>
+            <div class="mb-4 grid grid-cols-1 gap-x-5 xl:grid-cols-3">
               <div class="mb-3">
                   <label for="userNameInput" class="inline-block mb-2 text-base font-medium">Name</label>
                   <input type="text" id="userNameInput" formControlName="name" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter name">
@@ -184,19 +206,77 @@
                   <label for="dniInput" class="inline-block mb-2 text-base font-medium">DNI</label>
                   <input type="text" id="dniInput" formControlName="dni" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter DNI">
               </div>
-              <div class="flex justify-between gap-2 mt-4">
-                <div>
-                  @if(isfilterEmpty()) {
-                    <button type="button" (click)="cleanFilters()" class="mx-1 bg-white text-red-500 dark:bg-red-500/20 btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">Clean</button>
-                  }
+            </div>
+            <div class="mb-3">
+              <div class="flex flex-wrap gap-2 justify-around">
+                <div class="flex items-center gap-2">
+                    <input
+                      id="enabledInput"
+                      formControlName="enabled"
+                      type="checkbox"
+                      value=""
+                      class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
+                    >
+                    <label for="enabledInput" class="align-middle">
+                        Enabled
+                    </label>
                 </div>
-                <div>
-                  <button type="reset" dismissModal [ModalDismiss]="'filterModal'" class="mx-1 text-red-500 bg-white btn hover:text-red-500 hover:bg-red-200 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">Cancel</button>
-                  <button type="submit" [disabled]="filterForm.pristine" class="mx-1 text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
-                    filter
-                  </button>
+                <div class="flex items-center gap-2">
+                    <input
+                      id="accountNonExpiredInput"
+                      formControlName="accountNonExpired"
+                      type="checkbox"
+                      value=""
+                      class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
+                    >
+                    <label for="accountNonExpiredInput" class="align-middle">
+                      Account Non Expired
+                    </label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input
+                      id="accountNonLockedInput"
+                      formControlName="accountNonLocked"
+                      type="checkbox"
+                      value=""
+                      class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
+                    >
+                    <label for="accountNonLockedInput" class="align-middle">
+                      Account Non Locked
+                    </label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input
+                      id="credentialsNonExpiredInput"
+                      formControlName="credentialsNonExpired"
+                      type="checkbox"
+                      value=""
+                      class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
+                    >
+                    <label for="credentialsNonExpiredInput" class="align-middle">
+                      Credentials Non Expired
+                    </label>
                 </div>
               </div>
+            </div>
+            <div class="mb-3 max-w-72">
+              <label for="accountExpiryDateInput" class="inline-block mb-2 text-base font-medium">Account Expiry Date</label>
+              <input type="text" id="accountExpiryDateInput" formControlName="accountExpiryDate" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="2026-12-31T00:00:00">
+            </div>
+
+            <div class="flex justify-between gap-2 mt-4">
+              <div>
+                @if(isfilterEmpty()) {
+                  <button type="button" (click)="cleanFilters()" class="mx-1 bg-white text-red-500 dark:bg-red-500/20 btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">Clean</button>
+                }
+              </div>
+              <div>
+                <button type="reset" dismissModal [ModalDismiss]="'filterModal'" class="mx-1 text-red-500 bg-white btn hover:text-red-500 hover:bg-red-200 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">Cancel</button>
+                <button type="submit" [disabled]="filterForm.pristine" class="mx-1 text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                  filter
+                </button>
+              </div>
+            </div>
           </form>
       </div>
   </div>
@@ -209,45 +289,125 @@
             <button dismissModal [ModalDismiss]="'addUserModal'" class="transition-all duration-200 ease-linear text-slate-500 hover:text-red-500"><lucide-angular name="x" [class]="'size-5'"></lucide-angular></button>
         </div>
         <div class="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto">
-            <form action="javascript:void(0);">
-                <div class="mb-3">
-                    <label for="userId" class="inline-block mb-2 text-base font-medium">User ID</label>
-                    <input type="text" id="userId" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" disabled value="#TW1500004" required>
+            <form action="javascript:void(0);" [formGroup]="addUserForm" (ngSubmit)="addUser(addUserForm.value, 'addUserModal')">
+              <div class="mb-3">
+                <label for="userNameInput" class="inline-block mb-2 text-base font-medium">Name</label>
+                <input type="text" id="userNameInput" formControlName="name" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200">
+              </div>
+              <div class="mb-3">
+                <label for="userLastNameInput" class="inline-block mb-2 text-base font-medium">Last Name</label>
+                <input type="text" id="userLastNameInput" formControlName="lastName" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200">
+              </div>
+              <div class="mb-3">
+                <label for="emailInput" class="inline-block mb-2 text-base font-medium">Email</label>
+                <input type="email" id="emailInput" formControlName="email" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200">
+              </div>
+              <div class="mb-3">
+                <label for="phoneNumberInput" class="inline-block mb-2 text-base font-medium">Phone Number</label>
+                <input type="text" id="phoneNumberInput" formControlName="phoneNumber" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200">
+              </div>
+              <div class="mb-3">
+                <label for="locationInput" class="inline-block mb-2 text-base font-medium">Address</label>
+                <input type="text" id="locationInput" formControlName="address" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200">
+              </div>
+              <div class="mb-3">
+                <label for="dniInput" class="inline-block mb-2 text-base font-medium">DNI</label>
+                <input type="text" id="dniInput" formControlName="dni" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200">
+              </div>
+              <div class="mb-3">
+                <label for="userPassword" class="inline-block mb-2 text-base font-medium">
+                  Password
+                </label>
+                <div class="relative">
+                  <input
+                    [type]="showPassword ? 'text' : 'password'"
+                    id="userPassword"
+                    formControlName="password"
+                    [ngClass]="{
+                      'border-red-500 focus:border-red-500': addUserForm.get('password')?.invalid && addUserForm.get('password')?.touched
+                    }"
+                    class="form-input border-slate-200 dark:border-zink-500"
+                  />
+                  <button
+                    type="button"
+                    (click)="togglePassword()"
+                    tooltip="{{ showPassword ? 'Ocultar' : 'Mostrar' }}"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-zink-200"
+                  >
+                    <lucide-icon
+                      [name]="showPassword ? 'eye-off' : 'eye'"
+                      class="w-5 h-5">
+                    </lucide-icon>
+                  </button>
                 </div>
-                <div class="mb-3">
-                    <label for="joiningDateInput" class="inline-block mb-2 text-base font-medium">Joining Date</label>
-                    <input type="text" mwlFlatpickr id="joiningDateInput" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Select date" data-provider="flatpickr" data-date-format="d M, Y">
+              </div>
+              <div class="mb-3">
+                <label class="inline-block mb-2 text-base font-medium">Roles</label>
+                <ng-select
+                  [items]="roles"
+                  [multiple]="true"
+                  bindLabel="name"
+                  bindValue="id"
+                  formControlName="rolesIds"
+                  [clearable]="true"
+                  placeholder="Select roles">
+                </ng-select>
+              </div>
+              <div class="mb-3">
+                <div class="p-1 flex items-center">
+                  <div class="relative inline-block w-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2">
+                      <input type="checkbox" formControlName="enabled" name="enableSwitch" id="enableSwitch" class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none">
+                      <label for="enableSwitch" class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer cursor-pointertransition dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:bg-white dark:peer-checked/published:bg-zink-700 peer-checked/published:border-custom-500 dark:peer-checked/published:border-custom-800"></label>
+                  </div>
+                  <label for="enableSwitch" class="inline-block text-base font-medium cursor-pointer">Enabled</label>
                 </div>
-                <div class="mb-3">
-                    <label for="userNameInput" class="inline-block mb-2 text-base font-medium">Name</label>
-                    <input type="text" id="userNameInput" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter name" required>
+                <div class="p-1 flex items-center">
+                  <div class="relative inline-block w-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2">
+                      <input type="checkbox" formControlName="accountNonLocked" name="nonLockedSwitch" id="nonLockedSwitch" class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none">
+                      <label for="nonLockedSwitch" class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer cursor-pointertransition dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:bg-white dark:peer-checked/published:bg-zink-700 peer-checked/published:border-custom-500 dark:peer-checked/published:border-custom-800"></label>
+                  </div>
+                  <label for="nonLockedSwitch" class="inline-block text-base font-medium cursor-pointer">Account Non Locked</label>
                 </div>
-                <div class="mb-3">
-                    <label for="emailInput" class="inline-block mb-2 text-base font-medium">Email</label>
-                    <input type="email" id="emailInput" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter email" required>
+              </div>
+              <div class="mb-3">
+                <div class="p-1 flex items-center">
+                  <div class="relative inline-block w-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2">
+                    <input
+                      type="checkbox"
+                      formControlName="accountNonExpired"
+                      id="nonExpiredSwitch"
+                      class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none">
+                    <label for="nonExpiredSwitch" class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:border-custom-500"></label>
+                  </div>
+                  <label for="nonExpiredSwitch" class="inline-block text-base font-medium cursor-pointer">
+                    Account Never Expires
+                  </label>
+                  <label type="text" class="px-2 text-red-500">{{addUserForm.get('accountExpiryDate')?.value}}</label>
                 </div>
-                <div class="mb-3">
-                    <label for="phoneNumberInput" class="inline-block mb-2 text-base font-medium">Phone Number</label>
-                    <input type="text" id="phoneNumberInput" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="12345 67890" required>
-                </div>
-                <div class="mb-3">
-                    <label for="statusSelect" class="inline-block mb-2 text-base font-medium">Status</label>
-                    <select class="form-select border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" data-choices data-choices-search-false name="statusSelect" id="statusSelect">
-                        <option value="">Select Status</option>
-                        <option value="Verified">Verified</option>
-                        <option value="Waiting">Waiting</option>
-                        <option value="Rejected">Rejected</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="locationInput" class="inline-block mb-2 text-base font-medium">Location</label>
-                    <input type="text" id="locationInput" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Location" required>
-                </div>
-                <div class="flex justify-end gap-2 mt-4">
-                    <button type="reset" dismissModal [ModalDismiss]="'addUserModal'" class="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">Cancel</button>
-                    <button type="submit" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">Add
-                        User</button>
-                </div>
+                @if(!addUserForm.get('accountNonExpired')?.value) {
+                  <div class="mb-3">
+                    <label class="inline-block mb-2 text-base font-medium">
+                      Account Expiry Date
+                    </label>
+                    <input
+                      type="text"
+                      formControlName="accountExpiryDate"
+                      mwlFlatpickr
+                      [flatpickrOptions]="flatpickrOptions"
+                      data-provider="flatpickr"
+                      readonly="readonly"
+                      placeholder="Select Date"
+                      class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200">
+                  </div>
+                }
+              </div>
+
+              <div class="flex justify-end gap-2 mt-4">
+                  <button type="reset" dismissModal [ModalDismiss]="'addUserModal'" class="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">Cancel</button>
+                  <button type="submit" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">
+                    Add User
+                  </button>
+              </div>
             </form>
         </div>
     </div>
@@ -289,7 +449,6 @@
                   <label for="userPassword" class="inline-block mb-2 text-base font-medium">
                     Password
                   </label>
-
                   <div class="relative">
                     <input
                       [type]="showPassword ? 'text' : 'password'"
@@ -364,6 +523,7 @@
 
                       <input
                         type="text"
+                        formControlName="accountExpiryDate"
                         mwlFlatpickr
                         [flatpickrOptions]="flatpickrOptions"
                         data-provider="flatpickr"

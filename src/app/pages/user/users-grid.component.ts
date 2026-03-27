@@ -60,6 +60,7 @@ export class UsersGridComponent {
 
   filterForm!: FormGroup;
   editForm!: FormGroup;
+  addUserForm!: FormGroup;
 
   // Variables de tabla
   isFirst: boolean | null = null; //? first
@@ -93,13 +94,18 @@ export class UsersGridComponent {
     this.getUsers();
 
     this.filterForm = this.fb.group({
-      id: [0], //! ERROR DE INPUT STRING
+      id: [''],
       name: [''],
       lastName: [''],
       email: [''],
       phoneNumber: [''],
       address: [''],
       dni: [''],
+      enabled: true,
+      accountNonExpired: true,
+      accountNonLocked: true,
+      credentialsNonExpired: true,
+      accountExpiryDate: [null],
     });
 
     this.editForm = this.fb.group({
@@ -110,13 +116,13 @@ export class UsersGridComponent {
       phoneNumber: [''],
       address: [''],
       dni: [''],
-      password: [null],
-      rolesIds: [[]],
-      enabled: false,
-      accountNonLocked: true,
+      password: this.fb.control<string | null>(null),
+      rolesIds: this.fb.nonNullable.control<number[]>([]),
+      enabled: true,
       accountNonExpired: true,
-      accountExpiryDate: [null],
+      accountNonLocked: true,
       credentialsNonExpired: true,
+      accountExpiryDate: [null],
     });
 
     this.editForm.get('accountNonExpired')?.valueChanges.subscribe((val) => {
@@ -125,6 +131,22 @@ export class UsersGridComponent {
           accountExpiryDate: null,
         });
       }
+    });
+
+    this.addUserForm = this.fb.group({
+      name: this.fb.nonNullable.control(''),
+      lastName: this.fb.nonNullable.control(''),
+      email: this.fb.nonNullable.control(''),
+      phoneNumber: this.fb.nonNullable.control(''),
+      address: this.fb.nonNullable.control(''),
+      dni: this.fb.nonNullable.control(''),
+      password: this.fb.control<string | null>(null),
+      rolesIds: this.fb.nonNullable.control<number[]>([]),
+      enabled: this.fb.nonNullable.control(false),
+      accountNonExpired: this.fb.nonNullable.control(true),
+      accountNonLocked: this.fb.nonNullable.control(true),
+      credentialsNonExpired: this.fb.nonNullable.control(true),
+      accountExpiryDate: this.fb.control<string | null>(null),
     });
   }
 
@@ -155,7 +177,7 @@ export class UsersGridComponent {
         error: (err: any) => {
           const resp: ApiErrorModel = err.error;
           const mensaje =
-            resp?.message || resp?.errors?.[0]?.message || 'Error inesperado';
+            resp?.errors?.[0]?.message || resp?.message || 'Error inesperado';
           const titulo = resp.errors?.[0].error || 'ERROR';
 
           this.toastr.error(mensaje, titulo, {
@@ -170,14 +192,25 @@ export class UsersGridComponent {
     return Math.min(this.griddata.length, this.totalItems);
   }
 
+  activeFilterChips: { key: string; value: any }[] = [];
   applyFilters(idFilter: string) {
     const filters = this.filterForm.value;
+
+    console.log('FILTER: ', filters);
 
     const cleanedFilters = Object.fromEntries(
       Object.entries(filters).filter(
         ([_, value]) => value !== null && value !== ''
       )
     );
+
+    this.activeFilterChips = Object.entries(cleanedFilters).map(
+      ([key, value]) => ({
+        key,
+        value,
+      })
+    );
+    console.log('FILTER: ', cleanedFilters);
 
     this.currentPage = 0;
     this.griddata = [];
@@ -193,8 +226,14 @@ export class UsersGridComponent {
     return values.some((v) => v !== null && v !== '');
   }
 
+  removeSingleFilter(key: string) {
+    this.filterForm.get(key)?.reset();
+    this.applyFilters('filterModal');
+  }
+
   cleanFilters() {
     this.filterForm.reset();
+    this.activeFilterChips = [];
 
     this.currentPage = 0;
     this.griddata = [];
@@ -266,12 +305,30 @@ export class UsersGridComponent {
     enableTime: true,
     time_24hr: true,
     altInput: true,
-    altFormat: 'Y-m-d H:i',
-    dateFormat: 'Y-m-d H:i',
+    altFormat: 'Y-m-d\\TH:i:S',
+    dateFormat: 'Y-m-d\\TH:i:S',
     minuteIncrement: 5,
     position: 'auto',
     closeOnSelect: true,
   };
+
+  getRoles() {
+    this.roles = [];
+
+    this.roleService.getRoles().subscribe({
+      next: (resp) => {
+        this.roles = resp.map(({ permissionList, ...role }) => role);
+      },
+      error: (err: any) => {
+        const resp: ApiErrorModel = err.error;
+        const mensaje =
+          resp?.errors?.[0]?.message || resp?.message || 'Error inesperado';
+        const titulo = resp.errors?.[0].error || 'ERROR';
+
+        this.toastr.error(mensaje, titulo, {});
+      },
+    });
+  }
 
   openEditModal(user: UserModel) {
     const expiry = user.accountExpiryDate
@@ -294,15 +351,7 @@ export class UsersGridComponent {
       accountExpiryDate: expiry,
       credentialsNonExpired: true,
     });
-
-    this.roleService.getRoles().subscribe({
-      next: (resp) => {
-        this.roles = resp.map(({ permissionList, ...role }) => role);
-      },
-      error: (err) => {
-        console.log('ERROR get roles: ', err);
-      },
-    });
+    this.getRoles();
   }
 
   showPassword = false;
@@ -312,30 +361,57 @@ export class UsersGridComponent {
   }
 
   updateUser(body: UserRequest, idModal: string) {
-
-    console.log("DTO: ", body);
-
     const idUser: number = this.editForm.get('id')?.value;
+    const payload: UserRequest = { ...body };
 
-    if (body.password != '') {
-
+    if (!payload.password || payload.password.trim() === '') {
+      delete payload.password;
     }
 
-    this.userService.updateUser(idUser, body).subscribe({
-      next: (resp) => {
-        console.log('ACTUALIZADO:', resp);
+    this.userService.updateUser(idUser, payload).subscribe({
+      next: () => {
         this.toastr.success('User Update', 'Success', {});
+        this.currentPage = 0;
+        this.griddata = [];
+        this.isLast = false;
+
+        this.getUsers();
+        this.modalService.close(idModal);
       },
       error: (err: any) => {
         const resp: ApiErrorModel = err.error;
         const mensaje =
-          resp?.message || resp?.errors?.[0]?.message || 'Error inesperado';
+          resp?.errors?.[0]?.message || resp?.message || 'Error inesperado';
         const titulo = resp.errors?.[0].error || 'ERROR';
 
         this.toastr.error(mensaje, titulo, {});
       },
     });
-    this.modalService.close(idModal);
   }
 
+  addUser(body: UserRequest, idModal: string) {
+    const payload: UserRequest = { ...body };
+
+    console.log('CREATE USER: ', payload);
+
+    this.userService.createUser(payload).subscribe({
+      next: () => {
+        this.toastr.success('User Create', 'Success', {});
+        this.currentPage = 0;
+        this.griddata = [];
+        this.isLast = false;
+
+        this.getUsers();
+        this.modalService.close(idModal);
+      },
+      error: (err: any) => {
+        const resp: ApiErrorModel = err.error;
+        const mensaje =
+          resp?.errors?.[0]?.message || resp?.message || 'Error inesperado';
+        const titulo = resp.errors?.[0].error || 'ERROR';
+
+        this.toastr.error(mensaje, titulo, {});
+      },
+    });
+  }
 }
