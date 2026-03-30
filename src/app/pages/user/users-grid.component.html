@@ -361,7 +361,7 @@
               id="userNameInput"
               formControlName="name"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              placeholder="Enter name"
+              [placeholder]="'users-grid.common.modal.placeholder.name' | translate"
             />
           </div>
           <div class="mb-3">
@@ -375,7 +375,7 @@
               id="userLastNameInput"
               formControlName="lastName"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              placeholder="Enter last name"
+              [placeholder]="'users-grid.common.modal.placeholder.last-name' | translate"
             />
           </div>
           <div class="mb-3">
@@ -389,7 +389,7 @@
               id="emailInput"
               formControlName="email"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              placeholder="Enter email"
+              [placeholder]="'users-grid.common.modal.placeholder.email' | translate"
             />
           </div>
           <div class="mb-3">
@@ -403,7 +403,7 @@
               id="phoneNumberInput"
               formControlName="phoneNumber"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              placeholder="0000000000"
+              [placeholder]="'users-grid.common.modal.placeholder.phone-number' | translate"
             />
           </div>
           <div class="mb-3">
@@ -417,7 +417,7 @@
               id="locationInput"
               formControlName="address"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              placeholder="Enter address"
+              [placeholder]="'users-grid.common.modal.placeholder.address' | translate"
             />
           </div>
           <div class="mb-3">
@@ -431,7 +431,7 @@
               id="dniInput"
               formControlName="dni"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              placeholder="Enter DNI"
+              [placeholder]="'users-grid.common.modal.placeholder.dni' | translate"
             />
           </div>
         </div>
@@ -578,6 +578,7 @@
             id="userNameInput"
             formControlName="name"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+            [placeholder]="'users-grid.common.modal.placeholder.name' | translate"
           />
         </div>
         <div class="mb-3">
@@ -591,6 +592,7 @@
             id="userLastNameInput"
             formControlName="lastName"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+            [placeholder]="'users-grid.common.modal.placeholder.last-name' | translate"
           />
         </div>
         <div class="mb-3">
@@ -604,6 +606,7 @@
             id="emailInput"
             formControlName="email"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+            [placeholder]="'users-grid.common.modal.placeholder.email' | translate"
           />
         </div>
         <div class="mb-3">
@@ -617,6 +620,7 @@
             id="phoneNumberInput"
             formControlName="phoneNumber"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+            [placeholder]="'users-grid.common.modal.placeholder.phone-number' | translate"
           />
         </div>
         <div class="mb-3">
@@ -630,6 +634,7 @@
             id="locationInput"
             formControlName="address"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+            [placeholder]="'users-grid.common.modal.placeholder.address' | translate"
           />
         </div>
         <div class="mb-3">
@@ -643,6 +648,7 @@
             id="dniInput"
             formControlName="dni"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+            [placeholder]="'users-grid.common.modal.placeholder.dni' | translate"
           />
         </div>
         <div class="mb-3">
@@ -663,6 +669,7 @@
                   addUserForm.get('password')?.touched
               }"
               class="form-input border-slate-200 dark:border-zink-500"
+              [placeholder]="'users-grid.common.modal.placeholder.password' | translate"
             />
             <button
               type="button"
@@ -816,7 +823,7 @@
     <div
       class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500"
     >
-      <h5 class="text-16">Edit User</h5>
+      <h5 class="text-16">{{ "users-grid.edit-user.modal-title" | translate }}</h5>
       <button
         dismissModal
         [ModalDismiss]="'editUserModal'"
@@ -836,7 +843,7 @@
           <label
             for="userNameInput"
             class="inline-block mb-2 text-base font-medium"
-            >Name</label
+            >{{ "users-grid.common.modal.name" | translate }}</label
           >
           <input
             type="text"
@@ -849,7 +856,7 @@
           <label
             for="userLastNameInput"
             class="inline-block mb-2 text-base font-medium"
-            >Last Name</label
+            >{{ "users-grid.common.modal.last-name" | translate }}</label
           >
           <input
             type="text"
@@ -862,7 +869,7 @@
           <label
             for="emailInput"
             class="inline-block mb-2 text-base font-medium"
-            >Email</label
+            >{{ "users-grid.common.modal.email" | translate }}</label
           >
           <input
             type="email"
@@ -875,7 +882,7 @@
           <label
             for="phoneNumberInput"
             class="inline-block mb-2 text-base font-medium"
-            >Phone Number</label
+            >{{ "users-grid.common.modal.phone-number" | translate }}</label
           >
           <input
             type="text"
@@ -888,7 +895,7 @@
           <label
             for="locationInput"
             class="inline-block mb-2 text-base font-medium"
-            >Address</label
+            >{{ "users-grid.common.modal.address" | translate }}</label
           >
           <input
             type="text"
@@ -899,7 +906,7 @@
         </div>
         <div class="mb-3">
           <label for="dniInput" class="inline-block mb-2 text-base font-medium"
-            >DNI</label
+            >{{ "users-grid.common.modal.dni" | translate }}</label
           >
           <input
             type="text"
@@ -913,7 +920,7 @@
             for="userPassword"
             class="inline-block mb-2 text-base font-medium"
           >
-            Password
+          {{ "users-grid.common.modal.password" | translate }}
           </label>
           <div class="relative">
             <input
@@ -926,6 +933,7 @@
                   editForm.get('password')?.touched
               }"
               class="form-input border-slate-200 dark:border-zink-500"
+              [placeholder]="'users-grid.common.modal.placeholder.changePassword' | translate"
             />
             <button
               type="button"
@@ -942,7 +950,7 @@
           </div>
         </div>
         <div class="mb-3">
-          <label class="inline-block mb-2 text-base font-medium">Roles</label>
+          <label class="inline-block mb-2 text-base font-medium">{{ "users-grid.common.modal.roles" | translate }}</label>
           <ng-select
             [items]="roles"
             [multiple]="true"
@@ -974,7 +982,7 @@
             <label
               for="enableSwitch"
               class="inline-block text-base font-medium cursor-pointer"
-              >Enabled</label
+              >{{ "users-grid.common.enabled" | translate }}</label
             >
           </div>
           <div class="p-1 flex items-center">
@@ -996,7 +1004,7 @@
             <label
               for="nonLockedSwitch"
               class="inline-block text-base font-medium cursor-pointer"
-              >Account Non Locked</label
+              >{{ "users-grid.common.accountNonLocked" | translate }}</label
             >
           </div>
         </div>
@@ -1020,7 +1028,7 @@
               for="nonExpiredSwitch"
               class="inline-block text-base font-medium cursor-pointer"
             >
-              Account Never Expires
+            {{ "users-grid.common.accountNonExpired" | translate }}
             </label>
             <label type="text" class="px-2 text-red-500">{{
               editForm.get("accountExpiryDate")?.value
@@ -1029,7 +1037,7 @@
           @if(!editForm.get('accountNonExpired')?.value) {
           <div class="mb-3">
             <label class="inline-block mb-2 text-base font-medium">
-              Account Expiry Date
+              {{ "users-grid.common.accountExpiryDate" | translate }}
             </label>
 
             <input
@@ -1053,14 +1061,14 @@
               [ModalDismiss]="'editUserModal'"
               class="mx-1 text-red-500 bg-white btn hover:text-red-500 hover:bg-red-200 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
             >
-              Cancel
+            {{ "coomon.cancel" | translate }}
             </button>
             <button
               type="submit"
               [disabled]="editForm.pristine"
               class="mx-1 text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
             >
-              Update
+            {{ "coomon.cancel" | translate }}
             </button>
           </div>
         </div>
@@ -1090,9 +1098,9 @@
       </div>
       <img src="assets/images/delete.png" alt="" class="block h-12 mx-auto" />
       <div class="mt-5 text-center">
-        <h5 class="mb-1">Are you sure?</h5>
+        <h5 class="mb-1">{{ 'coomon.modal-delete.title' | translate}}</h5>
         <p class="text-slate-500 dark:text-zink-200">
-          Are you certain you want to delete this record?
+          {{ 'coomon.modal-delete.message' | translate}}
         </p>
         <div class="flex justify-center gap-2 mt-6">
           <button
@@ -1101,13 +1109,13 @@
             [ModalDismiss]="'deleteModal'"
             class="bg-white text-slate-500 btn hover:text-slate-500 hover:bg-slate-100 focus:text-slate-500 focus:bg-slate-100 active:text-slate-500 active:bg-slate-100 dark:bg-zink-600 dark:hover:bg-slate-500/10 dark:focus:bg-slate-500/10 dark:active:bg-slate-500/10"
           >
-            Cancel
+          {{ 'coomon.modal-delete.confirm' | translate}}
           </button>
           <button
             type="submit"
             class="text-white bg-red-500 border-red-500 btn hover:text-white hover:bg-red-600 hover:border-red-600 focus:text-white focus:bg-red-600 focus:border-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:border-red-600 active:ring active:ring-red-100 dark:ring-custom-400/20"
           >
-            Yes, Delete It!
+          {{ 'coomon.modal-delete.cancel' | translate}}
           </button>
         </div>
       </div>

@@ -11,6 +11,7 @@
   "product": "Producto",
   "apps": "Aplicaciones",
   "chat": "Chat",
+  "administration": "Administración",
   "calendar": "Calendario",
   "default": "Por Defecto",
   "month-grid": "Vista de Mes",
@@ -164,7 +165,14 @@
     "clean": "Limpiar",
     "cancel": "Cancelar",
     "filter": "Filtrar",
-    "clear-all": "Limpiar todo"
+    "clear-all": "Limpiar todo",
+    "update": "Actualizar",
+    "modal-delete": {
+      "title": "¿Estás seguro?",
+      "message": "¿Estás seguro de que quieres eliminar este registro?, esta acción no se puede deshacer.",
+      "confirm": "Sí, ¡eliminalo!",
+      "cancel": "No, ¡cancelalo!"
+    }
   },
   "users-grid": {
     "title": "Usuarios del sistema",
@@ -185,6 +193,7 @@
       "accountNonLocked": "Cuenta no bloqueada",
       "credentialsNonExpired": "Credenciales no expirada",
       "accountExpiryDate": "Fecha de vencimiento de la cuenta",
+      "select-roles": "Selecioná los roles",
       "modal": {
         "id": "ID Usuario",
         "name": "Nombre",
@@ -194,9 +203,18 @@
         "address": "Dirección",
         "dni": "DNI",
         "password": "Contraseña",
-        "roles": "Roles"
-      },
-      "select-roles": "Selecioná los roles"
+        "roles": "Roles",
+        "placeholder": {
+          "name": "Ingrese el nombre",
+          "last-name": "Ingrese el apellido",
+          "email": "Ingrese el correo electrónico",
+          "phone-number": "Ingrese el número celular",
+          "address": "Ingrese la dirección",
+          "dni": "Ingrese el DNI",
+          "password": "Ingrese la contraseña",
+          "changePassword": "Cambiar por una nueva contraseña"
+        }
+      }
     },
     "filter": {
       "modal-title": "Filtrar Usuarios",
@@ -213,6 +231,10 @@
     "add-user" : {
       "modal-title": "Añadir Usuario",
       "btn-add-user": "Añadir"
+    },
+    "edit-user": {
+      "modal-title": "Editar Usuario",
+      "btn-edit-user": "Guardar Cambios"
     }
   }
 }

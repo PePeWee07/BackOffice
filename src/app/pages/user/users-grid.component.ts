@@ -214,8 +214,6 @@ export class UsersGridComponent {
   applyFilters(idFilter: string) {
     const filters = this.filterForm.value;
 
-    console.log('FILTER: ', filters);
-
     const cleanedFilters = Object.fromEntries(
       Object.entries(filters).filter(
         ([_, value]) => value !== null && value !== ''
@@ -229,7 +227,6 @@ export class UsersGridComponent {
       })
     );
 
-    console.log('FILTER: ', cleanedFilters);
     this.currentFilters = cleanedFilters;
 
     this.currentPage = 0;
@@ -414,8 +411,6 @@ export class UsersGridComponent {
 
   addUser(body: UserRequest, idModal: string) {
     const payload: UserRequest = { ...body };
-
-    console.log('CREATE USER: ', payload);
 
     this.userService.createUser(payload).subscribe({
       next: () => {

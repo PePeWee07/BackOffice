@@ -11,6 +11,7 @@
   "product": "Product",
   "apps": "Apps",
   "chat": "Chat",
+  "administration": "Administration",
   "calendar": "Calendar",
   "default": "Default",
   "month-grid": "Month Grid",
@@ -161,9 +162,79 @@
   "level 3.1": "Level 3.1",
   "level-3.2": "Level 3.2",
   "more": "More",
+  "coomon": {
+    "clean": "Clean",
+    "cancel": "Cancel",
+    "filter": "Filter",
+    "clear-all": "Clean everything",
+    "update": "Update",
+    "modal-delete": {
+      "title": "Are you sure?",
+      "message": "Are you sure you want to delete this record? This action cannot be undone.",
+      "confirm": "Yes, delete it!",
+      "cancel": "No, cancel it!"
+    }
+  },
   "users-grid": {
-    "title": "System Users",
+    "title": "System users",
     "pagetitle": "Users",
-    "filter": "Filter"
+    "showing": "Showing",
+    "of": "of",
+    "results": "Results",
+    "card-users": {
+      "disabled": "Disabled",
+      "send-message": "Send message",
+      "overview": "Overview",
+      "edit": "Edit",
+      "delete": "Eliminate"
+    },
+    "common": {
+      "enabled": "Enabled",
+      "accountNonExpired": "Account not expired",
+      "accountNonLocked": "Account not blocked",
+      "credentialsNonExpired": "Unexpired credentials",
+      "accountExpiryDate": "Account expiration date",
+      "select-roles": "Select the roles",
+      "modal": {
+        "id": "User ID",
+        "name": "Name",
+        "last-name": "Last name",
+        "email": "Email",
+        "phone-number": "Cell Number",
+        "address": "Address",
+        "dni": "DNI",
+        "password": "Password",
+        "roles": "Roles",
+        "placeholder": {
+          "name": "Enter name",
+          "last-name": "Enter last name",
+          "email": "Enter email",
+          "phone-number": "Enter cell phone number",
+          "address": "Enter the address",
+          "dni": "Enter your ID",
+          "password": "Enter password",
+          "changePassword": "Change to a new password"
+        }
+      }
+    },
+    "filter": {
+      "modal-title": "Filter Users",
+      "btn-filter": "Filter"
+    },
+    "tooltips": {
+      "accountStatus": {
+        "title": "Account status",
+        "accountExpired": "Expired account",
+        "accountLocked": "Locked account",
+        "credentialsExpired": "Expired credentials"
+      }
+    },
+    "add-user": {
+      "modal-title": "Add User",
+      "btn-add-user": "Add"
+    },
+    "edit-user": {
+      "modal-title": "Edit User",
+      "btn-edit-user": "Edit"    }
   }
 }
