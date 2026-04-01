@@ -174,67 +174,77 @@
       "cancel": "No, ¡cancelalo!"
     }
   },
-  "users-grid": {
-    "title": "Usuarios del sistema",
-    "pagetitle": "Usuarios",
-    "showing": "Mostrando",
-    "of": "de",
-    "results": "Resultados",
-    "card-users": {
-      "disabled": "Deshabilitado",
-      "send-message": "Enviar mensaje",
-      "overview": "Descripción general",
-      "edit": "Editar",
-      "delete": "Eliminar"
-    },
-    "common": {
-      "enabled": "Habilitada",
-      "accountNonExpired": "Cuenta no expirada",
-      "accountNonLocked": "Cuenta no bloqueada",
-      "credentialsNonExpired": "Credenciales no expirada",
-      "accountExpiryDate": "Fecha de vencimiento de la cuenta",
-      "select-roles": "Selecioná los roles",
-      "modal": {
-        "id": "ID Usuario",
-        "name": "Nombre",
-        "last-name": "Apellido",
-        "email": "Correo Electrónico",
-        "phone-number": "Número Celular",
-        "address": "Dirección",
-        "dni": "DNI",
-        "password": "Contraseña",
-        "roles": "Roles",
-        "placeholder": {
-          "name": "Ingrese el nombre",
-          "last-name": "Ingrese el apellido",
-          "email": "Ingrese el correo electrónico",
-          "phone-number": "Ingrese el número celular",
-          "address": "Ingrese la dirección",
-          "dni": "Ingrese el DNI",
-          "password": "Ingrese la contraseña",
-          "changePassword": "Cambiar por una nueva contraseña"
+  "pages-component": {
+    "apps": {
+      "catia": {
+        "chat": {
+          "title": "CatIA",
+          "pagetitle": "Conversaciones"
         }
       }
     },
-    "filter": {
-      "modal-title": "Filtrar Usuarios",
-      "btn-filter": "Filtro"
-    },
-    "tooltips": {
-      "accountStatus": {
-        "title": "Estado de la cuenta",
-        "accountExpired": "Cuenta expirada",
-        "accountLocked": "Cuenta bloqueada",
-        "credentialsExpired": "Credenciales expiradas"
+    "user": {
+      "title": "Usuarios del sistema",
+      "pagetitle": "Usuarios",
+      "showing": "Mostrando",
+      "of": "de",
+      "results": "Resultados",
+      "card-users": {
+        "disabled": "Deshabilitado",
+        "send-message": "Enviar mensaje",
+        "overview": "Descripción general",
+        "edit": "Editar",
+        "delete": "Eliminar"
+      },
+      "common": {
+        "enabled": "Habilitada",
+        "accountNonExpired": "Cuenta no expirada",
+        "accountNonLocked": "Cuenta no bloqueada",
+        "credentialsNonExpired": "Credenciales no expirada",
+        "accountExpiryDate": "Fecha de vencimiento de la cuenta",
+        "select-roles": "Selecioná los roles",
+        "modal": {
+          "id": "ID Usuario",
+          "name": "Nombre",
+          "last-name": "Apellido",
+          "email": "Correo Electrónico",
+          "phone-number": "Número Celular",
+          "address": "Dirección",
+          "dni": "DNI",
+          "password": "Contraseña",
+          "roles": "Roles",
+          "placeholder": {
+            "name": "Ingrese el nombre",
+            "last-name": "Ingrese el apellido",
+            "email": "Ingrese el correo electrónico",
+            "phone-number": "Ingrese el número celular",
+            "address": "Ingrese la dirección",
+            "dni": "Ingrese el DNI",
+            "password": "Ingrese la contraseña",
+            "changePassword": "Cambiar por una nueva contraseña"
+          }
+        }
+      },
+      "filter": {
+        "modal-title": "Filtrar Usuarios",
+        "btn-filter": "Filtro"
+      },
+      "tooltips": {
+        "accountStatus": {
+          "title": "Estado de la cuenta",
+          "accountExpired": "Cuenta expirada",
+          "accountLocked": "Cuenta bloqueada",
+          "credentialsExpired": "Credenciales expiradas"
+        }
+      },
+      "add-user": {
+        "modal-title": "Añadir Usuario",
+        "btn-add-user": "Añadir"
+      },
+      "edit-user": {
+        "modal-title": "Editar Usuario",
+        "btn-edit-user": "Guardar Cambios"
       }
-    },
-    "add-user" : {
-      "modal-title": "Añadir Usuario",
-      "btn-add-user": "Añadir"
-    },
-    "edit-user": {
-      "modal-title": "Editar Usuario",
-      "btn-edit-user": "Guardar Cambios"
     }
   }
 }

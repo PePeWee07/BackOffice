@@ -16,6 +16,7 @@ import { MnDropdownComponent } from '../../../../Component/dropdown';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as Prism from 'prismjs';
 @Component({
   selector: 'app-chat',
@@ -32,9 +33,11 @@ import * as Prism from 'prismjs';
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
+    TranslateModule,
   ],
   templateUrl: './chat.component.html',
   styles: ``,
+  styleUrls: ['./chat.component.scss'],
   providers: [
     {
       provide: LUCIDE_ICONS,
@@ -59,8 +62,14 @@ export class ChatComponent {
   profile: string = 'assets/images/users/avatar-7.png';
   role: string = 'NextJS Developer';
 
+  isMenuCollapsed = false; // For Menu Collapse in false
+
   @ViewChild('scrollRef') scrollRef: any;
-  constructor(public formBuilder: UntypedFormBuilder) {}
+  constructor(
+    public formBuilder: UntypedFormBuilder,
+    public translate: TranslateService
+  ) {}
+
   ngOnInit(): void {
     this.chatuser = chatUser;
     this.recentChat = recentChats;
@@ -83,8 +92,8 @@ export class ChatComponent {
   }
 
   // toggletab
-  toggleTab(show: boolean) {
-    this.showTab = show;
+  setMainView(view: 'chat' | 'ai'): void {
+    this.showTab = view === 'chat';
   }
 
   onListScroll() {
@@ -134,5 +143,9 @@ export class ChatComponent {
       });
     }
     this.formData.reset();
+  }
+
+  toggleMenuCollapse(): void {
+    this.isMenuCollapsed = !this.isMenuCollapsed;
   }
 }

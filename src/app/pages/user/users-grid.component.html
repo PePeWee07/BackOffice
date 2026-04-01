@@ -1,6 +1,6 @@
 <app-page-title
-  [title]="'users-grid.title' | translate"
-  [pagetitle]="'users-grid.pagetitle' | translate"
+  [title]="'pages-component.user.title' | translate"
+  [pagetitle]="'pages-component.user.pagetitle' | translate"
   class="border-b-red-600"
 ></app-page-title>
 
@@ -12,7 +12,7 @@
       class="flex text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
     >
       <lucide-angular name="filter" class="size-4 me-2"></lucide-angular>
-      {{ "users-grid.filter.btn-filter" | translate }}
+      {{ "pages-component.user.filter.btn-filter" | translate }}
     </button>
     <div class="flex flex-wrap gap-2 items-center">
       @for (filter of activeFilterChips; track filter.key) {
@@ -20,7 +20,7 @@
         class="flex items-center px-2.5 py-1 text-xs font-medium rounded border bg-custom-100 border-custom-200 text-custom-600 dark:bg-custom-500/20 dark:text-custom-400"
       >
         <span class="opacity-70 mr-1 capitalize"
-          >{{ "users-grid.common." + filter.key | translate }}:</span
+          >{{ "pages-component.user.common." + filter.key | translate }}:</span
         >
         <strong>{{ filter.value }}</strong>
 
@@ -57,7 +57,7 @@
           [class]="'inline-block size-4'"
         ></lucide-angular>
         <span class="align-middle">
-          {{ "users-grid.add-user.btn-add-user" | translate }}</span
+          {{ "pages-component.user.add-user.btn-add-user" | translate }}</span
         >
       </button>
     </div>
@@ -67,9 +67,9 @@
 <div class="flex flex-col items-center mb-5 md:flex-row">
   <div class="mb-4 grow md:mb-0">
     <p class="text-slate-500 dark:text-zink-200">
-      {{ "users-grid.showing" | translate }} <b>{{ getEndIndex() }}</b>
-      {{ "users-grid.of" | translate }} <b>{{ totalItems }}</b>
-      {{ "users-grid.results" | translate }}
+      {{ "pages-component.user.showing" | translate }} <b>{{ getEndIndex() }}</b>
+      {{ "pages-component.user.of" | translate }} <b>{{ totalItems }}</b>
+      {{ "pages-component.user.results" | translate }}
     </p>
   </div>
 </div>
@@ -164,14 +164,14 @@
               name="check-circle"
               [class]="'size-3 mr-1.5'"
             ></lucide-angular>
-            {{ "users-grid.common.enabled" | translate }}
+            {{ "pages-component.user.common.enabled" | translate }}
           </span>
           }@else{
           <span
             class="px-2.5 py-0.5 text-xs font-medium rounded border border-transparent inline-flex items-center bg-red-100 text-red-500 dark:bg-red-500/20"
           >
             <lucide-angular name="x" [class]="'size-3 mr-1.5'"></lucide-angular>
-            {{ "users-grid.card-users.disabled" | translate }}
+            {{ "pages-component.user.card-users.disabled" | translate }}
           </span>
           }
         </div>
@@ -198,7 +198,7 @@
             [class]="'inline-block size-4 ltr:mr-1 rtl:ml-1'"
           ></lucide-angular>
           <span class="align-middle">
-            {{ "users-grid.card-users.send-message" | translate }}</span
+            {{ "pages-component.user.card-users.send-message" | translate }}</span
           >
         </a>
         <div class="relative dropdown" mndropdown [placement]="'bottom-end'">
@@ -227,7 +227,7 @@
                   name="eye"
                   [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"
                 ></lucide-angular>
-                <span class="align-middle">{{ "users-grid.card-users.overview" | translate }}</span></a
+                <span class="align-middle">{{ "pages-component.user.card-users.overview" | translate }}</span></a
               >
             </li>
             <li>
@@ -240,7 +240,7 @@
                   name="file-edit"
                   [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"
                 ></lucide-angular>
-                <span class="align-middle">{{ "users-grid.card-users.edit" | translate }}</span></a
+                <span class="align-middle">{{ "pages-component.user.card-users.edit" | translate }}</span></a
               >
             </li>
             <li>
@@ -252,7 +252,7 @@
                   name="trash-2"
                   [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"
                 ></lucide-angular>
-                <span class="align-middle">{{ "users-grid.card-users.delete" | translate }}</span></a
+                <span class="align-middle">{{ "pages-component.user.card-users.delete" | translate }}</span></a
               >
             </li>
           </ul>
@@ -300,9 +300,9 @@
 <div class="flex flex-col items-center mb-5 md:flex-row">
   <div class="mb-4 grow md:mb-0">
     <p class="text-slate-500 dark:text-zink-200">
-      {{ "users-grid.showing" | translate }} <b>{{ getEndIndex() }}</b>
-      {{ "users-grid.of" | translate }} <b>{{ totalItems }}</b>
-      {{ "users-grid.results" | translate }}
+      {{ "pages-component.user.showing" | translate }} <b>{{ getEndIndex() }}</b>
+      {{ "pages-component.user.of" | translate }} <b>{{ totalItems }}</b>
+      {{ "pages-component.user.results" | translate }}
     </p>
   </div>
 </div>
@@ -318,7 +318,7 @@
     <div
       class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500"
     >
-      <h5 class="text-16">{{ "users-grid.filter.modal-title" | translate }}</h5>
+      <h5 class="text-16">{{ "pages-component.user.filter.modal-title" | translate }}</h5>
       <button
         dismissModal
         [ModalDismiss]="'filterModal'"
@@ -339,7 +339,7 @@
           <label
             for="userIdInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.id" | translate }}</label
+            >{{ "pages-component.user.common.modal.id" | translate }}</label
           >
           <input
             type="number"
@@ -354,84 +354,84 @@
             <label
               for="userNameInput"
               class="inline-block mb-2 text-base font-medium"
-              >{{ "users-grid.common.modal.name" | translate }}</label
+              >{{ "pages-component.user.common.modal.name" | translate }}</label
             >
             <input
               type="text"
               id="userNameInput"
               formControlName="name"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'users-grid.common.modal.placeholder.name' | translate"
+              [placeholder]="'pages-component.user.common.modal.placeholder.name' | translate"
             />
           </div>
           <div class="mb-3">
             <label
               for="userLastNameInput"
               class="inline-block mb-2 text-base font-medium"
-              >{{ "users-grid.common.modal.last-name" | translate }}</label
+              >{{ "pages-component.user.common.modal.last-name" | translate }}</label
             >
             <input
               type="text"
               id="userLastNameInput"
               formControlName="lastName"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'users-grid.common.modal.placeholder.last-name' | translate"
+              [placeholder]="'pages-component.user.common.modal.placeholder.last-name' | translate"
             />
           </div>
           <div class="mb-3">
             <label
               for="emailInput"
               class="inline-block mb-2 text-base font-medium"
-              >{{ "users-grid.common.modal.email" | translate }}</label
+              >{{ "pages-component.user.common.modal.email" | translate }}</label
             >
             <input
               type="email"
               id="emailInput"
               formControlName="email"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'users-grid.common.modal.placeholder.email' | translate"
+              [placeholder]="'pages-component.user.common.modal.placeholder.email' | translate"
             />
           </div>
           <div class="mb-3">
             <label
               for="phoneNumberInput"
               class="inline-block mb-2 text-base font-medium"
-              >{{ "users-grid.common.modal.phone-number" | translate }}</label
+              >{{ "pages-component.user.common.modal.phone-number" | translate }}</label
             >
             <input
               type="text"
               id="phoneNumberInput"
               formControlName="phoneNumber"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'users-grid.common.modal.placeholder.phone-number' | translate"
+              [placeholder]="'pages-component.user.common.modal.placeholder.phone-number' | translate"
             />
           </div>
           <div class="mb-3">
             <label
               for="locationInput"
               class="inline-block mb-2 text-base font-medium"
-              >{{ "users-grid.common.modal.address" | translate }}</label
+              >{{ "pages-component.user.common.modal.address" | translate }}</label
             >
             <input
               type="text"
               id="locationInput"
               formControlName="address"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'users-grid.common.modal.placeholder.address' | translate"
+              [placeholder]="'pages-component.user.common.modal.placeholder.address' | translate"
             />
           </div>
           <div class="mb-3">
             <label
               for="dniInput"
               class="inline-block mb-2 text-base font-medium"
-              >{{ "users-grid.common.modal.dni" | translate }}</label
+              >{{ "pages-component.user.common.modal.dni" | translate }}</label
             >
             <input
               type="text"
               id="dniInput"
               formControlName="dni"
               class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'users-grid.common.modal.placeholder.dni' | translate"
+              [placeholder]="'pages-component.user.common.modal.placeholder.dni' | translate"
             />
           </div>
         </div>
@@ -446,7 +446,7 @@
                 class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
               />
               <label for="enabledInput" class="align-middle">
-                {{ "users-grid.common.enabled" | translate }}
+                {{ "pages-component.user.common.enabled" | translate }}
               </label>
             </div>
             <div class="flex items-center gap-2">
@@ -458,7 +458,7 @@
                 class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
               />
               <label for="accountNonExpiredInput" class="align-middle">
-                {{ "users-grid.common.accountNonExpired" | translate }}
+                {{ "pages-component.user.common.accountNonExpired" | translate }}
               </label>
             </div>
             <div class="flex items-center gap-2">
@@ -470,7 +470,7 @@
                 class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
               />
               <label for="accountNonLockedInput" class="align-middle">
-                {{ "users-grid.common.accountNonLocked" | translate }}
+                {{ "pages-component.user.common.accountNonLocked" | translate }}
               </label>
             </div>
             <div class="flex items-center gap-2">
@@ -482,7 +482,7 @@
                 class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
               />
               <label for="credentialsNonExpiredInput" class="align-middle">
-                {{ "users-grid.common.credentialsNonExpired" | translate }}
+                {{ "pages-component.user.common.credentialsNonExpired" | translate }}
               </label>
             </div>
           </div>
@@ -491,7 +491,7 @@
           <label
             for="accountExpiryDateInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.accountExpiryDate" | translate }}</label
+            >{{ "pages-component.user.common.accountExpiryDate" | translate }}</label
           >
           <input
             type="text"
@@ -549,7 +549,7 @@
       class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500"
     >
       <h5 class="text-16">
-        {{ "users-grid.add-user.modal-title" | translate }}
+        {{ "pages-component.user.add-user.modal-title" | translate }}
       </h5>
       <button
         dismissModal
@@ -571,84 +571,84 @@
           <label
             for="userNameInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.name" | translate }}</label
+            >{{ "pages-component.user.common.modal.name" | translate }}</label
           >
           <input
             type="text"
             id="userNameInput"
             formControlName="name"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'users-grid.common.modal.placeholder.name' | translate"
+            [placeholder]="'pages-component.user.common.modal.placeholder.name' | translate"
           />
         </div>
         <div class="mb-3">
           <label
             for="userLastNameInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.last-name" | translate }}</label
+            >{{ "pages-component.user.common.modal.last-name" | translate }}</label
           >
           <input
             type="text"
             id="userLastNameInput"
             formControlName="lastName"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'users-grid.common.modal.placeholder.last-name' | translate"
+            [placeholder]="'pages-component.user.common.modal.placeholder.last-name' | translate"
           />
         </div>
         <div class="mb-3">
           <label
             for="emailInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.email" | translate }}</label
+            >{{ "pages-component.user.common.modal.email" | translate }}</label
           >
           <input
             type="email"
             id="emailInput"
             formControlName="email"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'users-grid.common.modal.placeholder.email' | translate"
+            [placeholder]="'pages-component.user.common.modal.placeholder.email' | translate"
           />
         </div>
         <div class="mb-3">
           <label
             for="phoneNumberInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.phone-number" | translate }}</label
+            >{{ "pages-component.user.common.modal.phone-number" | translate }}</label
           >
           <input
             type="text"
             id="phoneNumberInput"
             formControlName="phoneNumber"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'users-grid.common.modal.placeholder.phone-number' | translate"
+            [placeholder]="'pages-component.user.common.modal.placeholder.phone-number' | translate"
           />
         </div>
         <div class="mb-3">
           <label
             for="locationInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.address" | translate }}</label
+            >{{ "pages-component.user.common.modal.address" | translate }}</label
           >
           <input
             type="text"
             id="locationInput"
             formControlName="address"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'users-grid.common.modal.placeholder.address' | translate"
+            [placeholder]="'pages-component.user.common.modal.placeholder.address' | translate"
           />
         </div>
         <div class="mb-3">
           <label
             for="dniInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.dni" | translate }}</label
+            >{{ "pages-component.user.common.modal.dni" | translate }}</label
           >
           <input
             type="text"
             id="dniInput"
             formControlName="dni"
             class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'users-grid.common.modal.placeholder.dni' | translate"
+            [placeholder]="'pages-component.user.common.modal.placeholder.dni' | translate"
           />
         </div>
         <div class="mb-3">
@@ -656,7 +656,7 @@
             for="userPassword"
             class="inline-block mb-2 text-base font-medium"
           >
-            {{ "users-grid.common.modal.password" | translate }}
+            {{ "pages-component.user.common.modal.password" | translate }}
           </label>
           <div class="relative">
             <input
@@ -669,7 +669,7 @@
                   addUserForm.get('password')?.touched
               }"
               class="form-input border-slate-200 dark:border-zink-500"
-              [placeholder]="'users-grid.common.modal.placeholder.password' | translate"
+              [placeholder]="'pages-component.user.common.modal.placeholder.password' | translate"
             />
             <button
               type="button"
@@ -687,7 +687,7 @@
         </div>
         <div class="mb-3">
           <label class="inline-block mb-2 text-base font-medium">{{
-            "users-grid.common.modal.roles" | translate
+            "pages-component.user.common.modal.roles" | translate
           }}</label>
           <ng-select
             [items]="roles"
@@ -696,7 +696,7 @@
             bindValue="id"
             formControlName="rolesIds"
             [clearable]="true"
-            [placeholder]="'users-grid.common.select-roles' | translate"
+            [placeholder]="'pages-component.user.common.select-roles' | translate"
           >
           </ng-select>
         </div>
@@ -720,7 +720,7 @@
             <label
               for="enableSwitch"
               class="inline-block text-base font-medium cursor-pointer"
-              >{{ "users-grid.common.enabled" | translate }}</label
+              >{{ "pages-component.user.common.enabled" | translate }}</label
             >
           </div>
           <div class="p-1 flex items-center">
@@ -742,7 +742,7 @@
             <label
               for="nonLockedSwitch"
               class="inline-block text-base font-medium cursor-pointer"
-              >{{ "users-grid.common.accountNonLocked" | translate }}</label
+              >{{ "pages-component.user.common.accountNonLocked" | translate }}</label
             >
           </div>
         </div>
@@ -766,7 +766,7 @@
               for="nonExpiredSwitch"
               class="inline-block text-base font-medium cursor-pointer"
             >
-              {{ "users-grid.common.accountNonExpired" | translate }}
+              {{ "pages-component.user.common.accountNonExpired" | translate }}
             </label>
             <label type="text" class="px-2 text-red-500">{{
               addUserForm.get("accountExpiryDate")?.value
@@ -775,7 +775,7 @@
           @if(!addUserForm.get('accountNonExpired')?.value) {
           <div class="mb-3">
             <label class="inline-block mb-2 text-base font-medium">
-              {{ "users-grid.common.accountExpiryDate" | translate }}
+              {{ "pages-component.user.common.accountExpiryDate" | translate }}
             </label>
             <input
               type="text"
@@ -823,7 +823,7 @@
     <div
       class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500"
     >
-      <h5 class="text-16">{{ "users-grid.edit-user.modal-title" | translate }}</h5>
+      <h5 class="text-16">{{ "pages-component.user.edit-user.modal-title" | translate }}</h5>
       <button
         dismissModal
         [ModalDismiss]="'editUserModal'"
@@ -843,7 +843,7 @@
           <label
             for="userNameInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.name" | translate }}</label
+            >{{ "pages-component.user.common.modal.name" | translate }}</label
           >
           <input
             type="text"
@@ -856,7 +856,7 @@
           <label
             for="userLastNameInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.last-name" | translate }}</label
+            >{{ "pages-component.user.common.modal.last-name" | translate }}</label
           >
           <input
             type="text"
@@ -869,7 +869,7 @@
           <label
             for="emailInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.email" | translate }}</label
+            >{{ "pages-component.user.common.modal.email" | translate }}</label
           >
           <input
             type="email"
@@ -882,7 +882,7 @@
           <label
             for="phoneNumberInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.phone-number" | translate }}</label
+            >{{ "pages-component.user.common.modal.phone-number" | translate }}</label
           >
           <input
             type="text"
@@ -895,7 +895,7 @@
           <label
             for="locationInput"
             class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.address" | translate }}</label
+            >{{ "pages-component.user.common.modal.address" | translate }}</label
           >
           <input
             type="text"
@@ -906,7 +906,7 @@
         </div>
         <div class="mb-3">
           <label for="dniInput" class="inline-block mb-2 text-base font-medium"
-            >{{ "users-grid.common.modal.dni" | translate }}</label
+            >{{ "pages-component.user.common.modal.dni" | translate }}</label
           >
           <input
             type="text"
@@ -920,7 +920,7 @@
             for="userPassword"
             class="inline-block mb-2 text-base font-medium"
           >
-          {{ "users-grid.common.modal.password" | translate }}
+          {{ "pages-component.user.common.modal.password" | translate }}
           </label>
           <div class="relative">
             <input
@@ -933,7 +933,7 @@
                   editForm.get('password')?.touched
               }"
               class="form-input border-slate-200 dark:border-zink-500"
-              [placeholder]="'users-grid.common.modal.placeholder.changePassword' | translate"
+              [placeholder]="'pages-component.user.common.modal.placeholder.changePassword' | translate"
             />
             <button
               type="button"
@@ -950,7 +950,7 @@
           </div>
         </div>
         <div class="mb-3">
-          <label class="inline-block mb-2 text-base font-medium">{{ "users-grid.common.modal.roles" | translate }}</label>
+          <label class="inline-block mb-2 text-base font-medium">{{ "pages-component.user.common.modal.roles" | translate }}</label>
           <ng-select
             [items]="roles"
             [multiple]="true"
@@ -982,7 +982,7 @@
             <label
               for="enableSwitch"
               class="inline-block text-base font-medium cursor-pointer"
-              >{{ "users-grid.common.enabled" | translate }}</label
+              >{{ "pages-component.user.common.enabled" | translate }}</label
             >
           </div>
           <div class="p-1 flex items-center">
@@ -1004,7 +1004,7 @@
             <label
               for="nonLockedSwitch"
               class="inline-block text-base font-medium cursor-pointer"
-              >{{ "users-grid.common.accountNonLocked" | translate }}</label
+              >{{ "pages-component.user.common.accountNonLocked" | translate }}</label
             >
           </div>
         </div>
@@ -1028,7 +1028,7 @@
               for="nonExpiredSwitch"
               class="inline-block text-base font-medium cursor-pointer"
             >
-            {{ "users-grid.common.accountNonExpired" | translate }}
+            {{ "pages-component.user.common.accountNonExpired" | translate }}
             </label>
             <label type="text" class="px-2 text-red-500">{{
               editForm.get("accountExpiryDate")?.value
@@ -1037,7 +1037,7 @@
           @if(!editForm.get('accountNonExpired')?.value) {
           <div class="mb-3">
             <label class="inline-block mb-2 text-base font-medium">
-              {{ "users-grid.common.accountExpiryDate" | translate }}
+              {{ "pages-component.user.common.accountExpiryDate" | translate }}
             </label>
 
             <input

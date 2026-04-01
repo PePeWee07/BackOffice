@@ -1,0 +1,35 @@
+/* móvil */
+:host ::ng-deep .mobile-bottom-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:host ::ng-deep .mobile-bottom-nav .nav-tabs,
+:host ::ng-deep .mobile-bottom-nav ul {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+:host ::ng-deep .mobile-bottom-nav app-nav-item,
+:host ::ng-deep .mobile-bottom-nav li {
+  display: inline-flex !important;
+  width: auto !important;
+}
+
+/* desktop xl */
+@media (min-width: 1280px) {
+
+  :host ::ng-deep .mobile-bottom-nav .nav-tabs,
+  :host ::ng-deep .mobile-bottom-nav ul {
+    flex-direction: column !important;
+  }
+
+  :host ::ng-deep .mobile-bottom-nav app-nav-item,
+  :host ::ng-deep .mobile-bottom-nav li {
+    width: 100% !important;
+  }
+}
