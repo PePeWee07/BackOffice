@@ -1,6 +1,5 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthenticationService } from '../services/auth/auth.service';
 import { TokenStorageService } from '../services/auth/token-storage.service';
 import { JwtToken } from '../../store/Authentication/jwt.model';
 
