@@ -7,8 +7,8 @@
 <drawer id="customizerButton" [position]="'drawer-end'">
     <div class="flex justify-between p-4 border-b border-slate-200 dark:border-zink-500">
         <div class="grow">
-            <h5 class="mb-1 text-16">Tailwick Theme Customizer</h5>
-            <p class="font-normal text-slate-500 dark:text-zink-200">Choose your themes & layouts etc.</p>
+            <h5 class="mb-1 text-16">{{ 'pagesComponent.layouts.customizer.title' | translate}}</h5>
+            <p class="font-normal text-slate-500 dark:text-zink-200">{{ 'pagesComponent.layouts.customizer.description' | translate}}</p>
         </div>
         <div class="shrink-0">
             <button dismissDrawer [DrawerDismiss]="'customizerButton'" class="transition-all duration-150 ease-linear text-slate-500 hover:text-slate-800 dark:text-zink-200 dark:hover:text-zink-50">
@@ -18,7 +18,7 @@
     </div>
     <div class="h-full p-6 overflow-y-auto">
         <div>
-            <h5 class="mb-3 underline capitalize text-15">Choose Layouts</h5>
+            <h5 class="mb-3 underline capitalize text-15">{{ 'pagesComponent.layouts.customizer.layout.title' | translate}}</h5>
             <div class="grid grid-cols-1 mb-5 gap-7 sm:grid-cols-2">
                 <div class="relative">
                     <input id="layout-one" name="dataLayout" class="absolute size-4 border rounded-full appearance-none cursor-pointer ltr:right-2 rtl:left-2 top-2 vertical-menu-btn bg-slate-100 border-slate-300 checked:bg-custom-500 checked:border-custom-500 dark:bg-zink-400 dark:border-zink-500" type="radio" value="vertical" (change)="changeTheme('vertical')" [checked]="theme === 'vertical'">
@@ -40,7 +40,7 @@
                             </span>
                         </span>
                     </label>
-                    <h5 class="mt-2 text-center text-15">Vertical</h5>
+                    <h5 class="mt-2 text-center text-15">{{ 'pagesComponent.layouts.customizer.layout.vertical' | translate}}</h5>
                 </div>
 
                 <div class="relative">
@@ -56,7 +56,7 @@
                             <span class="block p-1 mt-auto bg-slate-100 dark:bg-zink-500"></span>
                         </span>
                     </label>
-                    <h5 class="mt-2 text-center text-15">Horizontal</h5>
+                    <h5 class="mt-2 text-center text-15">{{ 'pagesComponent.layouts.customizer.layout.horizontal' | translate}}</h5>
                 </div>
             </div>
 
@@ -66,14 +66,14 @@
                         <input type="checkbox" name="customDefaultSwitch" value="dark" id="customDefaultSwitch" class="absolute block size-5 transition duration-300 ease-linear border-2 rounded-full appearance-none cursor-pointer border-slate-200 bg-white/80 peer/published checked:bg-white checked:right-0 checked:border-custom-500 arrow-none dark:border-zink-500 dark:bg-zink-500 dark:checked:bg-zink-400 checked:bg-none" (change)="changeSemiLayout($event)">
                         <label for="customDefaultSwitch" class="block h-5 overflow-hidden transition duration-300 ease-linear border rounded-full cursor-pointer border-slate-200 bg-slate-200 peer-checked/published:bg-custom-500 peer-checked/published:border-custom-500 dark:border-zink-500 dark:bg-zink-600"></label>
                     </div>
-                    <label for="customDefaultSwitch" class="inline-block text-base font-medium">Semi Dark (Sidebar & Header)</label>
+                    <label for="customDefaultSwitch" class="inline-block text-base font-medium">{{ 'pagesComponent.layouts.customizer.layout.semiDark' | translate}}</label>
                 </div>
             </div>
         </div>
 
         <div class="mt-6">
             <!-- data-skin="" -->
-            <h5 class="mb-3 underline capitalize text-15">Skin Layouts</h5>
+            <h5 class="mb-3 underline capitalize text-15">{{ 'pagesComponent.layouts.customizer.skin.title' | translate}}</h5>
             <div class="grid grid-cols-1 mb-5 gap-7 sm:grid-cols-2">
                 <div class="relative">
                     <input id="layoutSkitOne" name="dataLayoutSkin" class="absolute size-4 border rounded-full appearance-none cursor-pointer ltr:right-2 rtl:left-2 top-2 vertical-menu-btn bg-slate-100 border-slate-300 checked:bg-custom-500 checked:border-custom-500 dark:bg-zink-400 dark:border-zink-500" type="radio" value="default" (change)="changeSkinLayout('default')" [checked]="skin === 'default'">
@@ -95,7 +95,7 @@
                             </span>
                         </span>
                     </label>
-                    <h5 class="mt-2 text-center text-15">Default</h5>
+                    <h5 class="mt-2 text-center text-15">{{ 'pagesComponent.layouts.customizer.skin.default' | translate}}</h5>
                 </div>
 
                 <div class="relative">
@@ -118,65 +118,65 @@
                             </span>
                         </span>
                     </label>
-                    <h5 class="mt-2 text-center text-15">Bordered</h5>
+                    <h5 class="mt-2 text-center text-15">{{ 'pagesComponent.layouts.customizer.skin.bordered' | translate}}</h5>
                 </div>
             </div>
         </div>
 
         <div class="mt-6">
             <!-- data-mode="" -->
-            <h5 class="mb-3 underline capitalize text-15">Light & Dark</h5>
+            <h5 class="mb-3 underline capitalize text-15">{{ 'pagesComponent.layouts.customizer.theme.title' | translate}}</h5>
             <div class="flex gap-3">
-                <button type="button" id="dataModeOne" name="dataMode" value="light" (click)="changeLayoutMode('light')" [ngClass]="{'active':mode == 'light'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Light Mode</button>
-                <button type="button" id="dataModeTwo" name="dataMode" value="dark" (click)="changeLayoutMode('dark')" [ngClass]="{'active':mode == 'dark'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Dark Mode</button>
+                <button type="button" id="dataModeOne" name="dataMode" value="light" (click)="changeLayoutMode('light')" [ngClass]="{'active':mode == 'light'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.theme.btnLight' | translate}}</button>
+                <button type="button" id="dataModeTwo" name="dataMode" value="dark" (click)="changeLayoutMode('dark')" [ngClass]="{'active':mode == 'dark'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.theme.btnDark' | translate}}</button>
             </div>
         </div>
 
         <div class="mt-6">
             <!-- dir="ltr" -->
-            <h5 class="mb-3 underline capitalize text-15">LTR & RTL</h5>
+            <h5 class="mb-3 underline capitalize text-15">{{ 'pagesComponent.layouts.customizer.direction.title' | translate}}</h5>
             <div class="flex flex-wrap gap-3">
-                <button type="button" id="diractionOne" name="dir" value="ltr" (click)="changeLayoutDirection('ltr')" [ngClass]="{'active':dir == 'ltr'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">LTR Mode</button>
-                <button type="button" id="diractionTwo" name="dir" value="rtl" (click)="changeLayoutDirection('rtl')" [ngClass]="{'active':dir == 'rtl'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">RTL Mode</button>
+                <button type="button" id="diractionOne" name="dir" value="ltr" (click)="changeLayoutDirection('ltr')" [ngClass]="{'active':dir == 'ltr'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.direction.btnRight' | translate}}</button>
+                <button type="button" id="diractionTwo" name="dir" value="rtl" (click)="changeLayoutDirection('rtl')" [ngClass]="{'active':dir == 'rtl'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.direction.btnLeft' | translate}}</button>
             </div>
         </div>
 
         <div class="mt-6">
             <!-- data-content -->
-            <h5 class="mb-3 underline capitalize text-15">Content Width</h5>
+            <h5 class="mb-3 underline capitalize text-15">{{ 'pagesComponent.layouts.customizer.contetnWidth.title' | translate}}</h5>
             <div class="flex gap-3">
-                <button type="button" id="datawidthOne" name="datawidth" value="fluid" (click)="changeWidth('fluid')" [ngClass]="{'active':width == 'fluid'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Fluid</button>
-                <button type="button" id="datawidthTwo" name="datawidth" value="boxed" (click)="changeWidth('boxed')" [ngClass]="{'active':width == 'boxed'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Boxed</button>
+                <button type="button" id="datawidthOne" name="datawidth" value="fluid" (click)="changeWidth('fluid')" [ngClass]="{'active':width == 'fluid'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.contetnWidth.fluid' | translate}}</button>
+                <button type="button" id="datawidthTwo" name="datawidth" value="boxed" (click)="changeWidth('boxed')" [ngClass]="{'active':width == 'boxed'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.contetnWidth.boxed' | translate}}</button>
             </div>
         </div>
 
         @if(theme == 'vertical'){
         <div class="mt-6" id="sidebar-size">
             <!-- data-sidebar-size="" -->
-            <h5 class="mb-3 underline capitalize text-15">Sidebar Size</h5>
+            <h5 class="mb-3 underline capitalize text-15">{{ 'pagesComponent.layouts.customizer.sidebarSize.title' | translate}}</h5>
             <div class="flex flex-wrap gap-3">
-                <button type="button" id="sidebarSizeOne" name="sidebarSize" value="lg" (click)="changeSize('lg')" [ngClass]="{'active':size == 'lg'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Default</button>
-                <button type="button" id="sidebarSizeTwo" name="sidebarSize" value="md" (click)="changeSize('md')" [ngClass]="{'active':size == 'md'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Compact</button>
-                <button type="button" id="sidebarSizeThree" name="sidebarSize" value="sm" (click)="changeSize('sm')" [ngClass]="{'active':size == 'sm'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Small (Icon)</button>
+                <button type="button" id="sidebarSizeOne" name="sidebarSize" value="lg" (click)="changeSize('lg')" [ngClass]="{'active':size == 'lg'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.sidebarSize.default' | translate}}</button>
+                <button type="button" id="sidebarSizeTwo" name="sidebarSize" value="md" (click)="changeSize('md')" [ngClass]="{'active':size == 'md'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.sidebarSize.compact' | translate}}</button>
+                <button type="button" id="sidebarSizeThree" name="sidebarSize" value="sm" (click)="changeSize('sm')" [ngClass]="{'active':size == 'sm'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.sidebarSize.smallIcon' | translate}}</button>
             </div>
         </div>
     }
 
         <div class="mt-6" id="navigation-type">
             <!-- data-navbar="" -->
-            <h5 class="mb-3 underline capitalize text-15">Navigation Type</h5>
+            <h5 class="mb-3 underline capitalize text-15">{{ 'pagesComponent.layouts.customizer.navegationtType.title' | translate}}</h5>
             <div class="flex flex-wrap gap-3">
-                <button type="button" id="navbarTwo" name="navbar" value="sticky" (click)="changenavbar('sticky')" [ngClass]="{'active':navbar == 'sticky'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Sticky</button>
-                <button type="button" id="navbarOne" name="navbar" value="scroll" (click)="changenavbar('scroll')" [ngClass]="{'active':navbar == 'scroll'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Scroll</button>
-                <button type="button" id="navbarThree" name="navbar" value="bordered" (click)="changenavbar('bordered')" [ngClass]="{'active':navbar == 'bordered'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Bordered</button>
-                <button type="button" id="navbarFour" name="navbar" value="hidden" (click)="changenavbar('hidden')" [ngClass]="{'active':navbar == 'hidden'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">Hidden</button>
+                <button type="button" id="navbarTwo" name="navbar" value="sticky" (click)="changenavbar('sticky')" [ngClass]="{'active':navbar == 'sticky'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.navegationtType.sticky' | translate}}</button>
+                <button type="button" id="navbarOne" name="navbar" value="scroll" (click)="changenavbar('scroll')" [ngClass]="{'active':navbar == 'scroll'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.navegationtType.scroll' | translate}}</button>
+                <button type="button" id="navbarThree" name="navbar" value="bordered" (click)="changenavbar('bordered')" [ngClass]="{'active':navbar == 'bordered'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.navegationtType.bordered' | translate}}</button>
+                <button type="button" id="navbarFour" name="navbar" value="hidden" (click)="changenavbar('hidden')" [ngClass]="{'active':navbar == 'hidden'}" class="transition-all duration-200 ease-linear bg-white border-dashed text-slate-500 btn border-slate-200 hover:text-slate-500 hover:bg-slate-50 hover:border-slate-200 [&.active]:text-custom-500 [&.active]:bg-custom-50 [&.active]:border-custom-200 dark:bg-zink-600 dark:text-zink-200 dark:border-zink-400 dark:hover:bg-zink-600 dark:hover:text-zink-100 dark:hover:border-zink-400 dark:[&.active]:bg-custom-500/10 dark:[&.active]:border-custom-500/30 dark:[&.active]:text-custom-500">{{ 'pagesComponent.layouts.customizer.navegationtType.hidden' | translate}}</button>
             </div>
         </div>
 
         @if(theme == 'vertical'){
             <div class="mt-6" id="sidebar-color">
                 <!-- data-sidebar="" light, dark, brand, modern-->
-                <h5 class="mb-3 underline capitalize text-15">Sizebar Colors</h5>
+                <h5 class="mb-3 underline capitalize text-15">{{ 'pagesComponent.layouts.customizer.sidebarColor' | translate}}</h5>
                 <div class="flex flex-wrap gap-3">
                     <button type="button" id="sidebarColorOne" name="sidebarColor" value="light" (click)="changecolor('light')" [ngClass]="{'active':color == 'light'}" class="flex items-center justify-center size-10 bg-white border rounded-md border-slate-200 group active"><lucide-angular name="check" [class]="'size-5 hidden group-[.active]:inline-block text-slate-600'"></lucide-angular></button>
                     <button type="button" id="sidebarColorTwo" name="sidebarColor" value="dark" (click)="changecolor('dark')" [ngClass]="{'active':color == 'dark'}" class="flex items-center justify-center size-10 border rounded-md border-zink-900 bg-zink-900 group"><lucide-angular name="check" [class]="'size-5 hidden group-[.active]:inline-block text-white'"></lucide-angular></button>
@@ -188,12 +188,18 @@
 
         <div class="mt-6">
             <!-- data-topbar="" light, dark, brand, modern-->
-            <h5 class="mb-3 underline capitalize text-15">Topbar Colors</h5>
+            <h5 class="mb-3 underline capitalize text-15">{{ 'pagesComponent.layouts.customizer.topbarColor' | translate}}</h5>
             <div class="flex flex-wrap gap-3">
                 <button type="button" id="topbarColorOne" name="topbarColor" value="light" (click)="changetopbar('light')" [ngClass]="{'active':topbar == 'light'}" class="flex items-center justify-center size-10 bg-white border rounded-md border-slate-200 group active"><lucide-angular name="check" [class]="'size-5 hidden group-[.active]:inline-block text-slate-600'"></lucide-angular></button>
                 <button type="button" id="topbarColorTwo" name="topbarColor" value="dark" (click)="changetopbar('dark')" [ngClass]="{'active':topbar == 'dark'}" class="flex items-center justify-center size-10 border rounded-md border-zink-900 bg-zink-900 group"><lucide-angular name="check" [class]="'size-5 hidden group-[.active]:inline-block text-white'"></lucide-angular></button>
                 <button type="button" id="topbarColorThree" name="topbarColor" value="brand" (click)="changetopbar('brand')" [ngClass]="{'active':topbar == 'brand'}" class="flex items-center justify-center size-10 border rounded-md border-custom-800 bg-custom-800 group"><lucide-angular name="check" [class]="'size-5 hidden group-[.active]:inline-block text-white'"></lucide-angular></button>
             </div>
+        </div>
+
+        <div class="pt-6 mt-6 border-t border-slate-200 dark:border-zink-500">
+            <a href="" (click)="resetPreferences($event)" class="inline-flex text-sm font-medium transition-all duration-200 ease-linear text-custom-500 hover:text-custom-600 dark:text-custom-400 dark:hover:text-custom-300">
+              {{ 'pagesComponent.layouts.customizer.reset' | translate}}
+            </a>
         </div>
 
     </div>

@@ -1,21 +1,28 @@
 import { Component, inject } from '@angular/core';
 import { DrawerModule } from '../../Component/drawer';
 import { Store } from '@ngrx/store';
-import { changeDirection, changeMode, changeSkin, changelayout, changenavigation, changesidebarcolor, changesidebarsize, changetopbarcolor, changewidthLayout } from '../../store/layout/layout-action';
+import { changeDirection, changeMode, changeSkin, changelayout, changenavigation, changesidebarcolor, changesidebarsize, changetopbarcolor, changewidthLayout, hydrateLayoutPreferences } from '../../store/layout/layout-action';
 import { getLayout, getLayoutSkin, getLayoutWidth, getLayoutdirection, getLayoutmode, getNavigation, getSidebarcolor, getSidebarsize, getTopbarcolor } from '../../store/layout/layout-selector';
 import { CommonModule } from '@angular/common';
 import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
+import { initialState } from '../../store/layout/layout-reducers';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-customizer',
   standalone: true,
-  imports: [DrawerModule, CommonModule,LucideAngularModule],
+  imports: [DrawerModule, CommonModule, LucideAngularModule, TranslateModule],
   templateUrl: './customizer.component.html',
   styles: ``,
-  providers:[{provide: LUCIDE_ICONS, multi: true, useValue: new LucideIconProvider(icons)}]
+  providers: [
+    {
+      provide: LUCIDE_ICONS,
+      multi: true,
+      useValue: new LucideIconProvider(icons),
+    },
+  ],
 })
 export class CustomizerComponent {
-
   theme: string | undefined;
   mode: string | undefined;
   dir: string | undefined;
@@ -28,10 +35,9 @@ export class CustomizerComponent {
 
   attribute: any;
 
-  private store = inject(Store)
+  private store = inject(Store);
 
   ngOnInit(): void {
-
     this.store.select('layout').subscribe((data) => {
       this.theme = data.LAYOUT;
       this.skin = data.LAYOUT_SKIN;
@@ -42,7 +48,7 @@ export class CustomizerComponent {
       this.navbar = data.LAYOUT_NAVIGATION;
       this.color = data.SIDEBAR_COLOR;
       this.topbar = data.TOPBAR_COLOR;
-    })
+    });
 
     this.attribute = '';
   }
@@ -52,14 +58,14 @@ export class CustomizerComponent {
     this.theme = layout;
     this.store.dispatch(changelayout({ layout }));
     this.store.select(getLayout).subscribe((layout) => {
-      document.documentElement.setAttribute('data-layout', layout)
-    })
+      document.documentElement.setAttribute('data-layout', layout);
+    });
 
     if (layout == 'horizontal') {
-      this.store.dispatch(changesidebarsize({ size:'lg' }));
+      this.store.dispatch(changesidebarsize({ size: 'lg' }));
       this.store.select(getSidebarsize).subscribe((size) => {
-        document.documentElement.setAttribute('data-sidebar-size', size)
-      })
+        document.documentElement.setAttribute('data-sidebar-size', size);
+      });
     }
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
@@ -72,16 +78,16 @@ export class CustomizerComponent {
       this.store.dispatch(changetopbarcolor({ topbar: 'dark' }));
       this.store.dispatch(changesidebarcolor({ sidebar: 'dark' }));
       this.store.select(getTopbarcolor).subscribe((topbar) => {
-        document.documentElement.setAttribute('data-topbar', topbar)
-        document.documentElement.setAttribute('data-sidebar', topbar)
-      })
+        document.documentElement.setAttribute('data-topbar', topbar);
+        document.documentElement.setAttribute('data-sidebar', topbar);
+      });
     } else {
       this.store.dispatch(changetopbarcolor({ topbar: 'light' }));
       this.store.dispatch(changesidebarcolor({ sidebar: 'light' }));
       this.store.select(getTopbarcolor).subscribe((topbar) => {
-        document.documentElement.setAttribute('data-topbar', topbar)
-        document.documentElement.setAttribute('data-sidebar', topbar)
-      })
+        document.documentElement.setAttribute('data-topbar', topbar);
+        document.documentElement.setAttribute('data-sidebar', topbar);
+      });
     }
   }
 
@@ -90,8 +96,8 @@ export class CustomizerComponent {
     this.skin = skin;
     this.store.dispatch(changeSkin({ skin }));
     this.store.select(getLayoutSkin).subscribe((skin) => {
-      document.documentElement.setAttribute('data-skin', skin)
-    })
+      document.documentElement.setAttribute('data-skin', skin);
+    });
   }
 
   // Mode Change
@@ -101,21 +107,21 @@ export class CustomizerComponent {
     const sidebar = mode;
     this.store.dispatch(changeMode({ mode }));
     this.store.dispatch(changetopbarcolor({ topbar: mode }));
-    this.store.dispatch(changesidebarcolor({ sidebar:mode }));
+    this.store.dispatch(changesidebarcolor({ sidebar: mode }));
     this.store.select(getLayoutmode).subscribe((mode) => {
-      document.documentElement.setAttribute('data-mode', mode)
-      document.documentElement.setAttribute('data-topbar', mode)
-      document.documentElement.setAttribute('data-sidebar', mode)
-    })
+      document.documentElement.setAttribute('data-mode', mode);
+      document.documentElement.setAttribute('data-topbar', mode);
+      document.documentElement.setAttribute('data-sidebar', mode);
+    });
   }
 
   // Direction Change
-  changeLayoutDirection(dir:string) {
+  changeLayoutDirection(dir: string) {
     this.dir = dir;
     this.store.dispatch(changeDirection({ dir }));
     this.store.select(getLayoutdirection).subscribe((dir) => {
-      document.documentElement.setAttribute('dir', dir)
-    })
+      document.documentElement.setAttribute('dir', dir);
+    });
   }
 
   // Layout Width Change
@@ -123,8 +129,8 @@ export class CustomizerComponent {
     this.width = width;
     this.store.dispatch(changewidthLayout({ width }));
     this.store.select(getLayoutWidth).subscribe((width) => {
-      document.documentElement.setAttribute('data-content', width)
-    })
+      document.documentElement.setAttribute('data-content', width);
+    });
 
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
@@ -136,8 +142,8 @@ export class CustomizerComponent {
     this.size = size;
     this.store.dispatch(changesidebarsize({ size }));
     this.store.select(getSidebarsize).subscribe((size) => {
-      document.documentElement.setAttribute('data-sidebar-size', size)
-    })
+      document.documentElement.setAttribute('data-sidebar-size', size);
+    });
   }
 
   // Navigation Change
@@ -145,8 +151,8 @@ export class CustomizerComponent {
     this.navbar = navigation;
     this.store.dispatch(changenavigation({ navigation }));
     this.store.select(getNavigation).subscribe((navigation) => {
-      document.documentElement.setAttribute('data-navbar', navigation)
-    })
+      document.documentElement.setAttribute('data-navbar', navigation);
+    });
   }
 
   // sidebar color Change
@@ -154,8 +160,8 @@ export class CustomizerComponent {
     this.color = sidebar;
     this.store.dispatch(changesidebarcolor({ sidebar }));
     this.store.select(getSidebarcolor).subscribe((sidebar) => {
-      document.documentElement.setAttribute('data-sidebar', sidebar)
-    })
+      document.documentElement.setAttribute('data-sidebar', sidebar);
+    });
   }
 
   // topbar color Change
@@ -163,7 +169,50 @@ export class CustomizerComponent {
     this.topbar = topbar;
     this.store.dispatch(changetopbarcolor({ topbar }));
     this.store.select(getTopbarcolor).subscribe((topbar) => {
-      document.documentElement.setAttribute('data-topbar', topbar)
-    })
+      document.documentElement.setAttribute('data-topbar', topbar);
+    });
+  }
+
+  resetPreferences(event: Event) {
+    event.preventDefault();
+
+    this.store.dispatch(
+      hydrateLayoutPreferences({ state: { ...initialState } })
+    );
+
+    document.documentElement.setAttribute('data-layout', initialState.LAYOUT);
+    document.documentElement.setAttribute(
+      'data-sidebar',
+      initialState.SIDEBAR_COLOR
+    );
+    document.documentElement.setAttribute(
+      'data-sidebar-size',
+      initialState.SIDEBAR_SIZE
+    );
+    document.documentElement.setAttribute(
+      'data-mode',
+      initialState.LAYOUT_MODE
+    );
+    document.documentElement.setAttribute(
+      'data-topbar',
+      initialState.TOPBAR_COLOR
+    );
+    document.documentElement.setAttribute(
+      'data-skin',
+      initialState.LAYOUT_SKIN
+    );
+    document.documentElement.setAttribute(
+      'data-navbar',
+      initialState.LAYOUT_NAVIGATION
+    );
+    document.documentElement.setAttribute(
+      'data-content',
+      initialState.LAYOUT_WIDTH
+    );
+    document.documentElement.setAttribute('dir', initialState.LAYOUT_DIRECTION);
+
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 0);
   }
 }

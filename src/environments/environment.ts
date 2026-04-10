@@ -29,7 +29,10 @@ export const environment = {
           }
         },
         user: {
-
+          root: '/preferences',
+          endpoints: {
+            myPreferences: '/me',
+          }
         }
       },
     },

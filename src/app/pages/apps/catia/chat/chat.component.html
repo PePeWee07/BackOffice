@@ -1,6 +1,6 @@
 <app-page-title
-  [title]="'pages-component.apps.catia.chat.title' | translate"
-  [pagetitle]="'pages-component.apps.catia.chat.pagetitle' | translate"
+  [title]="'pagesComponent.apps.catia.chat.title' | translate"
+  [pagetitle]="'pagesComponent.apps.catia.chat.pagetitle' | translate"
   class="border-b-red-600"
 ></app-page-title>
 
@@ -11,7 +11,7 @@
         <div class="fixed inset-x-0 bottom-0 z-[20] text-center md:inset-x-auto md:w-96 xl:relative xl:inset-auto xl:bottom-auto xl:w-20 shrink-0">
             <div class="block w-full xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] xl:inline-block card xl:h-[calc(100%_-_theme('spacing.5'))] shadow-lg xl:shadow-md">
                 <div class="flex flex-row items-center justify-between w-full px-3 py-2 xl:h-full xl:flex-col xl:justify-start xl:p-4">
-                    <a href="javascript:void(0);" class="hidden xl:block"><img src="assets/images/logo-sm.png" alt="" class="h-8 mx-auto"></a>
+                    <a href="javascript:void(0);" class="hidden xl:block"><img src="assets/images/logo-sm.png" alt="" class="h-7 mx-auto"></a>
                     <app-nav [tabSetName]="'chat'" [defaultActiveKey]="'chat'" class="mobile-bottom-nav nav-tabs text-center xl:pt-8">
                         <app-nav-item [tabSetName]="'chat'" [eventKey]="'chat'" (click)="setMainView('chat')" class="group/item tabs chatTab">
                             <a href="javascript:void(0);" data-tab-toggle data-target="mainChatList" class="inline-flex items-center justify-center  w-12 h-12  transition-all duration-200 ease-linear rounded-md mainChatList"><lucide-angular name="messages-square" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>

@@ -174,12 +174,12 @@
       "cancel": "いや、キャンセルしてください！"
     }
   },
-  "pages-component": {
+  "pagesComponent": {
     "apps": {
       "catia": {
         "chat": {
-          "title": "Chat",
-          "pagetitle": "Chat"
+          "title": "CatIA",
+          "pagetitle": "会話"
         }
       }
     },
@@ -244,6 +244,65 @@
       "edit-user": {
         "modal-title": "ユーザーの編集",
         "btn-edit-user": "変更を保存"
+      }
+    },
+    "layouts": {
+      "customizer": {
+        "title": "テーマカスタマイザー",
+        "description": "テーマとデザインを選択します。",
+        "layout": {
+          "title": "デザインを選ぶ",
+          "vertical": "垂直",
+          "horizontal": "水平",
+          "semiDark": "セミダーク (サイドバーとヘッダー)"
+        },
+        "skin": {
+          "title": "テーマを選択してください",
+          "default": "デフォルト",
+          "bordered": "エッジ付き"
+        },
+        "theme": {
+          "title": "問題",
+          "btnLight": "クリアモード",
+          "btnDark": "ダークモード"
+        },
+        "direction": {
+          "title": "(左から右へ) と (右から左へ)",
+          "btnRight": "左から右へ",
+          "btnLeft": "右から左へ"
+        },
+        "contetnWidth": {
+          "title": "コンテンツの幅",
+          "fluid": "流暢",
+          "boxed": "箱入り"
+        },
+        "sidebarSize": {
+          "title": "サイドバーのサイズ",
+          "default": "デフォルト",
+          "compact": "コンパクト",
+          "smallIcon": "小さなアイコン"
+        },
+        "navegationtType": {
+          "title": "ナビゲーションの種類",
+          "sticky": "修理済み",
+          "scroll": "変位",
+          "bordered": "エッジ付き",
+          "hidden": "隠れた"
+        },
+        "sidebarColor": "サイドバーの色",
+        "topbarColor": "上部のバーの色",
+        "reset": "デフォルト値にリセットする"
+      },
+      "footer": {},
+      "layout": {},
+      "sidebar": {},
+      "topbar": {
+        "title": "管理ウェブサイト",
+        "dropdown": {
+          "profile": "プロフィール",
+          "chat": "会話",
+          "logout": "サインアウト"
+        }
       }
     }
   }

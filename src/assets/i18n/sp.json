@@ -174,7 +174,7 @@
       "cancel": "No, ¡cancelalo!"
     }
   },
-  "pages-component": {
+  "pagesComponent": {
     "apps": {
       "catia": {
         "chat": {
@@ -244,6 +244,65 @@
       "edit-user": {
         "modal-title": "Editar Usuario",
         "btn-edit-user": "Guardar Cambios"
+      }
+    },
+    "layouts": {
+      "customizer":{
+        "title": "Personalizador de Temas",
+        "description": "Elige tus temas y diseños.",
+        "layout": {
+          "title": "Elija diseños",
+          "vertical": "Vertical",
+          "horizontal": "Horizontal",
+          "semiDark": "Semi Oscuro (Barra lateral y encabezado)"
+        },
+        "skin": {
+          "title": "Elija el tema",
+          "default": "Por defecto",
+          "bordered": "Con bordes"
+        },
+        "theme": {
+          "title": "tema",
+          "btnLight": "Modo Claro",
+          "btnDark": "Modo Oscuro"
+        },
+        "direction": {
+          "title": "(De izquierda a derecha) y (de derecha a izquierda)",
+          "btnRight": "De izquierda a derecha",
+          "btnLeft": "De derecha a izquierda"
+        },
+        "contetnWidth": {
+          "title": "Ancho del contenido",
+          "fluid": "Fluido",
+          "boxed": "En caja"
+        },
+        "sidebarSize": {
+          "title": "Tamaño de la barra lateral",
+          "default": "Por defecto",
+          "compact": "Compacto",
+          "smallIcon": "Icono pequeño"
+        },
+        "navegationtType": {
+          "title": "Tipo de navegación",
+          "sticky": "Fija",
+          "scroll": "Desplazamiento",
+          "bordered": "Con bordes",
+          "hidden": "Oculta"
+        },
+        "sidebarColor": "Color de la barra lateral",
+        "topbarColor": "Color de la barra superior",
+        "reset": "Restablecer a los valores predeterminados"
+      },
+      "footer":{},
+      "layout":{},
+      "sidebar":{},
+      "topbar":{
+        "title": "Web Admistrativa",
+        "dropdown": {
+          "profile": "Perfil",
+          "chat": "Conversación",
+          "logout": "Cerrar Sesión"
+        }
       }
     }
   }

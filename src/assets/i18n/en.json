@@ -175,11 +175,11 @@
       "cancel": "No, cancel it!"
     }
   },
-  "pages-component": {
+  "pagesComponent": {
     "apps": {
       "catia": {
         "chat": {
-          "title": "Chat",
+          "title": "CatIA",
           "pagetitle": "Chat"
         }
       }
@@ -245,6 +245,65 @@
       "edit-user": {
         "modal-title": "Edit User",
         "btn-edit-user": "Edit"
+      }
+    },
+    "layouts": {
+      "customizer": {
+        "title": "Theme Customizer",
+        "description": "Choose your themes and designs.",
+        "layout": {
+          "title": "Choose designs",
+          "vertical": "Vertical",
+          "horizontal": "Horizontal",
+          "semiDark": "Semi Dark (Sidebar and Header)"
+        },
+        "skin": {
+          "title": "Choose the theme",
+          "default": "Default",
+          "bordered": "With edges"
+        },
+        "theme": {
+          "title": "issue",
+          "btnLight": "Clear Mode",
+          "btnDark": "Dark Mode"
+        },
+        "direction": {
+          "title": "(From left to right) and (from right to left)",
+          "btnRight": "From left to right",
+          "btnLeft": "From right to left"
+        },
+        "contetnWidth": {
+          "title": "Content Width",
+          "fluid": "Fluent",
+          "boxed": "in box"
+        },
+        "sidebarSize": {
+          "title": "Sidebar size",
+          "default": "Default",
+          "compact": "Compact",
+          "smallIcon": "small icon"
+        },
+        "navegationtType": {
+          "title": "Navigation type",
+          "sticky": "Fixed",
+          "scroll": "Displacement",
+          "bordered": "With edges",
+          "hidden": "Hidden"
+        },
+        "sidebarColor": "Sidebar Color",
+        "topbarColor": "Top bar color",
+        "reset": "Reset to default values"
+      },
+      "footer": {},
+      "layout": {},
+      "sidebar": {},
+      "topbar": {
+        "title": "Administrative Website",
+        "dropdown": {
+          "profile": "Profile",
+          "chat": "Conversation",
+          "logout": "Sign Out"
+        }
       }
     }
   }

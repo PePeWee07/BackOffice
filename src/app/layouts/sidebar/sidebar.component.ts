@@ -3,15 +3,13 @@ import { File, LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } fr
 import { MENU } from './menu';
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { MenuItem } from './menu.model';
-import { MnDropdownComponent } from '../../Component/dropdown';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LanguageService } from '../../core/services/language.service';
 import { CutomDropdownComponent } from '../../Component/customdropdown';
 import { Store } from '@ngrx/store';
 import { getLayout, getSidebarsize } from '../../store/layout/layout-selector';
 import { CommonModule } from '@angular/common';
-import { changesidebarsize } from '../../store/layout/layout-action';
 
 
 @Component({

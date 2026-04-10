@@ -4,7 +4,7 @@ import { InMemoryScrollingFeature, InMemoryScrollingOptions, provideRouter, with
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideStore } from '@ngrx/store';
-import { metaReducers, rootReducer } from './store';
+import { rootReducer } from './store';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -51,7 +51,7 @@ export const appConfig: ApplicationConfig = {
       multi: true,
     },
     provideClientHydration(),
-    provideStore(rootReducer, { metaReducers }),
+    provideStore(rootReducer),
     provideEffects(
       EcommerceEffects,
       HRManagementEffects,
