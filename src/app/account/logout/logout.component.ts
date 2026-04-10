@@ -9,6 +9,7 @@ import {
 import { AuthenticationService } from '../../core/services/auth/auth.service';
 import { ApiErrorModel } from '../../store/Authentication/apiError.model';
 import { ToastrService } from 'ngx-toastr';
+import { switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-logout',
@@ -25,31 +26,34 @@ import { ToastrService } from 'ngx-toastr';
   ],
 })
 export class LogoutComponent {
+  year = new Date().getFullYear();
+
   constructor(
     private router: Router,
     private authService: AuthenticationService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
   ) {}
 
-  year = new Date().getFullYear();
+  ngOnInit(): void {
+
+  }
 
   logout() {
-    this.authService.logout().subscribe({
-      next: () => {
-        this.authService.tokenStorage.signOut();
-        this.authService.currentUserSubject.next(null);
-        this.router.navigate(['/account-login']);
-      },
-      error: (err) => {
-        const resp: ApiErrorModel = err.error;
-        const mensaje =
-          resp?.message || resp?.errors?.[0]?.message || 'Error inesperado';
-        const titulo = resp.errors?.[0].error || 'ERROR';
+    this.authService
+      .getCsrfToken()
+      .pipe(switchMap(() => this.authService.logout()))
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/account-login']);
+        },
+        error: (err) => {
+          const resp: ApiErrorModel = err.error;
+          const mensaje =
+            resp?.message || resp?.errors?.[0]?.message || 'Error inesperado';
+          const titulo = resp?.errors?.[0]?.error || 'ERROR';
 
-        this.toastr.error(mensaje, titulo, {
-          // toastClass: '',
-        });
-      },
-    });
+          this.toastr.error(mensaje, titulo, {});
+        },
+      });
   }
 }

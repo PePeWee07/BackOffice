@@ -6,16 +6,18 @@ import {
 } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthenticationService } from '../services/auth/auth.service';
-import { TokenStorageService } from './../services/auth/token-storage.service';
+import { TokenStorageService } from '../services/auth/token-storage.service';
 import {
-  catchError,
-  switchMap,
-  throwError,
   BehaviorSubject,
+  catchError,
   filter,
+  switchMap,
   take,
+  throwError,
   finalize,
+  map,
 } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
@@ -25,28 +27,35 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenStorage = inject(TokenStorageService);
   const token = tokenStorage.getToken();
 
-  // 1. No añadir token si es la ruta de login o refresh
+  const apiUrl = environment.backEnd.baseUrl + environment.backEnd.auth.root;
+  const authPath = environment.backEnd.auth;
+
   const isAuthPath =
-    req.url.includes('/back-end-auth/log-in') ||
-    req.url.includes('/back-end-auth/token-refresh');
+    req.url.includes(apiUrl + authPath.logIn) ||
+    req.url.includes(apiUrl + authPath.refreshToken) ||
+    req.url.includes(apiUrl + authPath.logout) ||
+    req.url.includes(apiUrl + authPath.csrf);
 
   let authReq = req;
+
   if (token && !isAuthPath) {
     authReq = req.clone({
-      setHeaders: { Authorization: `Bearer ${token}` },
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
     });
   }
 
   return next(authReq).pipe(
     catchError((error) => {
-      // 2. Si da 401 y no es la ruta de login, intentamos refrescar
       if (
         error instanceof HttpErrorResponse &&
         error.status === 401 &&
         !isAuthPath
       ) {
-        return handle401Error(authReq, next, authService);
+        return handle401Error(authReq, next, authService, tokenStorage);
       }
+
       return throwError(() => error);
     })
   );
@@ -55,44 +64,51 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
 function handle401Error(
   request: HttpRequest<any>,
   next: HttpHandlerFn,
-  authService: AuthenticationService
+  authService: AuthenticationService,
+  tokenStorage: TokenStorageService
 ) {
   if (!isRefreshing) {
     isRefreshing = true;
     refreshTokenSubject.next(null);
 
-    return authService.refreshToken().pipe(
+    return authService.getCsrfToken().pipe(
+      switchMap(() => authService.refreshToken()),
       switchMap((response) => {
-        isRefreshing = false;
-        const newToken = (response as { jwt: string }).jwt;
+        const newToken = response.accessToken;
+
+        tokenStorage.saveToken(newToken);
         refreshTokenSubject.next(newToken);
 
-        // Reintentamos la petición original con el nuevo token
         return next(
           request.clone({
-            setHeaders: { Authorization: `Bearer ${newToken}` },
+            setHeaders: {
+              Authorization: `Bearer ${newToken}`,
+            },
           })
         );
       }),
       catchError((err) => {
-        isRefreshing = false;
-        authService.tokenStorage.signOut();
+        tokenStorage.signOut();
         location.reload();
         return throwError(() => err);
-      })
-    );
-  } else {
-    // Si ya se está refrescando, esperamos a que el primer proceso termine
-    return refreshTokenSubject.pipe(
-      filter((token) => token !== null),
-      take(1),
-      switchMap((token) => {
-        return next(
-          request.clone({
-            setHeaders: { Authorization: `Bearer ${token}` },
-          })
-        );
+      }),
+      finalize(() => {
+        isRefreshing = false;
       })
     );
   }
+
+  return refreshTokenSubject.pipe(
+    filter((token) => token !== null),
+    take(1),
+    switchMap((token) =>
+      next(
+        request.clone({
+          setHeaders: {
+            Authorization: `Bearer ${token!}`,
+          },
+        })
+      )
+    )
+  );
 }

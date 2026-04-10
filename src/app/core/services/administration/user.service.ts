@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Page, UserModel, UserQueryParams, UserRequest } from '../../../store/User/user-model';
+import { environment } from '../../../../environments/environment';
+import { env } from 'process';
 
 @Injectable({
   providedIn: 'root',
@@ -9,13 +11,16 @@ import { Page, UserModel, UserQueryParams, UserRequest } from '../../../store/Us
 export class UserService {
   private http = inject(HttpClient);
 
+  private apiUrl = environment.backEnd.baseUrl + environment.backEnd.api.root + environment.backEnd.api.resoruces.adminManager.root;
+  private path = environment.backEnd.api.resoruces.adminManager.endpoints;
+
   getUsers(query: UserQueryParams): Observable<Page<UserModel>> {
     const page = query.page ?? 0;
 
     const params = this.buildParams(query);
 
     return this.http.get<Page<UserModel>>(
-      `/back-end/v2/manager/users/page/${page}`,
+      this.apiUrl + this.path.pageUser + page,
       { params }
     );
   }
@@ -33,22 +38,19 @@ export class UserService {
   }
 
   getUserByEmail(email: string): Observable<UserModel> {
-    return this.http.get<UserModel>(`/back-end/v2/manager/user/email/${email}`);
+    return this.http.get<UserModel>(this.apiUrl + this.path.userByEmail + email);
   }
 
   getUserById(userId: number): Observable<UserModel> {
-    return this.http.get<UserModel>(`/back-end/v2/manager/user/${userId}`);
+    return this.http.get<UserModel>(this.apiUrl + this.path.userByID + userId);
   }
 
   createUser(body: UserRequest): Observable<UserModel> {
-    return this.http.post<UserModel>(`/back-end/v2/manager/user`, body);
+    return this.http.post<UserModel>(this.apiUrl + this.path.saveUser, body);
   }
 
   updateUser(userId: number, body: UserRequest) {
-    return this.http.patch<UserModel>(
-      `/back-end/v2/manager/user/${userId}`,
-      body
-    );
+    return this.http.patch<UserModel>(this.apiUrl + this.path.updateUser + userId, body);
   }
 }
 

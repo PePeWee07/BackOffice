@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { Router } from '@angular/router';
-import { TokenStorageService } from './core/services/auth/token-storage.service';
 
 @Component({
   selector: 'app-root',
@@ -12,9 +10,9 @@ import { TokenStorageService } from './core/services/auth/token-storage.service'
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'Tailwick';
+  title = 'UCACUE';
 
-  constructor(private router: Router, private tokenStorage:TokenStorageService) {}
+  constructor() {}
 
   ngOnInit() {
     // Escuchar cambios en el LocalStorage desde OTRAS pestañas/iframes

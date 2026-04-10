@@ -1,10 +1,22 @@
-import { TokenStorageService } from './../../core/services/auth/token-storage.service';
-import { Component } from '@angular/core';
-import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import {
+  LUCIDE_ICONS,
+  LucideAngularModule,
+  LucideIconProvider,
+  icons,
+} from 'lucide-angular';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { finalize, switchMap } from 'rxjs';
+
 import { AuthenticationService } from '../../core/services/auth/auth.service';
+import { TokenStorageService } from '../../core/services/auth/token-storage.service';
 import { CutomDropdownComponent } from '../../Component/customdropdown';
 import { ToastrService } from 'ngx-toastr';
 import { ApiErrorModel } from '../../store/Authentication/apiError.model';
@@ -28,14 +40,12 @@ import { ApiErrorModel } from '../../store/Authentication/apiError.model';
     },
   ],
 })
-export class LoginComponent {
-
-  // set the current year
+export class LoginComponent implements OnInit {
   year: number = new Date().getFullYear();
-  // Login Form
   loginForm!: UntypedFormGroup;
   submitted = false;
-  fieldTextType!: boolean;
+  fieldTextType = false;
+  loading = false;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -43,15 +53,12 @@ export class LoginComponent {
     private authenticationService: AuthenticationService,
     private tokenStorage: TokenStorageService,
     private toastr: ToastrService
-  ) {
-    if (this.authenticationService.user) {
-      this.router.navigate(['/']);
-    }
-  }
+  ) {}
 
   ngOnInit(): void {
-    if (this.tokenStorage.getUser()) {
+    if (this.tokenStorage.getToken()) {
       this.router.navigate(['/']);
+      return;
     }
 
     this.loginForm = this.formBuilder.group({
@@ -60,45 +67,45 @@ export class LoginComponent {
     });
   }
 
-  // convenience getter for easy access to form fields
   get f() {
     return this.loginForm.controls;
   }
 
-  loading = false;
   onSubmit() {
-    if (this.tokenStorage.getToken()) {
-      this.router.navigate(['/']);
+    this.submitted = true;
+
+    if (this.loginForm.invalid) {
       return;
     }
 
-    if (this.loading) return; // Evita doble clic
+    if (this.loading) return;
     this.loading = true;
 
-    this.submitted = true;
     const email = this.f['email'].value;
     const password = this.f['password'].value;
 
-    this.authenticationService.login(email, password).subscribe({
-      next: () => {
-        this.router.navigate(['/']);
-      },
-      error: (err: any) => {
-        const resp: ApiErrorModel = err.error
-        const mensaje =
-          resp?.message ||
-          resp?.errors?.[0]?.message ||
-          'Error inesperado';
-        const titulo = resp.errors?.[0].error || 'ERROR';
+    this.authenticationService
+      .getCsrfToken()
+      .pipe(
+        switchMap(() => this.authenticationService.login(email, password)),
+        finalize(() => {
+          this.loading = false;
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/']);
+        },
+        error: (err: any) => {
+          const resp: ApiErrorModel = err.error;
+          const mensaje =
+            resp?.message || resp?.errors?.[0]?.message || 'Error inesperado';
+          const titulo = resp?.errors?.[0]?.error || 'ERROR';
 
-        this.toastr.error(mensaje, titulo, {
-          // toastClass: '',
-        });
-        this.loading = false;
-      }
-    });
+          this.toastr.error(mensaje, titulo, {});
+        },
+      });
   }
-
 
   toggleFieldTextType() {
     this.fieldTextType = !this.fieldTextType;

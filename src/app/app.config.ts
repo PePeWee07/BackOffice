@@ -4,9 +4,9 @@ import { InMemoryScrollingFeature, InMemoryScrollingOptions, provideRouter, with
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideStore } from '@ngrx/store';
-import { rootReducer } from './store';
+import { metaReducers, rootReducer } from './store';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
-import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule, provideHttpClient, withFetch, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { LucideAngularModule, icons } from 'lucide-angular';
 import { provideEffects } from '@ngrx/effects';
@@ -51,7 +51,7 @@ export const appConfig: ApplicationConfig = {
       multi: true,
     },
     provideClientHydration(),
-    provideStore(rootReducer),
+    provideStore(rootReducer, { metaReducers }),
     provideEffects(
       EcommerceEffects,
       HRManagementEffects,
@@ -78,9 +78,7 @@ export const appConfig: ApplicationConfig = {
     ),
     TranslateService,
     importProvidersFrom(
-      AngularFireModule.initializeApp(environment.firebaseConfig),
-      AngularFireAuthModule,
-      HttpClientModule,
+
       BrowserAnimationsModule,
       LucideAngularModule.pick(icons),
       TranslateModule.forRoot({

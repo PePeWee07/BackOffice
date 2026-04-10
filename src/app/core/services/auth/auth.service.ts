@@ -1,18 +1,26 @@
 import { TokenStorageService } from './token-storage.service';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, EMPTY, finalize, Observable } from 'rxjs';
 import { tap } from 'rxjs';
 import { AuthResponse } from '../../../store/Authentication/auth.models';
+import { CsrfResponse } from '../../../store/Authentication/CsrfResponse';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   public currentUserSubject: BehaviorSubject<AuthResponse | null>;
   public currentUser: Observable<AuthResponse | null>;
 
+  private isLoggingIn = false;
+  private csrfToken: string | null = null;
+  private csrfHeaderName = 'X-XSRF-TOKEN';
+  private apiUrl = environment.backEnd.baseUrl + environment.backEnd.auth.root;
+  private authPath = environment.backEnd.auth;
+
   constructor(
     private http: HttpClient,
-    public tokenStorage: TokenStorageService
+    private tokenStorage: TokenStorageService
   ) {
     this.currentUserSubject = new BehaviorSubject<AuthResponse | null>(
       this.tokenStorage.getUser()
@@ -24,50 +32,97 @@ export class AuthenticationService {
     return this.currentUserSubject.value;
   }
 
-  user!: AuthResponse;
-
-  private isLoggingIn = false;
-  login(email: string, password: string) {
-    if (this.isLoggingIn) return EMPTY;
-
-    this.isLoggingIn = true;
+  getCsrfToken() {
     return this.http
-      .post<AuthResponse>(`/back-end-auth/log-in`, {
-        username: email,
-        password,
+      .get<CsrfResponse>(this.apiUrl + this.authPath.csrf, {
+        withCredentials: true,
       })
       .pipe(
-        tap((user) => {
-          this.currentUserSubject.next(user);
-          this.tokenStorage.saveUser(user);
-          this.tokenStorage.saveToken(user.jwt);
-          this.tokenStorage.saveRefreshToken(user.refreshToken!);
+        tap((response) => {
+          this.csrfToken = response.token;
+          this.csrfHeaderName = response.headerName || 'X-XSRF-TOKEN';
+        })
+      );
+  }
+
+  login(email: string, password: string) {
+    if (this.isLoggingIn) return EMPTY;
+    if (!this.csrfToken) {
+      throw new Error('CSRF token not loaded');
+    }
+
+    this.isLoggingIn = true;
+
+    return this.http
+      .post<AuthResponse>(
+        this.apiUrl + this.authPath.logIn,
+        {
+          username: email,
+          password,
+        },
+        {
+          withCredentials: true,
+          headers: new HttpHeaders({
+            [this.csrfHeaderName]: this.csrfToken,
+          }),
+        }
+      )
+      .pipe(
+        tap((response) => {
+          this.currentUserSubject.next(response);
+          this.tokenStorage.saveUser(response);
+          this.tokenStorage.saveToken(response.accessToken);
         }),
         finalize(() => (this.isLoggingIn = false))
       );
   }
 
-  logout() {
-    let email = this.currentUserValue?.username;
-    const params = new HttpParams().set('email', email ?? 'Anonymus');
-    return this.http.post(`/back-end-auth/log-out`, null, { params });
-  }
-
   refreshToken() {
-    const refreshToken = this.tokenStorage.getRefreshToken();
+    if (!this.csrfToken) {
+      throw new Error('CSRF token not loaded');
+    }
 
     return this.http
-      .post<AuthResponse>('/back-end-auth/token-refresh', {
-        refreshToken: refreshToken,
-      })
+      .post<AuthResponse>(
+        this.apiUrl + this.authPath.refreshToken,
+        {},
+        {
+          withCredentials: true,
+          headers: new HttpHeaders({
+            [this.csrfHeaderName]: this.csrfToken,
+          }),
+        }
+      )
       .pipe(
-        tap((response: AuthResponse) => {
-          if (response) {
-            this.currentUserSubject.next(response);
-            this.tokenStorage.saveUser(response);
-            this.tokenStorage.saveToken(response.jwt);
-            this.tokenStorage.saveRefreshToken(response.refreshToken!);
-          }
+        tap((response) => {
+          this.currentUserSubject.next(response);
+          this.tokenStorage.saveUser(response);
+          this.tokenStorage.saveToken(response.accessToken);
+        })
+      );
+  }
+
+  logout() {
+    if (!this.csrfToken) {
+      throw new Error('CSRF token not loaded');
+    }
+
+    return this.http
+      .post(
+        this.apiUrl + this.authPath.logout,
+        {},
+        {
+          withCredentials: true,
+          headers: new HttpHeaders({
+            [this.csrfHeaderName]: this.csrfToken,
+          }),
+        }
+      )
+      .pipe(
+        tap(() => {
+          this.tokenStorage.signOut();
+          this.currentUserSubject.next(null);
+          this.csrfToken = null;
         })
       );
   }
@@ -89,4 +144,3 @@ export class AuthenticationService {
     return null;
   }
 }
-

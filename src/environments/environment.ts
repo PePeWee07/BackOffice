@@ -5,16 +5,35 @@
 export const environment = {
   production: false,
   defaultauth: 'fakebackend',
-  firebaseConfig: {
-    apiKey: '',
-    authDomain: '',
-    databaseURL: '',
-    projectId: '',
-    storageBucket: '',
-    messagingSenderId: '',
-    appId: '',
-    measurementId: ''
-  }
+  backEnd: {
+    baseUrl: 'http://localhost:8080/ucacue',
+    auth: {
+      root: '/auth',
+      logIn: '/log-in',
+      register: '/sign-up',
+      logout: '/log-out',
+      refreshToken: '/token-refresh',
+      csrf: '/csrf',
+    },
+    api: {
+      root: '/api/v2',
+      resoruces: {
+        adminManager: {
+          root: '/manager',
+          endpoints: {
+            pageUser: '/users/page/',
+            userByID: '/user/',
+            userByEmail: '/user/email/',
+            saveUser: '/user',
+            updateUser: '/user/'
+          }
+        },
+        user: {
+
+        }
+      },
+    },
+  },
 };
 
 /*

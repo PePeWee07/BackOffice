@@ -288,24 +288,24 @@ export class UsersGridComponent {
     accountNonLocked: boolean,
     credentialsNonExpired: boolean
   ): string {
-    const title = this.translate.instant('users-grid.tooltips.accountStatus.title');
+    const title = this.translate.instant('pages-component.user.tooltips.accountStatus.title');
 
     const accountExpiredLabel = this.translate.instant(
       accountNonExpired
-        ? 'users-grid.common.accountNonExpired'
-        : 'users-grid.tooltips.accountStatus.accountExpired'
+        ? 'pages-component.user.common.accountNonExpired'
+        : 'pages-component.user.tooltips.accountStatus.accountExpired'
     );
 
     const accountLockedLabel = this.translate.instant(
       accountNonLocked
-        ? 'users-grid.common.accountNonLocked'
-        : 'users-grid.tooltips.accountStatus.accountLocked'
+        ? 'pages-component.user.common.accountNonLocked'
+        : 'pages-component.user.tooltips.accountStatus.accountLocked'
     );
 
     const credentialsLabel = this.translate.instant(
       credentialsNonExpired
-        ? 'users-grid.common.credentialsNonExpired'
-        : 'users-grid.tooltips.accountStatus.credentialsExpired'
+        ? 'pages-component.user.common.credentialsNonExpired'
+        : 'pages-component.user.tooltips.accountStatus.credentialsExpired'
     );
 
     const html = `

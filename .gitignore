@@ -43,4 +43,4 @@ Thumbs.db
 
 # Environment files
 .env
-src/environments/environment.pod.ts
+src/environments/environment.prod.ts
