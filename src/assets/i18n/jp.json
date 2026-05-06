@@ -304,6 +304,26 @@
           "logout": "サインアウト"
         }
       }
+    },
+    "dashboard": {
+      "index": {
+        "title": "CatIA",
+        "pagetitle": "ボード",
+        "welcome": "ようこそ🎉",
+        "hero-description": "サービスステータス",
+        "monitor-title": "CatIA マイクロサービス モニター",
+        "health-title": "健康状態",
+        "services-available": "{{healthy}}/{{total}} 利用可能なサービス",
+        "refresh": "アップデート",
+        "status-online": "資産",
+        "status-offline": "未回答",
+        "port": "ポート",
+        "response": "答え",
+        "last-check": "最終検証",
+        "loading": "サービスのステータスを確認しています...",
+        "summary-all-healthy": "すべてのマイクロサービスが正しく応答しました。",
+        "summary-with-errors": "少なくとも 1 つのマイクロサービスが利用できないか、エラーが返されました。"
+      }
     }
   }
 }

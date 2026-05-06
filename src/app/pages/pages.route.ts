@@ -1,7 +1,5 @@
 import { Route } from '@angular/router';
 import { IndexComponent } from './dashboard/index/index.component';
-import { AnalyticsComponent } from './dashboard/analytics/analytics.component';
-import { HrComponent } from './dashboard/hr/hr.component';
 import { ChatComponent } from './apps/catia/chat/chat.component';
 import { ListComponent } from './ecommerce/products/list/list.component';
 import { GridComponent } from './ecommerce/products/grid/grid.component';
@@ -50,15 +48,6 @@ export const PAGE_ROUTES: Route[] = [
     path: '',
     component: IndexComponent,
   },
-  {
-    path: 'dashboards-analytics',
-    component: AnalyticsComponent,
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['ROLE_ADMIN'],
-    },
-  },
-  { path: 'dashboards-hr', component: HrComponent },
   { path: 'apps-chat', component: ChatComponent },
   {
     path: 'apps-calendar',

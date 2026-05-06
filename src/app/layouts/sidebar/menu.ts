@@ -13,22 +13,10 @@ export const MENU: MenuItem[] = [
     subItems: [
       {
         id: 1.1,
-        label: 'ecommerce',
+        label: 'CatIA',
         link: '/',
         parentId: 1,
-      },
-      {
-        id: 1.2,
-        label: 'analytics',
-        link: '/dashboards-analytics',
-        parentId: 1,
-      },
-      {
-        id: 1.4,
-        label: 'hr',
-        link: '/dashboards-hr',
-        parentId: 1,
-      },
+      }
     ],
   },
   {

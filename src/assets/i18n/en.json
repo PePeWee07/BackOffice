@@ -305,6 +305,26 @@
           "logout": "Sign Out"
         }
       }
+    },
+    "dashboard": {
+      "index": {
+        "title": "CatIA",
+        "pagetitle": "Boards",
+        "welcome": "Welcome 🎉",
+        "hero-description": "Services status",
+        "monitor-title": "CatIA Microservices Monitor",
+        "health-title": "Health status",
+        "services-available": "{{healthy}}/{{total}} available services",
+        "refresh": "Update",
+        "status-online": "Asset",
+        "status-offline": "Unanswered",
+        "port": "Port",
+        "response": "Answer",
+        "last-check": "Last verification",
+        "loading": "Checking status of services...",
+        "summary-all-healthy": "All microservices responded correctly.",
+        "summary-with-errors": "At least one microservice is not available or returned an error."
+      }
     }
   }
 }

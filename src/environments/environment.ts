@@ -5,6 +5,23 @@
 export const environment = {
   production: false,
   defaultauth: 'fakebackend',
+  microservices: {
+    catiaCore: {
+      name: 'CatIA Core',
+      baseUrl: 'http://localhost:8080/ucacue',
+      healthPath: '/api/v1/catia/core/health',
+    },
+    ticAiSupport: {
+      name: 'TicAI Support',
+      baseUrl: 'http://localhost:5001',
+      healthPath: '/health',
+    },
+    webhookWhatsapp: {
+      name: 'Webhook WhatsApp',
+      baseUrl: 'http://localhost:8081',
+      healthPath: '/webhook/health',
+    },
+  },
   backEnd: {
     baseUrl: 'http://localhost:8080/ucacue',
     auth: {
@@ -16,7 +33,7 @@ export const environment = {
       csrf: '/csrf',
     },
     api: {
-      root: '/api/v2',
+      root: '/api/v1',
       resoruces: {
         adminManager: {
           root: '/manager',

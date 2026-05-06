@@ -304,6 +304,26 @@
           "logout": "Cerrar Sesión"
         }
       }
+    },
+    "dashboard": {
+      "index": {
+        "title": "CatIA",
+        "pagetitle": "Tableros",
+        "welcome": "Bienvenido 🎉",
+        "hero-description": "Estado de los servicios",
+        "monitor-title": "Monitor de microservicios CatIA",
+        "health-title": "Estado de salud",
+        "services-available": "{{healthy}}/{{total}} servicios disponibles",
+        "refresh": "Actualizar",
+        "status-online": "Activo",
+        "status-offline": "Sin respuesta",
+        "port": "Puerto",
+        "response": "Respuesta",
+        "last-check": "Ultima verificacion",
+        "loading": "Consultando estado de los servicios...",
+        "summary-all-healthy": "Todos los microservicios respondieron correctamente.",
+        "summary-with-errors": "Al menos un microservicio no esta disponible o devolvio error."
+      }
     }
   }
 }
