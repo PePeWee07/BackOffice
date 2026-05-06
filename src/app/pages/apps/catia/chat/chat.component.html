@@ -40,9 +40,8 @@
         </div>
         <!-- SideBar End -->
 
-
         <!-- Menu Content -->
-          <div class="menu-content shrink-0 overflow-hidden transition-all duration-300 ease-in-out" [ngClass]="{
+        <div class="menu-content shrink-0 overflow-hidden transition-all duration-300 ease-in-out" [ngClass]="{
             'xl:w-80': !isMenuCollapsed,
             'xl:w-0': isMenuCollapsed
           }">
@@ -210,113 +209,113 @@
         </div><!--Menu Content End -->
 
         @if(showTab){
-                <!-- Chat Content -->
-                <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full min-w-0 chat-content">
-                    <div class="relative flex flex-col h-full">
-                        <div class="card-body">
-                            <div class="flex items-center gap-3">
-                              @if (isMenuCollapsed){
-                                <button
-                                      type="button"
-                                      (click)="toggleMenuCollapse()"
-                                      class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
-                                      <lucide-angular name="chevrons-left" [class]="'size-4 mx-auto'"></lucide-angular>
-                                </button>
+          <!-- Chat Content -->
+          <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full min-w-0 chat-content">
+              <div class="relative flex flex-col h-full">
+                  <div class="card-body">
+                      <div class="flex items-center gap-3">
+                        @if (isMenuCollapsed){
+                          <button
+                                type="button"
+                                (click)="toggleMenuCollapse()"
+                                class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
+                                <lucide-angular name="chevrons-left" [class]="'size-4 mx-auto'"></lucide-angular>
+                          </button>
+                        }
+                          <a href="javascript:void(0);" [DrawerTrigger]="'drawerEnd'" class="flex items-center gap-3 ltr:mr-auto rtl:ml-auto shrink-0" id="userChatProfile">
+                              <div class="size-10 h-10 rounded-full bg-slate-100 dark:bg-zink-600">
+                                  <img src="{{profile}}" alt="" class="h-10 rounded-full">
+                              </div>
+                              <div>
+                                  <h6>{{username}}</h6>
+                                  <p class="text-sm text-slate-500 dark:text-zink-200">{{role}}</p>
+                              </div>
+                          </a>
+                          <ul class="flex items-center">
+                              <li>
+                                  <a [appModalTrigger]="'callModal'" href="javascript:void(0);" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="phone" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular></a>
+                              </li>
+                              <li>
+                                  <a href="javascript:void(0);" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="video" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular></a>
+                              </li>
+                              <li>
+                                  <a href="javascript:void(0);" id="searchChatButton" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="search" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular></a>
+                              </li>
+                              <li class="hidden md:block">
+                                  <a href="javascript:void(0);" [DrawerTrigger]="'drawerEnd'" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item">
+                                      <lucide-angular name="panel-right-open" class="size-4 mx-auto transition-all duration-200 ease-linear fill-slate-100 dark:fill-zink-600 dark:text-zink-200 text-slate-500 group-hover/item:text-custom-500 group-hover/item:fill-custom-100 dark:group-hover/item:fill-custom-500/20 dark:group-hover/item:text-custom-500 group-[.active]/item:hidden block"></lucide-angular>
+                                  </a>
+                              </li>
+                          </ul>
+                      </div>
+                  </div>
+                  <div class="relative bg-slate-50 dark:bg-zink-600/50 grow">
+                      <div class="absolute inset-x-0 top-0 z-10 hidden transition-all duration-200 ease-linear bg-white border-y border-slate-200 dark:bg-zink-700 dark:border-zink-500" id="searchChat">
+                          <input type="text" class="w-full px-5 py-2 focus:outline-none" placeholder="Search for ..." autocomplete="off">
+                      </div>
+                      <ngx-simplebar class="h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)]">
+                          <ul class="flex flex-col gap-5 list-none card-body">
+                              @for(user of chatuser;track $index){
+                              <li class="flex chat-message group/item [&.right]:justify-end" [ngClass]="user.isSender == true ? 'right':''">
+                                  <div class="flex gap-3">
+                                      <a href="javascript:void(0);" class="flex items-center self-end justify-center text-sm font-semibold rounded-full size-9 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 shrink-0 group-[.right]/item:order-3">
+                                          <img src="{{user.avatar}}" alt="" class="object-cover rounded-full h-9">
+                                      </a>
+                                      <div class="grow group-[.right]/item:order-2 flex flex-col gap-3">
+                                          <div class="flex gap-3">
+                                              <div class="relative p-4 bg-white dark:bg-zink-700 rounded-md ltr:rounded-bl-none rtl:rounded-br-none shadow-sm 2xl:max-w-sm ltr:group-[.right]/item:rounded-br-none rtl:group-[.right]/item:rounded-bl-none ltr:group-[.right]/item:rounded-bl-md rtl:group-[.right]/item:rounded-br-md group-[.right]/item:order-2">
+                                                  {{user.chatMsg}}
+                                                  @if(user.attachments){
+                                                  <div class="grid grid-cols-2 gap-4 mt-4 2xl:grid-cols-3">
+                                                      @for(attachment of user.attachments;track $index){
+                                                      <a href="javascript:void(0);">
+                                                          <img [src]="attachment" alt="" class="rounded-md">
+                                                      </a>
+                                                      }
+                                                  </div>}
+                                              </div>
+                                              <div mndropdown class="relative transition-all duration-200 ease-linear opacity-0 dropdown shrink-0 group-hover/item:opacity-100 group-[.right]/item:order-1">
+                                                  <button mndropdownToggle type="button" class="dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown"><lucide-angular name="more-vertical" class="inline-block size-4 ml-1"></lucide-angular></button>
+                                                  <ul mndropdownMenu class="absolute z-50 py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600" aria-labelledby="dropdownMenuButton">
+                                                      <li>
+                                                          <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Reply</a>
+                                                      </li>
+                                                      <li>
+                                                          <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Forward</a>
+                                                      </li>
+                                                      <li>
+                                                          <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Copy</a>
+                                                      </li>
+                                                      <li>
+                                                          <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Bookmark</a>
+                                                      </li>
+                                                      <li>
+                                                          <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Delete</a>
+                                                      </li>
+                                                  </ul>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </li>
                               }
-                                <a href="javascript:void(0);" [DrawerTrigger]="'drawerEnd'" class="flex items-center gap-3 ltr:mr-auto rtl:ml-auto shrink-0" id="userChatProfile">
-                                    <div class="size-10 h-10 rounded-full bg-slate-100 dark:bg-zink-600">
-                                        <img src="{{profile}}" alt="" class="h-10 rounded-full">
-                                    </div>
-                                    <div>
-                                        <h6>{{username}}</h6>
-                                        <p class="text-sm text-slate-500 dark:text-zink-200">{{role}}</p>
-                                    </div>
-                                </a>
-                                <ul class="flex items-center">
-                                    <li>
-                                        <a [appModalTrigger]="'callModal'" href="javascript:void(0);" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="phone" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="video" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular></a>
-                                    </li>
-                                    <li>
-                                        <a href="javascript:void(0);" id="searchChatButton" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="search" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular></a>
-                                    </li>
-                                    <li class="hidden md:block">
-                                        <a href="javascript:void(0);" [DrawerTrigger]="'drawerEnd'" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item">
-                                            <lucide-angular name="panel-right-open" class="size-4 mx-auto transition-all duration-200 ease-linear fill-slate-100 dark:fill-zink-600 dark:text-zink-200 text-slate-500 group-hover/item:text-custom-500 group-hover/item:fill-custom-100 dark:group-hover/item:fill-custom-500/20 dark:group-hover/item:text-custom-500 group-[.active]/item:hidden block"></lucide-angular>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="relative bg-slate-50 dark:bg-zink-600/50 grow">
-                            <div class="absolute inset-x-0 top-0 z-10 hidden transition-all duration-200 ease-linear bg-white border-y border-slate-200 dark:bg-zink-700 dark:border-zink-500" id="searchChat">
-                                <input type="text" class="w-full px-5 py-2 focus:outline-none" placeholder="Search for ..." autocomplete="off">
-                            </div>
-                            <ngx-simplebar class="h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)]">
-                                <ul class="flex flex-col gap-5 list-none card-body">
-                                    @for(user of chatuser;track $index){
-                                    <li class="flex chat-message group/item [&.right]:justify-end" [ngClass]="user.isSender == true ? 'right':''">
-                                        <div class="flex gap-3">
-                                            <a href="javascript:void(0);" class="flex items-center self-end justify-center text-sm font-semibold rounded-full size-9 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 shrink-0 group-[.right]/item:order-3">
-                                                <img src="{{user.avatar}}" alt="" class="object-cover rounded-full h-9">
-                                            </a>
-                                            <div class="grow group-[.right]/item:order-2 flex flex-col gap-3">
-                                                <div class="flex gap-3">
-                                                    <div class="relative p-4 bg-white dark:bg-zink-700 rounded-md ltr:rounded-bl-none rtl:rounded-br-none shadow-sm 2xl:max-w-sm ltr:group-[.right]/item:rounded-br-none rtl:group-[.right]/item:rounded-bl-none ltr:group-[.right]/item:rounded-bl-md rtl:group-[.right]/item:rounded-br-md group-[.right]/item:order-2">
-                                                        {{user.chatMsg}}
-                                                        @if(user.attachments){
-                                                        <div class="grid grid-cols-2 gap-4 mt-4 2xl:grid-cols-3">
-                                                            @for(attachment of user.attachments;track $index){
-                                                            <a href="javascript:void(0);">
-                                                                <img [src]="attachment" alt="" class="rounded-md">
-                                                            </a>
-                                                            }
-                                                        </div>}
-                                                    </div>
-                                                    <div mndropdown class="relative transition-all duration-200 ease-linear opacity-0 dropdown shrink-0 group-hover/item:opacity-100 group-[.right]/item:order-1">
-                                                        <button mndropdownToggle type="button" class="dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown"><lucide-angular name="more-vertical" class="inline-block size-4 ml-1"></lucide-angular></button>
-                                                        <ul mndropdownMenu class="absolute z-50 py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600" aria-labelledby="dropdownMenuButton">
-                                                            <li>
-                                                                <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Reply</a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Forward</a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Copy</a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Bookmark</a>
-                                                            </li>
-                                                            <li>
-                                                                <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Delete</a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    }
-                                </ul>
-                            </ngx-simplebar>
-                        </div>
-                        <div class="card-body">
-                            <form (ngSubmit)="messageSave()" [formGroup]="formData" class="flex items-center gap-2">
-                                <div class="grow">
-                                    <input type="text" id="inputText" formControlName="chatMsg" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Type your message here ..." required autocomplete="off">
-                                </div>
-                                <div class="flex gap-2 shrink-0">
-                                    <button type="button" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular name="mic" [class]="'size-4'"></lucide-angular></button>
-                                    <button type="button" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular name="image" [class]="'size-4'"></lucide-angular></button>
-                                    <button type="button" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"><lucide-angular name="send" [class]="'inline-block size-4 mr-1 align-middle'"></lucide-angular> <span class="align-middle"> Send</span></button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div><!--Chat Content End-->
+                          </ul>
+                      </ngx-simplebar>
+                  </div>
+                  <div class="card-body">
+                      <form (ngSubmit)="messageSave()" [formGroup]="formData" class="flex items-center gap-2">
+                          <div class="grow">
+                              <input type="text" id="inputText" formControlName="chatMsg" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Type your message here ..." required autocomplete="off">
+                          </div>
+                          <div class="flex gap-2 shrink-0">
+                              <button type="button" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular name="mic" [class]="'size-4'"></lucide-angular></button>
+                              <button type="button" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular name="image" [class]="'size-4'"></lucide-angular></button>
+                              <button type="button" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"><lucide-angular name="send" [class]="'inline-block size-4 mr-1 align-middle'"></lucide-angular> <span class="align-middle"> Send</span></button>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+          </div><!--Chat Content End-->
         }@else {
           <!-- IA Content -->
           <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full min-w-0 bot-content">
@@ -366,8 +365,7 @@
                       </div>
                   </div>
               </div>
-          </div>
-          <!--IA Content End-->
+          </div><!--IA Content End-->
         }
     </div>
 </div>
