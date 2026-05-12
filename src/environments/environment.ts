@@ -12,12 +12,12 @@ export const environment = {
       healthPath: '/api/v1/catia/core/health',
     },
     ticAiSupport: {
-      name: 'TicAI Support',
+      name: 'CatIA AI',
       baseUrl: 'http://localhost:5001',
       healthPath: '/health',
     },
     webhookWhatsapp: {
-      name: 'Webhook WhatsApp',
+      name: 'CatIA Webhook',
       baseUrl: 'http://localhost:8081',
       healthPath: '/webhook/health',
     },
@@ -42,15 +42,15 @@ export const environment = {
             userByID: '/user/',
             userByEmail: '/user/email/',
             saveUser: '/user',
-            updateUser: '/user/'
-          }
+            updateUser: '/user/',
+          },
         },
         user: {
           root: '/preferences',
           endpoints: {
             myPreferences: '/me',
-          }
-        }
+          },
+        },
       },
     },
   },

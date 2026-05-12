@@ -30,7 +30,6 @@ import { FakeBackendInterceptor } from './core/helpers/fake-backend';
 
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
-import { environment } from '../environments/environment.prod';
 
 export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/');

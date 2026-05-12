@@ -18,6 +18,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as Prism from 'prismjs';
+
+import { CatiaChatService } from '../../../../core/services/apis/catia/catia-chat.service';
+import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -67,7 +71,9 @@ export class ChatComponent {
   @ViewChild('scrollRef') scrollRef: any;
   constructor(
     public formBuilder: UntypedFormBuilder,
-    public translate: TranslateService
+    public translate: TranslateService,
+    private catiaService: CatiaChatService,
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -145,7 +151,33 @@ export class ChatComponent {
     this.formData.reset();
   }
 
+  // ===================================================
+  // ===================================================
+
+  // Colapsar el Menu
   toggleMenuCollapse(): void {
     this.isMenuCollapsed = !this.isMenuCollapsed;
+  }
+
+  // Buscar usuario por identificacion(DNI/Pasaporte) o whatsappPhone(Numero Telefonico)
+  findUserChat() {
+    this.catiaService.findUserChat({ identificacion: '0704713619' }).subscribe({
+      next: (user) => console.log('Usuario encontrado: ', user),
+      error: (err: any) => {
+        this.toastr.error(err);
+      }
+    });
+  }
+
+  // Busqueda de un mensaje por ID
+  findMessageId(){
+    this.catiaService.findMessageId(10).subscribe({
+      next: (message) => {
+        console.log('Mensaje encontrado: ', message);
+      },
+      error: (err: any) => {
+        this.toastr.error(err);
+      },
+    });
   }
 }

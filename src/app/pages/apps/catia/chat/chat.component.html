@@ -50,6 +50,8 @@
                   <div class="flex flex-col h-full">
                       <div class="tab-content">
                           <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'chat'" class="block tab-pane" id="mainChatList">
+
+                            <!-- FINDER -->
                               <div class="card-body">
                                   <div class="flex items-center gap-3">
                                       <button
@@ -66,6 +68,7 @@
                                       <lucide-angular name="search" [class]="'inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600'"></lucide-angular>
                                   </div>
                               </div>
+
                               <ngx-simplebar class="max-h-[calc(100vh_-_380px)] xl:max-h-[calc(100vh_-_300px)]" #scrollRef>
                                   <ul class="flex flex-col gap-1" id="chatList">
                                       <li class="px-5">
