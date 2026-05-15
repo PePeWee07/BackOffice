@@ -122,7 +122,7 @@
                                 <ngx-simplebar class="max-h-44 xl:max-h-52 mb-4" #searchScrollRef>
                                   <ul class="flex flex-col gap-1">
                                       @for(item of searchResults;track item.id){
-                                        <li (click)="chatUsername(item.erpUser?.nombres, getRolesString(item.erpUser?.rolesUsuario))">
+                                        <li (click)="openUserProfile(item)">
                                           <a href="javascript:void(0);" [ngClass]="{'active': item.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-amber-50 group/item dark:[&.active]:bg-green-600 online border-y border-amber-100 dark:border-green-700">
                                             <div class="relative flex items-center justify-center font-semibold rounded-full text-amber-500 dark:text-green-200 size-9 bg-amber-100 dark:bg-green-600">
                                               <img src="assets/images/users/user-dummy-img.jpg" alt="avatar" class="rounded-full h-9">
@@ -173,7 +173,7 @@
                               <ngx-simplebar class="max-h-44 xl:max-h-52" #recentScrollRef>
                                   <ul class="flex flex-col gap-1" id="recentChatList">
                                       @for(data of recentChat;track data.id ){
-                                      <li (click)="chatUsername(data.erpUser?.nombres, getRolesString(data.erpUser?.rolesUsuario))">
+                                      <li (click)="openUserProfile(data)">
                                         <a href="javascript:void(0);" [ngClass]="{'active': data.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600 group/item online">
                                               <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
                                                   <img src="assets/images/users/user-dummy-img.jpg" alt="" class="rounded-full h-9">
@@ -214,7 +214,7 @@
                               <ngx-simplebar class="max-h-[calc(100vh_-_560px)] xl:max-h-[calc(100vh_-_470px)]" #allScrollRef>
                                   <ul class="flex flex-col gap-1" id="chatList">
                                       @for(item of allConversations;track item.id){
-                                        <li (click)="chatUsername(item.erpUser?.nombres, getRolesString(item.erpUser?.rolesUsuario))">
+                                        <li (click)="openUserProfile(item)">
                                           <a href="javascript:void(0);" [ngClass]="{'active': item.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 group/item dark:[&.active]:bg-zink-600 online">
                                             <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
                                               <img src="assets/images/users/user-dummy-img.jpg" alt="avatar" class="rounded-full h-9">
@@ -298,51 +298,229 @@
                               <ngx-simplebar class="max-h-[calc(100vh_-_250px)] xl:max-h-full card-body">
                                   <div class="flex items-center gap-3">
                                     <button
-                                      type="button"
-                                      (click)="toggleMenuCollapse()"
-                                      class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
+                                        type="button"
+                                        (click)="toggleMenuCollapse()"
+                                        class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
                                       <lucide-angular name="chevron-left" [class]="'size-4 mx-auto'"></lucide-angular>
                                     </button>
                                       <h6 class="text-15 grow">Profile</h6>
-                                      <button class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500"><lucide-angular name="x" [class]="'size-4 mx-auto' "></lucide-angular></button>
+                                      @if (selectedUser && !isEditingUserProfile) {
+                                        <button
+                                          type="button"
+                                          (click)="startUserProfileEdit()"
+                                          class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md shrink-0 bg-custom-500 text-white">
+                                          Editar
+                                        </button>
+                                      }
+                                      @if (selectedUser && isEditingUserProfile) {
+                                        <div class="flex items-center gap-2 shrink-0">
+                                          <button
+                                            type="button"
+                                            (click)="cancelUserProfileEdit()"
+                                            class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                                            Cancelar
+                                          </button>
+                                          <button
+                                            type="button"
+                                            (click)="saveUserProfile()"
+                                            class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md bg-custom-500 text-white"
+                                            [disabled]="isSavingUserProfile">
+                                            {{ isSavingUserProfile ? 'Guardando...' : 'Guardar' }}
+                                          </button>
+                                        </div>
+                                      }
+                                      <button
+                                        type="button"
+                                        (click)="closeUserProfile()"
+                                        class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500"><lucide-angular name="x" [class]="'size-4 mx-auto' "></lucide-angular></button>
                                   </div>
-                                  <div class="text-center">
-                                      <div class=" size-20 mx-auto mt-8 bg-pink-100 rounded-full dark:bg-pink-500/20">
-                                          <img src="assets/images/users/avatar-1.png" alt="" class="h-20 rounded-full">
+                                  @if (selectedUser) {
+                                    <div class="text-center">
+                                        <div class="size-20 mx-auto mt-8 rounded-full bg-slate-100 dark:bg-zink-600 flex items-center justify-center">
+                                            <img src="assets/images/users/user-dummy-img.jpg" alt="" class="h-20 rounded-full">
+                                        </div>
+                                        <h5 class="mt-4 text-16">{{ getUserFullName(selectedUser) }}</h5>
+                                        <p class="text-slate-500 dark:text-zink-200">{{ getRolesString(selectedUser.erpUser?.rolesUsuario) }}</p>
+                                    </div>
+
+                                    <div class="mt-5 p-4 rounded-lg bg-slate-50 dark:bg-zink-700/40">
+                                        <p class="mb-3 text-slate-500 dark:text-zink-200">Resumen</p>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-700 dark:bg-custom-500/20 dark:text-custom-300">
+                                              Estado: {{ selectedUser.conversationState || 'N/A' }}
+                                            </span>
+                                            <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                                              Preguntas válidas: {{ selectedUser.validQuestionCount }}
+                                            </span>
+                                            <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                                              Límite: {{ selectedUser.limitQuestions }}
+                                            </span>
+                                            <span class="px-2 py-1 text-xs rounded-md"
+                                              [ngClass]="selectedUser.block
+                                                ? 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-300'
+                                                : 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-300'">
+                                              {{ selectedUser.block ? 'Bloqueado' : 'Activo' }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-5">
+                                        <p class="mb-4 text-slate-500 dark:text-zink-200">Información personal</p>
+                                        <h6 class="mb-3 font-medium">
+                                          <lucide-angular name="badge-info" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
+                                          <span class="align-middle">Identificación: {{ selectedUser.identificacion || selectedUser.erpUser?.identificacion || 'N/A' }}</span>
+                                        </h6>
+                                        <h6 class="mb-3 font-medium">
+                                          <lucide-angular name="phone" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
+                                          <span class="align-middle">{{ selectedUser.whatsappPhone || selectedUser.erpUser?.numeroCelular || 'N/A' }}</span>
+                                        </h6>
+                                        <h6 class="mb-3 font-medium">
+                                          <lucide-angular name="mail" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
+                                          <span class="align-middle">{{ selectedUser.erpUser?.emailInstitucional || selectedUser.erpUser?.emailPersonal || 'N/A' }}</span>
+                                        </h6>
+                                        <h6 class="font-medium">
+                                          <lucide-angular name="user" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
+                                          <span class="align-middle">Sexo: {{ selectedUser.erpUser?.sexo || 'N/A' }}</span>
+                                        </h6>
+                                    </div>
+
+                                    <div class="mt-5">
+                                        <p class="mb-4 text-slate-500 dark:text-zink-200">Actividad del chat</p>
+                                        <h6 class="mb-3 font-medium">
+                                          <lucide-angular name="clock-3" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
+                                          <span class="align-middle">Primera interacción: {{ formatDateTime(selectedUser.firstInteraction) }}</span>
+                                        </h6>
+                                        <h6 class="mb-3 font-medium">
+                                          <lucide-angular name="history" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
+                                          <span class="align-middle">Última interacción: {{ formatDateTime(selectedUser.lastInteraction) }}</span>
+                                        </h6>
+                                        <h6 class="mb-3 font-medium">
+                                          <lucide-angular name="refresh-cw" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
+                                          <span class="align-middle">Próximo reset: {{ formatDateTime(selectedUser.nextResetDate) }}</span>
+                                        </h6>
+                                        <h6 class="font-medium">
+                                          <lucide-angular name="message-square-more" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
+                                          <span
+                                            class="align-middle inline-block max-w-full truncate text-[10px] font-mono"
+                                            [title]="selectedUser.previousResponseId || 'N/A'">
+                                            Previous Response ID: {{ selectedUser.previousResponseId || 'N/A' }}
+                                          </span>
+                                        </h6>
+                                    </div>
+
+                                    <div class="mt-5 p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                                        <div class="flex items-center gap-2 mb-4">
+                                            <p class="text-slate-500 dark:text-zink-200 grow">Campos editables</p>
+                                            <span class="px-2 py-1 text-[11px] rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                                              Core CATIA
+                                            </span>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 gap-4">
+                                            <div>
+                                                <label class="block mb-2 text-sm text-slate-500 dark:text-zink-200">Previous Response ID</label>
+                                                @if (isEditingUserProfile && profileDraft) {
+                                                  <input
+                                                    type="text"
+                                                    [(ngModel)]="profileDraft.previousResponseId"
+                                                    class="form-input w-full border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100 text-[10px]">
+                                                } @else {
+                                                  <div class="flex items-center gap-2 px-3 py-2 rounded-md bg-slate-50 dark:bg-zink-700/40">
+                                                    <p
+                                                      class="min-w-0 grow truncate text-[10px] font-mono"
+                                                      [title]="selectedUser.previousResponseId || 'N/A'">
+                                                      {{ selectedUser.previousResponseId || 'N/A' }}
+                                                    </p>
+                                                    @if (selectedUser.previousResponseId) {
+                                                      <button
+                                                        type="button"
+                                                        (click)="copyText(selectedUser.previousResponseId)"
+                                                        class="shrink-0 text-[10px] font-medium text-custom-500 hover:text-custom-600">
+                                                        Copiar
+                                                      </button>
+                                                    }
+                                                  </div>
+                                                }
+                                            </div>
+
+                                            <div class="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label class="block mb-2 text-sm text-slate-500 dark:text-zink-200">Limit Questions</label>
+                                                    @if (isEditingUserProfile && profileDraft) {
+                                                      <input
+                                                        type="number"
+                                                        min="0"
+                                                        [(ngModel)]="profileDraft.limitQuestions"
+                                                        class="form-input w-full border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100">
+                                                    } @else {
+                                                      <p class="px-3 py-2 rounded-md bg-slate-50 dark:bg-zink-700/40">{{ selectedUser.limitQuestions }}</p>
+                                                    }
+                                                </div>
+
+                                                <div>
+                                                    <label class="block mb-2 text-sm text-slate-500 dark:text-zink-200">Limit Strike</label>
+                                                    @if (isEditingUserProfile && profileDraft) {
+                                                      <input
+                                                        type="number"
+                                                        min="0"
+                                                        [(ngModel)]="profileDraft.limitStrike"
+                                                        class="form-input w-full border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100">
+                                                    } @else {
+                                                      <p class="px-3 py-2 rounded-md bg-slate-50 dark:bg-zink-700/40">{{ selectedUser.limitStrike }}</p>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                <label class="block mb-2 text-sm text-slate-500 dark:text-zink-200">Estado de bloqueo</label>
+                                                @if (isEditingUserProfile && profileDraft) {
+                                                  <label class="inline-flex items-center gap-3 cursor-pointer">
+                                                    <input
+                                                      type="checkbox"
+                                                      [(ngModel)]="profileDraft.block"
+                                                      class="size-4 rounded border-slate-300 text-custom-500 focus:ring-custom-500">
+                                                    <span class="text-sm text-slate-600 dark:text-zink-200">
+                                                      {{ profileDraft.block ? 'Bloqueado' : 'Activo' }}
+                                                    </span>
+                                                  </label>
+                                                } @else {
+                                                  <p class="px-3 py-2 rounded-md bg-slate-50 dark:bg-zink-700/40">
+                                                    {{ selectedUser.block ? 'Bloqueado' : 'Activo' }}
+                                                  </p>
+                                                }
+                                            </div>
+
+                                            <div>
+                                                <label class="block mb-2 text-sm text-slate-500 dark:text-zink-200">Blocking Reason</label>
+                                                @if (isEditingUserProfile && profileDraft) {
+                                                  <textarea
+                                                    rows="3"
+                                                    [(ngModel)]="profileDraft.blockingReason"
+                                                    class="form-input w-full border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100"></textarea>
+                                                } @else {
+                                                  <p class="px-3 py-2 rounded-md bg-slate-50 dark:bg-zink-700/40">{{ selectedUser.blockingReason || 'N/A' }}</p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if (selectedUser.blockingReason) {
+                                      <div class="mt-5 p-4 rounded-lg bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-300">
+                                          <p class="mb-2 font-medium">Motivo de bloqueo</p>
+                                          <p class="text-sm">{{ selectedUser.blockingReason }}</p>
                                       </div>
-                                      <h5 class="mt-4 text-16">William Heineman</h5>
-                                      <p class="text-slate-500 dark:text-zink-200">NextJs Developer</p>
-                                  </div>
-                                  <div class="mt-5">
-                                      <p class="mb-3 text-slate-500 dark:text-zink-200">Object</p>
-                                      <p>If several languages coalesce, the grammar of the resulting language is more simple and regular than that of the individual.</p>
-                                  </div>
-                                  <div class="mt-5">
-                                      <p class="mb-4 text-slate-500 dark:text-zink-200">Personal Information</p>
-                                      <h6 class="mb-3 font-medium"><lucide-angular name="phone" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular> <span class="align-middle">+(103) 1234 567 8954</span></h6>
-                                      <h6 class="mb-3 font-medium"><lucide-angular name="map-pin" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular> <span class="align-middle">California, USA</span></h6>
-                                      <h6 class="font-medium"><lucide-angular name="mail" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular> <span class="align-middle">william&#64;tailwick.com</span></h6>
-                                  </div>
-                                  <div class="mt-5">
-                                      <div class="flex items-center gap-2 mb-4">
-                                          <p class="text-slate-500 dark:text-zink-200 grow">Settings</p>
-                                          <a href="javascript:void(0);" class="text-sm underline text-slate-500 dark:text-zink-200 shrink-0">View More</a>
-                                      </div>
-                                      <div class="flex items-center mb-3">
-                                          <div class="relative inline-block size-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2">
-                                              <input type="checkbox" name="muteNotification" id="muteNotification" class="absolute block size-5 transition duration-300 ease-linear border-2 rounded-full appearance-none cursor-pointer border-slate-200 dark:border-zink-600 bg-white/80 dark:bg-zink-400 peer/published checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0 rtl:checked:left-0 checked:border-custom-100 dark:checked:border-custom-900 arrow-none checked:bg-none">
-                                              <label for="muteNotification" class="block h-5 overflow-hidden duration-300 ease-linear border rounded-full cursor-pointer cursor-pointertransition border-slate-200 dark:border-zink-500 bg-slate-200 dark:bg-zink-600 peer-checked/published:bg-custom-100 dark:peer-checked/published:bg-custom-900 peer-checked/published:border-custom-100 dark:peer-checked/published:border-custom-900"></label>
-                                          </div>
-                                          <label for="muteNotification" class="inline-block text-base font-medium cursor-pointer">Mute Notifications</label>
-                                      </div>
-                                      <div class="flex items-center mb-3">
-                                          <div class="relative inline-block size-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2">
-                                              <input type="checkbox" name="blockAccount" id="blockAccount" class="absolute block size-5 transition duration-300 ease-linear border-2 rounded-full appearance-none cursor-pointer border-slate-200 dark:border-zink-600 bg-white/80 dark:bg-zink-400 peer/published checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0 rtl:checked:left-0 checked:border-custom-100 dark:checked:border-custom-900 arrow-none checked:bg-none">
-                                              <label for="blockAccount" class="block h-5 overflow-hidden duration-300 ease-linear border rounded-full cursor-pointer cursor-pointertransition border-slate-200 dark:border-zink-500 bg-slate-200 dark:bg-zink-600 peer-checked/published:bg-custom-100 dark:peer-checked/published:bg-custom-900 peer-checked/published:border-custom-100 dark:peer-checked/published:border-custom-900"></label>
-                                          </div>
-                                          <label for="blockAccount" class="inline-block text-base font-medium cursor-pointer">Block Account</label>
-                                      </div>
-                                  </div>
+                                    }
+                                  } @else {
+                                    <div class="flex flex-col items-center justify-center py-16 text-center">
+                                        <div class="size-16 rounded-full bg-slate-100 dark:bg-zink-600 flex items-center justify-center">
+                                            <lucide-angular name="user-round-search" [class]="'size-8 text-slate-400 dark:text-zink-300'"></lucide-angular>
+                                        </div>
+                                        <h5 class="mt-4 text-16">Selecciona un usuario</h5>
+                                        <p class="mt-2 text-slate-500 dark:text-zink-200">
+                                          Haz click en un resultado, un chat reciente o una conversación para ver su perfil.
+                                        </p>
+                                    </div>
+                                  }
                               </ngx-simplebar>
                           </mn-tab-pane>
                       </div>
@@ -565,40 +743,6 @@
         </div>
     </div>
 </drawer>
-
-<ng-modals id="addContactModal" [placement]="'modal-center'" className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4 ">
-    <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600 flex flex-col h-full">
-        <div class="flex items-center justify-between p-4 border-b dark:border-zink-500">
-            <h5 class="text-16">Add Contact</h5>
-            <button data-modal-close="addContactModal" dismissModal [ModalDismiss]="'addContactModal'" class="transition-all duration-200 ease-linear text-slate-400 hover:text-red-500"><lucide-angular name="x" class="size-5"></lucide-angular></button>
-        </div>
-        <div class="max-h-[calc(theme('height.screen')_-_180px)] overflow-y-auto p-4">
-            <form>
-                <div class="relative size-24 mx-auto mb-4 rounded-full shadow-md bg-slate-100 profile-user dark:bg-zink-500">
-                    <img src="assets/images/users/user-dummy-img.jpg" alt="" class="object-cover w-full h-full rounded-full user-profile-image">
-                    <div class="absolute bottom-0 right-0 flex items-center justify-center size-8 rounded-full profile-photo-edit">
-                        <input id="profile-img-file-input" type="file" class="hidden profile-img-file-input" required>
-                        <label for="profile-img-file-input" class="flex items-center justify-center size-8 bg-white rounded-full shadow-lg cursor-pointer dark:bg-zink-600 profile-photo-edit">
-                            <lucide-angular name="image-plus" class="size-4 text-slate-500 fill-slate-200 dark:text-zink-200 dark:fill-zink-500"></lucide-angular>
-                        </label>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label for="contactnameInput" class="inline-block mb-2 text-base font-medium">Contact Name</label>
-                    <input type="text" id="contactnameInput" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Enter Name" required>
-                </div>
-                <div class="mb-3">
-                    <label for="destinationInput" class="inline-block mb-2 text-base font-medium">Destination</label>
-                    <input type="text" id="destinationInput" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Destination" required>
-                </div>
-                <div class="flex justify-end gap-2 mt-4">
-                    <button type="reset" dismissModal [ModalDismiss]="'addContactModal'" class="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10">Cancel</button>
-                    <button type="submit" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20">Add Contact</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</ng-modals><!--end modal-->
 
 <ng-modals id="callModal" [placement]="'modal-center'" className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4 ">
     <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600 flex flex-col h-full">

@@ -14,6 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as Prism from 'prismjs';
 
 import { CatiaChatService } from '../../../../core/services/apis/catia/catia-chat.service';
+import { TabContextService } from '../../../../Component/tab/tab-context.service';
 import { ToastrService } from 'ngx-toastr';
 import {
   CatiaUserChatQueryParams,
@@ -56,6 +57,16 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   showTab: boolean = true;
   profile: string = 'assets/images/users/user-dummy-img.jpg';
   role: string = 'None';
+  selectedUser: CatiaUserModel | null = null;
+  isEditingUserProfile = false;
+  isSavingUserProfile = false;
+  profileDraft: {
+    previousResponseId: string;
+    limitQuestions: number;
+    limitStrike: number;
+    block: boolean;
+    blockingReason: string;
+  } | null = null;
   formMessage!: UntypedFormGroup;
   isMenuCollapsed = false; // For Menu Collapse in false
   searchTerm = '';
@@ -112,6 +123,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     public formBuilder: UntypedFormBuilder,
     public translate: TranslateService,
     private catiaService: CatiaChatService,
+    private tabContextService: TabContextService,
     private toastr: ToastrService
   ) {}
 
@@ -573,6 +585,40 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     return userRoles;
   }
 
+  getUserDisplayName(user?: CatiaUserModel | null): string {
+    return (
+      user?.erpUser?.nombres?.trim() ||
+      user?.identificacion?.trim() ||
+      user?.whatsappPhone?.trim() ||
+      'Anonymus'
+    );
+  }
+
+  getUserFullName(user?: CatiaUserModel | null): string {
+    const names = user?.erpUser?.nombres?.trim() ?? '';
+    const lastNames = user?.erpUser?.apellidos?.trim() ?? '';
+    const fullName = `${names} ${lastNames}`.trim();
+
+    return fullName || this.getUserDisplayName(user);
+  }
+
+  formatDateTime(value?: string | Date | null): string {
+    if (!value) {
+      return 'N/A';
+    }
+
+    const date = value instanceof Date ? value : new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return 'N/A';
+    }
+
+    return new Intl.DateTimeFormat('es-EC', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(date);
+  }
+
   // Calclular TimeStamp
   getTimeAgo(value?: string | Date | null): string {
     if (!value) {
@@ -601,5 +647,100 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       name: this.username,
       time: currentDate.getHours() + ':' + currentDate.getMinutes(),
     });
+  }
+
+  openUserProfile(user: CatiaUserModel) {
+    this.selectedUser = user;
+    this.username = this.getUserDisplayName(user);
+    this.role = this.getRolesString(user.erpUser?.rolesUsuario);
+    this.isEditingUserProfile = false;
+    this.profileDraft = null;
+    this.showTab = true;
+    this.tabContextService.changeTab('chat', 'profile');
+  }
+
+  closeUserProfile() {
+    this.isEditingUserProfile = false;
+    this.profileDraft = null;
+    this.tabContextService.changeTab('chat', 'chat');
+  }
+
+  copyText(value: string) {
+    if (!value?.trim()) {
+      return;
+    }
+
+    navigator.clipboard.writeText(value);
+    this.toastr.success('Copiado al portapapeles');
+  }
+
+  startUserProfileEdit() {
+    if (!this.selectedUser) {
+      return;
+    }
+
+    this.profileDraft = {
+      previousResponseId: this.selectedUser.previousResponseId ?? '',
+      limitQuestions: this.selectedUser.limitQuestions ?? 0,
+      limitStrike: this.selectedUser.limitStrike ?? 0,
+      block: this.selectedUser.block ?? false,
+      blockingReason: this.selectedUser.blockingReason ?? '',
+    };
+    this.isEditingUserProfile = true;
+  }
+
+  cancelUserProfileEdit() {
+    this.isEditingUserProfile = false;
+    this.profileDraft = null;
+  }
+
+  saveUserProfile() {
+    if (!this.selectedUser || !this.profileDraft || this.isSavingUserProfile) {
+      return;
+    }
+
+    this.isSavingUserProfile = true;
+
+    this.catiaService
+      .updateUserChat(this.selectedUser.id, {
+        previousResponseId: this.profileDraft.previousResponseId.trim(),
+        limitQuestions: Number(this.profileDraft.limitQuestions),
+        limitStrike: Number(this.profileDraft.limitStrike),
+        block: this.profileDraft.block,
+        blockingReason: this.profileDraft.blockingReason.trim(),
+      })
+      .subscribe({
+        next: (updatedUser) => {
+          this.selectedUser = updatedUser;
+          this.username = this.getUserDisplayName(updatedUser);
+          this.role = this.getRolesString(updatedUser.erpUser?.rolesUsuario);
+          this.syncUpdatedUser(updatedUser);
+          this.isSavingUserProfile = false;
+          this.isEditingUserProfile = false;
+          this.profileDraft = null;
+          this.toastr.success('Usuario actualizado correctamente');
+        },
+        error: (err: any) => {
+          this.isSavingUserProfile = false;
+          this.toastr.error(JSON.stringify(err));
+          console.error('Error:', err);
+        },
+      });
+  }
+
+  private syncUpdatedUser(updatedUser: CatiaUserModel) {
+    this.searchResults = this.replaceUserInList(this.searchResults, updatedUser);
+    this.recentChat = this.replaceUserInList(this.recentChat, updatedUser);
+    this.allConversations = this.replaceUserInList(
+      this.allConversations,
+      updatedUser
+    );
+  }
+
+  private replaceUserInList(
+    users: CatiaUserModel[],
+    updatedUser: CatiaUserModel
+  ): CatiaUserModel[] {
+    return users.map((user) => (user.id === updatedUser.id ? updatedUser : user));
   }
 }
