@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
 import { map, Observable } from 'rxjs';
 import {
+  CatiaUserFindQueryParams,
   CatiaUserChatQueryParams,
   CatiaUserChatUpdateRequest,
   CatiaUserModel,
@@ -105,12 +106,10 @@ export class CatiaChatService {
   }
 
   // User find
-  findUserChat(params: {
-    identificacion?: string;
-    whatsappPhone?: string;
-  }): Observable<CatiaUserModel> {
+  findUserChat(params: CatiaUserFindQueryParams): Observable<CatiaPage<CatiaUserModel>> {
     const identificacion = params.identificacion?.trim();
     const whatsappPhone = params.whatsappPhone?.trim();
+    const page = this.normalizePage(params.page);
 
     let httpParams = new HttpParams();
 
@@ -122,24 +121,33 @@ export class CatiaChatService {
       httpParams = httpParams.set('whatsappPhone', whatsappPhone);
     }
 
-    return this.http.get<CatiaUserModel>(`${this.apiURL}/whatsapp/user/find`, {
-      params: httpParams,
-    });
+    httpParams = httpParams
+      .set('page', page.toString())
+      .set('pageSize', (params.pageSize ?? 10).toString())
+      .set('sortBy', params.sortBy ?? 'lastInteraction')
+      .set('direction', params.direction ?? 'asc');
+
+    return this.http.get<CatiaPage<CatiaUserModel>>(
+      `${this.apiURL}/whatsapp/user/find`,
+      { params: httpParams }
+    );
   }
 
   // User Pages
   listUserChats(
     params: CatiaUserChatQueryParams = {}
   ): Observable<CatiaPage<CatiaUserModel>> {
-    const page = params.page ?? 0;
+    const page = this.normalizePage(params.page);
 
-    let httpParams = new HttpParams()
+    const httpParams = new HttpParams()
       .set('pageSize', (params.pageSize ?? 10).toString())
       .set('sortBy', params.sortBy ?? 'lastInteraction')
       .set('direction', params.direction ?? 'asc');
 
+    const requestUrl = `${this.apiURL}/whatsapp/page/users/${page}`;
+
     return this.http.get<CatiaPage<CatiaUserModel>>(
-      `${this.apiURL}/whatsapp/page/users/${page}`,
+      requestUrl,
       { params: httpParams }
     );
   }
@@ -148,7 +156,7 @@ export class CatiaChatService {
   listUserChatsBySessionStart(
     params: CatiaUserChatQueryParams
   ): Observable<CatiaPage<CatiaUserModel>> {
-    const page = params.page ?? 0;
+    const page = this.normalizePage(params.page);
 
     if (!params.startDate?.trim() || !params.endDate?.trim()) {
       throw new Error(
@@ -313,7 +321,7 @@ export class CatiaChatService {
   getAllTemplateResponses(
     params: CatiaTemplateQueryParams = {}
   ): Observable<CatiaPage<ResponseMessageTemplate>> {
-    const page = params.page ?? 0;
+    const page = this.normalizePage(params.page);
 
     const httpParams = new HttpParams()
       .set('pageSize', (params.pageSize ?? 20).toString())
@@ -390,5 +398,13 @@ export class CatiaChatService {
     return this.http.get<MessageTemplate>(
       `${this.apiURL}/whatsapp/template/messages/${messageId}`
     );
+  }
+
+  private normalizePage(page?: number): number {
+    if (page === undefined || page === null || Number.isNaN(page)) {
+      return 0;
+    }
+
+    return page < 0 ? 0 : page;
   }
 }

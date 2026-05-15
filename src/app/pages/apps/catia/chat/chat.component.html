@@ -49,9 +49,9 @@
               <div class="w-full h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card xl:h-[calc(100%_-_theme('spacing.5'))]">
                   <div class="flex flex-col h-full">
                       <div class="tab-content">
+                          <!-- Menu Chats -->
                           <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'chat'" class="block tab-pane" id="mainChatList">
-
-                            <!-- FINDER -->
+                              <!-- FINDER -->
                               <div class="card-body">
                                   <div class="flex items-center gap-3">
                                       <button
@@ -61,58 +61,196 @@
                                         <lucide-angular name="chevron-left" [class]="'size-4 mx-auto'"></lucide-angular>
                                       </button>
                                       <h6 class="text-15 grow">Chats</h6>
-                                      <button [appModalTrigger]="'addContactModal'" class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500"><lucide-angular name="plus" [class]="'size-4 mx-auto'"></lucide-angular></button>
+                                  </div>
+                                  <div class="flex items-center gap-2 mt-4">
+                                      <button
+                                        type="button"
+                                        (click)="searchMode = 'identificacion'"
+                                        [class]="searchMode === 'identificacion'
+                                          ? 'px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-400'
+                                          : 'px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200'">
+                                        Identificación
+                                      </button>
+                                      <button
+                                        type="button"
+                                        (click)="searchMode = 'whatsappPhone'"
+                                        [class]="searchMode === 'whatsappPhone'
+                                          ? 'px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-400'
+                                          : 'px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200'">
+                                        Teléfono
+                                      </button>
                                   </div>
                                   <div class="relative mt-5">
-                                      <input type="text" class="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Search for ..." autocomplete="off">
+                                      <input
+                                        type="text"
+                                        [(ngModel)]="searchTerm"
+                                        (keydown.enter)="submitUserSearch()"
+                                        class="ltr:pl-8 rtl:pr-20 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                                        [placeholder]="'Buscar por ' + searchModeLabel + '...'"
+                                        autocomplete="off">
                                       <lucide-angular name="search" [class]="'inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600'"></lucide-angular>
+                                      <div class="absolute top-1.5 ltr:right-1.5 rtl:left-1.5 flex items-center gap-1">
+                                        @if (searchTerm) {
+                                          <button
+                                            type="button"
+                                            (click)="clearUserSearch()"
+                                            class="inline-flex items-center justify-center size-7 rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                                            <lucide-angular name="x" [class]="'size-4'"></lucide-angular>
+                                          </button>
+                                        }
+                                        <button
+                                          type="button"
+                                          (click)="submitUserSearch()"
+                                          class="inline-flex items-center justify-center size-7 rounded-md bg-custom-500 text-white">
+                                          <lucide-angular name="arrow-right" [class]="'size-4'"></lucide-angular>
+                                        </button>
+                                      </div>
                                   </div>
+                                  @if (isSearchingUser) {
+                                    <p class="mt-2 text-xs text-slate-500 dark:text-zink-200">
+                                      Buscando usuario...
+                                    </p>
+                                  }
                               </div>
 
-                              <ngx-simplebar class="max-h-[calc(100vh_-_380px)] xl:max-h-[calc(100vh_-_300px)]" #scrollRef>
-                                  <ul class="flex flex-col gap-1" id="chatList">
-                                      <li class="px-5">
-                                          <p class="mb-1 text-slate-500 dark:text-zink-200">Recent Chats</p>
-                                      </li>
-                                      @for(data of recentChat;track $index ){
-                                      <li (click)="chatUsername(data.name,data.avatar,data.role)">
-                                        <a href="javascript:void(0);" [ngClass]="{'active': data.name == username}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600 group/item online">
+                              @if (hasSearchedUser) {
+                                <div class="px-5">
+                                    <p class="mb-2 text-amber-500 dark:text-green-200">
+                                      Search Result ({{ searchResults.length }}/{{ totalSearchResults }})
+                                    </p>
+                                </div>
+                                <ngx-simplebar class="max-h-44 xl:max-h-52 mb-4" #searchScrollRef>
+                                  <ul class="flex flex-col gap-1">
+                                      @for(item of searchResults;track item.id){
+                                        <li (click)="chatUsername(item.erpUser?.nombres, getRolesString(item.erpUser?.rolesUsuario))">
+                                          <a href="javascript:void(0);" [ngClass]="{'active': item.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-amber-50 group/item dark:[&.active]:bg-green-600 online border-y border-amber-100 dark:border-green-700">
+                                            <div class="relative flex items-center justify-center font-semibold rounded-full text-amber-500 dark:text-green-200 size-9 bg-amber-100 dark:bg-green-600">
+                                              <img src="assets/images/users/user-dummy-img.jpg" alt="avatar" class="rounded-full h-9">
+                                              <span [ngClass]="'online' == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-amber-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-green-700 rounded-full  dark:group-[.offline]/item:bg-green-500"></span>
+                                            </div>
+                                            <div class="overflow-hidden grow">
+                                              <h6 class="mb-1">{{item.erpUser?.nombres || "Anonymus"}}</h6>
+                                              <p class="text-xs truncate text-amber-500 dark:text-green-200">DNI: {{item.erpUser?.identificacion || "none"}}</p>
+                                            </div>
+                                            <div class="self-start shrink-0 text-amber-500 dark:text-green-200">
+                                              <small>{{getTimeAgo(item.lastInteraction)}}</small>
+                                            </div>
+                                          </a>
+                                        </li>
+                                      }
+
+                                      @if (isSearchingUser) {
+                                        <li class="px-5 py-3">
+                                          <p class="text-xs text-center text-amber-500 dark:text-green-200">
+                                            Cargando resultados...
+                                          </p>
+                                        </li>
+                                      }
+
+                                      @if (!hasMoreSearchResults && searchResults.length > 0) {
+                                        <li class="px-5 py-3">
+                                          <p class="text-xs text-center text-amber-400 dark:text-green-300">
+                                            No hay más resultados para cargar.
+                                          </p>
+                                        </li>
+                                      }
+
+                                      @if (!isSearchingUser && searchResults.length === 0) {
+                                        <li class="px-5 py-3">
+                                          <p class="text-xs text-center text-amber-400 dark:text-green-300">
+                                            No se encontraron resultados.
+                                          </p>
+                                        </li>
+                                      }
+                                  </ul>
+                                </ngx-simplebar>
+                              }
+
+                              <!-- Contacts -->
+                              <div class="px-5">
+                                  <p class="mb-2 text-slate-500 dark:text-zink-200">Recent Chats ({{ totalRecentChats }})</p>
+                              </div>
+                              <ngx-simplebar class="max-h-44 xl:max-h-52" #recentScrollRef>
+                                  <ul class="flex flex-col gap-1" id="recentChatList">
+                                      @for(data of recentChat;track data.id ){
+                                      <li (click)="chatUsername(data.erpUser?.nombres, getRolesString(data.erpUser?.rolesUsuario))">
+                                        <a href="javascript:void(0);" [ngClass]="{'active': data.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600 group/item online">
                                               <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
-                                                  <img src="{{data.avatar}}" alt="" class="rounded-full h-9">
-                                                  <span [ngClass]="data.status == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-slate-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-zink-700 rounded-full  dark:group-[.offline]/item:bg-zink-500"></span>
+                                                  <img src="assets/images/users/user-dummy-img.jpg" alt="" class="rounded-full h-9">
+                                                  <span [ngClass]="'online' == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-slate-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-zink-700 rounded-full  dark:group-[.offline]/item:bg-zink-500"></span>
                                               </div>
                                               <div class="overflow-hidden grow">
-                                                  <h6 class="mb-1">{{data.name}}</h6>
-                                                  <p class="text-xs truncate text-slate-500 dark:text-zink-200">{{data.message}}</p>
+                                                  <h6 class="mb-1">{{data.erpUser?.nombres || "Anonymus"}}</h6>
+                                                  <p class="text-xs truncate text-slate-500 dark:text-zink-200">DNI: {{data.erpUser?.identificacion || "none"}}</p>
                                               </div>
                                               <div class="self-start shrink-0 text-slate-500 dark:text-zink-200">
-                                                  <small>{{data.timestamp}}</small>
+                                                  <small>{{getTimeAgo(data.lastInteraction)}}</small>
                                               </div>
                                           </a>
                                       </li>
                                       }
 
-                                      <li class="px-5">
-                                          <p class="mb-1 text-slate-500 dark:text-zink-200">All Conversion</p>
-                                      </li>
-                                      @for(item of allConversations;track $index){
-                                      <li (click)="chatUsername(item.name,item.avatar,item.role)">
-                                          <a href="javascript:void(0);" [ngClass]="{'active': item.name == username}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 group/item dark:[&.active]:bg-zink-600 {{item.status}}">
-                                              <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
-                                                  <img src="{{item.avatar}}" alt="" class="rounded-full h-9">
-                                                  <span [ngClass]="{'group-[.offline]/item:bg-slate-400':item.status === 'offline',
-                                                  'group-[.online]/item:bg-green-400':item.status === 'online',
-                                                  'bg-red-500':item.status === 'offfline'}" class="absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-zink-700 rounded-full  dark:group-[.offline]/item:bg-zink-500 "></span>
-                                              </div>
-                                              <div class="overflow-hidden grow">
-                                                  <h6 class="mb-1">{{item.name}}</h6>
-                                                  <p class="text-xs truncate text-slate-500 dark:text-zink-200">{{item.role}}</p>
-                                              </div>
+                                      @if (isLoadingRecentChats) {
+                                        <li class="px-5 py-3">
+                                          <p class="text-xs text-center text-slate-500 dark:text-zink-200">
+                                            Cargando recientes...
+                                          </p>
+                                        </li>
+                                      }
+
+                                      @if (!hasMoreRecentChats && recentChat.length > 0) {
+                                        <li class="px-5 py-3">
+                                          <p class="text-xs text-center text-slate-400 dark:text-zink-300">
+                                            No hay más recientes para cargar.
+                                          </p>
+                                        </li>
+                                      }
+                                  </ul>
+                              </ngx-simplebar>
+
+                              <div class="px-5 mt-4">
+                                  <p class="mb-2 text-slate-500 dark:text-zink-200">All Conversion ({{ totalUserChats }})</p>
+                              </div>
+                              <ngx-simplebar class="max-h-[calc(100vh_-_560px)] xl:max-h-[calc(100vh_-_470px)]" #allScrollRef>
+                                  <ul class="flex flex-col gap-1" id="chatList">
+                                      @for(item of allConversations;track item.id){
+                                        <li (click)="chatUsername(item.erpUser?.nombres, getRolesString(item.erpUser?.rolesUsuario))">
+                                          <a href="javascript:void(0);" [ngClass]="{'active': item.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 group/item dark:[&.active]:bg-zink-600 online">
+                                            <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
+                                              <img src="assets/images/users/user-dummy-img.jpg" alt="avatar" class="rounded-full h-9">
+                                              <span [ngClass]="'online' == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-slate-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-zink-700 rounded-full  dark:group-[.offline]/item:bg-zink-500"></span>
+                                            </div>
+                                            <div class="overflow-hidden grow">
+                                              <h6 class="mb-1">{{item.erpUser?.nombres || "Anonymus"}}</h6>
+                                              <p class="text-xs truncate text-slate-500 dark:text-zink-200">DNI: {{item.erpUser?.identificacion || "none"}}</p>
+                                            </div>
+                                            <div class="self-start shrink-0 text-slate-500 dark:text-zink-200">
+                                              <small>{{getTimeAgo(item.lastInteraction)}}</small>
+                                            </div>
                                           </a>
-                                      </li>}
+                                        </li>
+                                      }
+
+                                      @if (isLoadingUserChats) {
+                                        <li class="px-5 py-3">
+                                          <p class="text-xs text-center text-slate-500 dark:text-zink-200">
+                                            Cargando más conversaciones...
+                                          </p>
+                                        </li>
+                                      }
+
+                                      @if (!hasMoreUserChats && allConversations.length > 0) {
+                                        <li class="px-5 py-3">
+                                          <p class="text-xs text-center text-slate-400 dark:text-zink-300">
+                                            No hay más conversaciones para cargar.
+                                          </p>
+                                        </li>
+                                      }
                                   </ul>
                               </ngx-simplebar>
                           </mn-tab-pane>
+
+                          <!-- Menu AI -->
                           <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'AI'" class="tab-pane" id="botChat">
                               <div class="card-body">
                                   <div class="flex items-center gap-3">
@@ -154,6 +292,8 @@
                                   </ul>
                               </ngx-simplebar>
                           </mn-tab-pane>
+
+                          <!-- Menu Profile -->
                           <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'profile'" class="tab-pane" id="profile">
                               <ngx-simplebar class="max-h-[calc(100vh_-_250px)] xl:max-h-full card-body">
                                   <div class="flex items-center gap-3">
@@ -306,7 +446,7 @@
                       </ngx-simplebar>
                   </div>
                   <div class="card-body">
-                      <form (ngSubmit)="messageSave()" [formGroup]="formData" class="flex items-center gap-2">
+                      <form (ngSubmit)="messageSave()" [formGroup]="formMessage" class="flex items-center gap-2">
                           <div class="grow">
                               <input type="text" id="inputText" formControlName="chatMsg" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Type your message here ..." required autocomplete="off">
                           </div>

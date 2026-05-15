@@ -1,13 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { PageTitleComponent } from '../../../../shared/page-title/page-title.component';
 import { CommonModule } from '@angular/common';
 import { SimplebarAngularModule } from 'simplebar-angular';
-import {
-  allConversations,
-  chatUser,
-  contact,
-  recentChats,
-} from '../../../../data';
 import { NavModule } from '../../../../Component/tab/tab.module';
 import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
 import { DrawerModule } from '../../../../Component/drawer';
@@ -21,6 +15,12 @@ import * as Prism from 'prismjs';
 
 import { CatiaChatService } from '../../../../core/services/apis/catia/catia-chat.service';
 import { ToastrService } from 'ngx-toastr';
+import {
+  CatiaUserChatQueryParams,
+  CatiaUserFindQueryParams,
+  CatiaUserModel,
+  RolesUsuario,
+} from '../../../../core/services/apis/catia/models/catia-user';
 
 @Component({
   selector: 'app-chat',
@@ -50,25 +50,64 @@ import { ToastrService } from 'ngx-toastr';
     },
   ],
 })
-export class ChatComponent {
+export class ChatComponent implements AfterViewInit, OnDestroy {
   chatuser: any;
-  recentChat: any;
-  allConversations: any;
+  username: string = 'User';
   showTab: boolean = true;
-  contacts: any;
-  chatuserData: any;
-  groupData: any;
-  contactData: any;
-  messageData: any;
-  formData!: UntypedFormGroup;
-  username: string = 'William Heineman';
-  usermessage!: string;
-  profile: string = 'assets/images/users/avatar-7.png';
-  role: string = 'NextJS Developer';
-
+  profile: string = 'assets/images/users/user-dummy-img.jpg';
+  role: string = 'None';
+  formMessage!: UntypedFormGroup;
   isMenuCollapsed = false; // For Menu Collapse in false
+  searchTerm = '';
+  searchMode: 'identificacion' | 'whatsappPhone' = 'identificacion';
+  private readonly scrollThreshold = 120;
+  
+  searchResults: CatiaUserModel[] = [];
+  hasSearchedUser = false;
+  isSearchingUser = false;
+  currentSearchPage = 0;
+  readonly searchPageSize = 10;
+  hasMoreSearchResults = false;
+  totalSearchResults = 0;
+  private lastSearchTriggerScrollTop = -1;
+  private readonly handleSearchScroll = () => this.onSearchScroll();
 
-  @ViewChild('scrollRef') scrollRef: any;
+  recentChat: CatiaUserModel[] = [];
+  currentRecentChatPage = 0;
+  readonly recentChatPageSize = 10;
+  isLoadingRecentChats = false;
+  hasMoreRecentChats = true;
+  totalRecentChats = 0;
+  private lastRecentTriggerScrollTop = -1;
+  private readonly handleRecentChatScroll = () => this.onRecentChatScroll();
+
+  allConversations: CatiaUserModel[] = [];
+  currentUserChatPage = 0;
+  readonly userChatPageSize = 10;
+  isLoadingUserChats = false;
+  hasMoreUserChats = true;
+  totalUserChats = 0;
+  private lastUserTriggerScrollTop = -1;
+  private readonly handleUserChatScroll = () => this.onUserChatScroll();
+
+  private _searchScrollRef: any;
+  @ViewChild('searchScrollRef')
+  set searchScrollRef(value: any) {
+    if (this._searchScrollRef === value) {
+      return;
+    }
+
+    this.removeSearchScrollListener();
+    this._searchScrollRef = value;
+    this.registerSearchScrollListener();
+  }
+
+  get searchScrollRef(): any {
+    return this._searchScrollRef;
+  }
+
+  @ViewChild('recentScrollRef') recentScrollRef: any;
+  @ViewChild('allScrollRef') allScrollRef: any;
   constructor(
     public formBuilder: UntypedFormBuilder,
     public translate: TranslateService,
@@ -77,24 +116,426 @@ export class ChatComponent {
   ) {}
 
   ngOnInit(): void {
-    this.chatuser = chatUser;
-    this.recentChat = recentChats;
-    this.allConversations = allConversations;
-    this.contacts = contact;
+    this.loadInitialUserChats();
+    this.loadInitialRecentChats();
+    this.chatuser = [];
 
     // Validation
-    this.formData = this.formBuilder.group({
+    this.formMessage = this.formBuilder.group({
       chatMsg: ['', [Validators.required]],
     });
   }
+  // ===================================================
 
   ngAfterViewInit() {
-    this.scrollRef.SimpleBar.getScrollElement().scrollTop = 300;
-    this.onListScroll();
+    this.registerSearchScrollListener();
+    this.registerRecentChatScrollListener();
+    this.registerUserChatScrollListener();
   }
 
   ngAfterContentChecked() {
     Prism.highlightAll();
+  }
+
+  ngOnDestroy(): void {
+    this.removeSearchScrollListener();
+    this.removeRecentChatScrollListener();
+    this.removeUserChatScrollListener();
+  }
+
+  onSearchScroll() {
+    const scrollElement = this.searchScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement || this.isSearchingUser || !this.hasMoreSearchResults) {
+      return;
+    }
+
+    const distanceToBottom =
+      scrollElement.scrollHeight -
+      (scrollElement.scrollTop + scrollElement.clientHeight);
+
+    if (
+      distanceToBottom <= this.scrollThreshold &&
+      scrollElement.scrollTop > this.lastSearchTriggerScrollTop
+    ) {
+      this.lastSearchTriggerScrollTop = scrollElement.scrollTop;
+      this.loadNextSearchPage();
+    }
+  }
+
+  onRecentChatScroll() {
+    const scrollElement = this.recentScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (
+      !scrollElement ||
+      this.isLoadingRecentChats ||
+      !this.hasMoreRecentChats
+    ) {
+      return;
+    }
+
+    const distanceToBottom =
+      scrollElement.scrollHeight -
+      (scrollElement.scrollTop + scrollElement.clientHeight);
+
+    if (
+      distanceToBottom <= this.scrollThreshold &&
+      scrollElement.scrollTop > this.lastRecentTriggerScrollTop
+    ) {
+      this.lastRecentTriggerScrollTop = scrollElement.scrollTop;
+      this.loadNextRecentChatsPage();
+    }
+  }
+
+  onUserChatScroll() {
+    const scrollElement = this.allScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement || this.isLoadingUserChats || !this.hasMoreUserChats) {
+      return;
+    }
+
+    const distanceToBottom =
+      scrollElement.scrollHeight -
+      (scrollElement.scrollTop + scrollElement.clientHeight);
+
+    if (
+      distanceToBottom <= this.scrollThreshold &&
+      scrollElement.scrollTop > this.lastUserTriggerScrollTop
+    ) {
+      this.lastUserTriggerScrollTop = scrollElement.scrollTop;
+      this.loadNextUserChatsPage();
+    }
+  }
+
+  // ================== Consumos Servicios =======================
+  // Buscar usuario por identificacion(DNI/Pasaporte) o whatsappPhone(Numero Telefonico)
+  findUserChat(params: CatiaUserFindQueryParams, reset = false) {
+    const searchValue =
+      params.identificacion?.trim() ?? params.whatsappPhone?.trim() ?? '';
+
+    if (!searchValue) {
+      this.searchResults = [];
+      this.hasSearchedUser = false;
+      this.hasMoreSearchResults = false;
+      this.totalSearchResults = 0;
+      this.toastr.info('Escribe una identificación o un número de teléfono');
+      return;
+    }
+
+    this.isSearchingUser = true;
+    this.hasSearchedUser = true;
+
+    this.catiaService.findUserChat(params).subscribe({
+      next: (pageUsers) => {
+        const newUsers = pageUsers.content ?? [];
+
+        this.searchResults =
+          reset || pageUsers.page.number === 0
+            ? newUsers
+            : [...this.searchResults, ...newUsers];
+        this.currentSearchPage = pageUsers.page.number;
+        this.totalSearchResults = pageUsers.page.totalElements;
+        this.hasMoreSearchResults =
+          pageUsers.page.number + 1 < pageUsers.page.totalPages;
+        this.isSearchingUser = false;
+
+        setTimeout(() => {
+          this.registerSearchScrollListener();
+          this.ensureSearchResultsFillViewport();
+        });
+
+        if (reset && this.searchResults.length === 0) {
+          this.toastr.info('No se encontraron usuarios para esa búsqueda');
+        }
+      },
+      error: (err: any) => {
+        this.isSearchingUser = false;
+        this.searchResults = [];
+        this.hasMoreSearchResults = false;
+        this.totalSearchResults = 0;
+
+        if (err.status === 404) {
+          this.toastr.info(
+            err?.error?.error ?? 'No se encontraron usuarios para esa búsqueda'
+          );
+          return;
+        }
+
+        this.toastr.error(JSON.stringify(err));
+        console.error('Error:', err);
+      },
+    });
+  }
+
+  // Obtener lista de conversaciones
+  listUserChats(params: CatiaUserChatQueryParams) {
+    this.catiaService.listUserChats(params).subscribe({
+      next: (pageUsers) => {
+        const newUsers = pageUsers.content ?? [];
+
+        this.allConversations =
+          params.page && params.page > 0
+            ? [...this.allConversations, ...newUsers]
+            : newUsers;
+
+        this.currentUserChatPage = pageUsers.page.number;
+        this.totalUserChats = pageUsers.page.totalElements;
+        this.hasMoreUserChats =
+          pageUsers.page.number + 1 < pageUsers.page.totalPages;
+        this.isLoadingUserChats = false;
+      },
+      error: (err: any) => {
+        this.isLoadingUserChats = false;
+        this.toastr.error(JSON.stringify(err));
+        console.error('Error:', err);
+      },
+    });
+  }
+
+  // Obtener lista de conversaciones dentro 24h
+  recentUserChats(params: CatiaUserChatQueryParams) {
+    this.catiaService.listUserChatsBySessionStart(params).subscribe({
+      next: (pageUsers) => {
+        const newUsers = pageUsers.content ?? [];
+
+        this.recentChat =
+          params.page && params.page > 0
+            ? [...this.recentChat, ...newUsers]
+            : newUsers;
+
+        this.currentRecentChatPage = pageUsers.page.number;
+        this.totalRecentChats = pageUsers.page.totalElements;
+        this.hasMoreRecentChats =
+          pageUsers.page.number + 1 < pageUsers.page.totalPages;
+        this.isLoadingRecentChats = false;
+      },
+      error: (err: any) => {
+        this.isLoadingRecentChats = false;
+        this.toastr.error(JSON.stringify(err));
+        console.error('Error:', err);
+      },
+    });
+  }
+
+  // Busqueda de un mensaje por ID
+  findMessageId(messageId: number) {
+    this.catiaService.findMessageId(messageId).subscribe({
+      next: (message) => {
+        console.log('Mensaje encontrado: ', message);
+      },
+      error: (err: any) => {
+        this.toastr.error(JSON.stringify(err));
+        console.error('Error:', err);
+      },
+    });
+  }
+
+  // Send Message
+  messageSave() {}
+
+  // =============== Metodos =======================
+
+  submitUserSearch() {
+    const searchValue = this.searchTerm.trim();
+
+    if (!searchValue) {
+      this.clearUserSearch();
+      return;
+    }
+
+    this.currentSearchPage = 0;
+    this.hasMoreSearchResults = false;
+    this.searchResults = [];
+    this.totalSearchResults = 0;
+    this.hasSearchedUser = true;
+    this.lastSearchTriggerScrollTop = -1;
+    this.findUserChat(
+      {
+        identificacion:
+          this.searchMode === 'identificacion' ? searchValue : undefined,
+        whatsappPhone:
+          this.searchMode === 'whatsappPhone' ? searchValue : undefined,
+        page: 0,
+        pageSize: this.searchPageSize,
+        sortBy: 'lastInteraction',
+        direction: 'asc',
+      },
+      true
+    );
+  }
+
+  clearUserSearch() {
+    this.searchTerm = '';
+    this.searchMode = 'identificacion';
+    this.searchResults = [];
+    this.isSearchingUser = false;
+    this.currentSearchPage = 0;
+    this.hasMoreSearchResults = false;
+    this.totalSearchResults = 0;
+    this.hasSearchedUser = false;
+    this.lastSearchTriggerScrollTop = -1;
+  }
+
+  loadNextSearchPage() {
+    const searchValue = this.searchTerm.trim();
+
+    if (!searchValue || this.isSearchingUser || !this.hasMoreSearchResults) {
+      return;
+    }
+
+    this.findUserChat({
+      identificacion:
+        this.searchMode === 'identificacion' ? searchValue : undefined,
+      whatsappPhone:
+        this.searchMode === 'whatsappPhone' ? searchValue : undefined,
+      page: this.currentSearchPage + 1,
+      pageSize: this.searchPageSize,
+      sortBy: 'lastInteraction',
+      direction: 'asc',
+    });
+  }
+
+  ensureSearchResultsFillViewport() {
+    const scrollElement = this.searchScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement || this.isSearchingUser || !this.hasMoreSearchResults) {
+      return;
+    }
+
+    const hasScrollableOverflow =
+      scrollElement.scrollHeight > scrollElement.clientHeight + 8;
+
+    if (!hasScrollableOverflow) {
+      this.loadNextSearchPage();
+    }
+  }
+
+  loadInitialRecentChats() {
+    this.currentRecentChatPage = 0;
+    this.totalRecentChats = 0;
+    this.hasMoreRecentChats = true;
+    this.recentChat = [];
+    this.lastRecentTriggerScrollTop = -1;
+    this.loadNextRecentChatsPage(true);
+  }
+
+  loadNextRecentChatsPage(reset = false) {
+    if (this.isLoadingRecentChats) {
+      return;
+    }
+
+    if (!reset && !this.hasMoreRecentChats) {
+      return;
+    }
+
+    this.isLoadingRecentChats = true;
+
+    const nextPage = reset ? 0 : this.currentRecentChatPage + 1;
+
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    let recentChatRangeStart = twentyFourHoursAgo.toISOString().split('.')[0];
+    let recentChatRangeEnd = now.toISOString().split('.')[0];
+
+    this.recentUserChats({
+      page: nextPage,
+      pageSize: this.recentChatPageSize,
+      sortBy: 'lastInteraction',
+      direction: 'asc',
+      startDate: recentChatRangeStart,
+      endDate: recentChatRangeEnd,
+    });
+  }
+
+  loadInitialUserChats() {
+    this.currentUserChatPage = 0;
+    this.totalUserChats = 0;
+    this.hasMoreUserChats = true;
+    this.allConversations = [];
+    this.lastUserTriggerScrollTop = -1;
+    this.loadNextUserChatsPage(true);
+  }
+
+  loadNextUserChatsPage(reset = false) {
+    if (this.isLoadingUserChats) {
+      return;
+    }
+
+    if (!reset && !this.hasMoreUserChats) {
+      return;
+    }
+
+    this.isLoadingUserChats = true;
+
+    const nextPage = reset ? 0 : this.currentUserChatPage + 1;
+
+    this.listUserChats({
+      page: nextPage,
+      pageSize: this.userChatPageSize,
+      sortBy: 'lastInteraction',
+      direction: 'asc',
+    });
+  }
+
+  registerUserChatScrollListener() {
+    const scrollElement = this.allScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement) {
+      return;
+    }
+
+    scrollElement.addEventListener('scroll', this.handleUserChatScroll);
+  }
+
+  registerSearchScrollListener() {
+    const scrollElement = this.searchScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement) {
+      return;
+    }
+
+    scrollElement.addEventListener('scroll', this.handleSearchScroll);
+  }
+
+  registerRecentChatScrollListener() {
+    const scrollElement = this.recentScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement) {
+      return;
+    }
+
+    scrollElement.addEventListener('scroll', this.handleRecentChatScroll);
+  }
+
+  removeUserChatScrollListener() {
+    const scrollElement = this.allScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement) {
+      return;
+    }
+
+    scrollElement.removeEventListener('scroll', this.handleUserChatScroll);
+  }
+
+  removeRecentChatScrollListener() {
+    const scrollElement = this.recentScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement) {
+      return;
+    }
+
+    scrollElement.removeEventListener('scroll', this.handleRecentChatScroll);
+  }
+
+  removeSearchScrollListener() {
+    const scrollElement = this.searchScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement) {
+      return;
+    }
+
+    scrollElement.removeEventListener('scroll', this.handleSearchScroll);
   }
 
   // toggletab
@@ -102,82 +543,63 @@ export class ChatComponent {
     this.showTab = view === 'chat';
   }
 
-  onListScroll() {
-    if (this.scrollRef !== undefined) {
-      setTimeout(() => {
-        this.scrollRef.SimpleBar.getScrollElement().scrollTop =
-          this.scrollRef.SimpleBar.getScrollElement().scrollHeight;
-      }, 500);
+  get searchModeLabel(): string {
+    switch (this.searchMode) {
+      case 'identificacion':
+        return 'Identificación';
+      case 'whatsappPhone':
+        return 'Teléfono';
     }
   }
-  /***
-   * OnClick User Chat show
-   */
-  chatUsername(name: any, avatar: any, role: any) {
-    this.username = name;
-    this.usermessage = 'Hello';
-    this.chatuser = [];
-    const currentDate = new Date();
-    this.profile = avatar;
-    this.role = role;
-
-    this.chatuser.push({
-      name: this.username,
-      chatMsg: this.usermessage,
-      time: currentDate.getHours() + ':' + currentDate.getMinutes(),
-      avatar: avatar,
-    });
-  }
-
-  // Send Message
-  messageSave() {
-    const chatMsg = this.formData.get('chatMsg')!.value;
-    const currentDate = new Date();
-    if (this.formData.valid && chatMsg) {
-      // Message Push in Chat
-      this.chatuser.push({
-        name: 'Shawn',
-        chatMsg,
-        time: currentDate.getHours() + ':' + currentDate.getMinutes(),
-        isSender: true,
-      });
-
-      this.onListScroll();
-      // Set Form Data Reset
-      this.formData = this.formBuilder.group({
-        chatMsg: null,
-      });
-    }
-    this.formData.reset();
-  }
-
-  // ===================================================
-  // ===================================================
 
   // Colapsar el Menu
   toggleMenuCollapse(): void {
     this.isMenuCollapsed = !this.isMenuCollapsed;
   }
 
-  // Buscar usuario por identificacion(DNI/Pasaporte) o whatsappPhone(Numero Telefonico)
-  findUserChat() {
-    this.catiaService.findUserChat({ identificacion: '0704713619' }).subscribe({
-      next: (user) => console.log('Usuario encontrado: ', user),
-      error: (err: any) => {
-        this.toastr.error(err);
-      }
-    });
+  // Devuelve un string con los tipos de rol o 'None'
+  getRolesString(roles?: RolesUsuario[]): string {
+    if (!roles?.length) {
+      return 'None';
+    }
+
+    let userRoles = roles
+      .map((r) => r.tipoRol ?? '')
+      .filter((t) => !!t)
+      .join(', ');
+
+    this.role = userRoles;
+
+    return userRoles;
   }
 
-  // Busqueda de un mensaje por ID
-  findMessageId(){
-    this.catiaService.findMessageId(10).subscribe({
-      next: (message) => {
-        console.log('Mensaje encontrado: ', message);
-      },
-      error: (err: any) => {
-        this.toastr.error(err);
-      },
+  // Calclular TimeStamp
+  getTimeAgo(value?: string | Date | null): string {
+    if (!value) {
+      return 'N/A';
+    }
+    const date = value instanceof Date ? value : new Date(value);
+
+    const diff = Date.now() - date.getTime();
+    const mins = Math.floor(diff / 1000 / 60);
+    if (mins < 60) {
+      return `${mins} min atrás`;
+    }
+
+    const hrs = Math.floor(mins / 60);
+    return `${hrs} hora${hrs > 1 ? 's' : ''} atrás`;
+  }
+
+  // OnClick User Chat show
+  chatUsername(name: any, role: any) {
+    this.username = name;
+    this.chatuser = [];
+    const currentDate = new Date();
+    this.role = role;
+
+    this.chatuser.push({
+      name: this.username,
+      time: currentDate.getHours() + ':' + currentDate.getMinutes(),
     });
   }
 }

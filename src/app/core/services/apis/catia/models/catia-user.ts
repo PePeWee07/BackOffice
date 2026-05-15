@@ -69,6 +69,15 @@ export interface CatiaUserChatQueryParams {
   endDate?: string;
 }
 
+export interface CatiaUserFindQueryParams {
+  identificacion?: string;
+  whatsappPhone?: string;
+  page?: number;
+  pageSize?: number;
+  sortBy?: string;
+  direction?: 'asc' | 'desc';
+}
+
 export interface CatiaUserChatUpdateRequest {
   whatsappPhone?: string;
   previousResponseId?: string;

@@ -1,23 +1,13 @@
 export interface CatiaPage<T> {
   content: T[];
-  pageable: CatiaPageable;
-  totalPages: number;
-  totalElements: number;
-  last: boolean;
-  size: number;
-  number: number;
-  numberOfElements: number;
-  first: boolean;
-  empty: boolean;
+  page: CatiaPageable;
 }
 
 export interface CatiaPageable {
-  pageNumber: number;
-  pageSize: number;
-  sort: CatiaSort;
-  offset: number;
-  paged: boolean;
-  unpaged: boolean;
+  size: number;
+  number: number;
+  totalElements: number;
+  totalPages: number;
 }
 
 export interface CatiaSort {

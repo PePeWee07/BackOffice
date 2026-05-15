@@ -48,7 +48,14 @@ export const PAGE_ROUTES: Route[] = [
     path: '',
     component: IndexComponent,
   },
-  { path: 'apps-chat', component: ChatComponent },
+  {
+    path: 'apps-chat',
+    component: ChatComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['ROLE_ADMIN'],
+    },
+  },
   {
     path: 'apps-calendar',
     component: CalendarComponent,
