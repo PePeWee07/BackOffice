@@ -89,6 +89,9 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   hasMoreMessages = false;
   isLoadingMessages = false;
   messageAddressMap: Record<number, MessageAddress | null> = {};
+  messageMediaUrlMap: Record<number, string | null> = {};
+  messageMediaLoadingMap: Record<number, boolean> = {};
+  messageMediaErrorMap: Record<number, string | null> = {};
   private isPrependingMessages = false;
   private readonly handleMessageScroll = () => this.onMessageScroll();
   private messageStreamSubscription?: Subscription;
@@ -194,6 +197,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.removeUserChatScrollListener();
     this.removeMessageScrollListener();
     this.closeMessageStream();
+    this.clearMessageMediaUrls();
   }
 
   onSearchScroll() {
@@ -278,9 +282,13 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   loadInitialMessageHistory() {
+    this.clearMessageMediaUrls();
     this.messages = [];
     this.messageAddressMap = {};
     this.messageAiResponseMap = {};
+    this.messageMediaUrlMap = {};
+    this.messageMediaLoadingMap = {};
+    this.messageMediaErrorMap = {};
     this.currentMessagePage = 0;
     this.totalMessages = 0;
     this.hasMoreMessages = false;
@@ -405,6 +413,177 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     return message.direction === 'OUTBOUND';
   }
 
+  getMessageAvatar(message: CatiaMessageModel): string {
+    if (message.source === 'IA' || message.source === 'BACK_END') {
+      return 'assets/images/users/catia-off-background.png';
+    }
+
+    return 'assets/images/users/user-dummy-img.jpg';
+  }
+
+  private normalizeEpoch(value?: number | null): number | null {
+    if (!value) {
+      return null;
+    }
+
+    return value < 1_000_000_000_000 ? value * 1000 : value;
+  }
+
+  getMessageTimestampMs(message: CatiaMessageModel): number | null {
+    return this.normalizeEpoch(message.sentAt ?? message.timestamp);
+  }
+
+  isMediaMessage(message: CatiaMessageModel): boolean {
+    return (
+      message.type === 'IMAGE' ||
+      message.type === 'VIDEO' ||
+      message.type === 'AUDIO' ||
+      message.type === 'DOCUMENT'
+    );
+  }
+
+  isMessageMediaLikelyExpired(message: CatiaMessageModel): boolean {
+    const timestampMs = this.getMessageTimestampMs(message);
+
+    if (!timestampMs) {
+      return false;
+    }
+
+    const ageMs = Date.now() - timestampMs;
+    const twentyNineDaysMs = 29 * 24 * 60 * 60 * 1000;
+
+    return ageMs >= twentyNineDaysMs;
+  }
+
+  canLoadMessageMedia(message: CatiaMessageModel): boolean {
+    return this.isMediaMessage(message) && !!message.mediaId?.trim();
+  }
+
+  getMessageMediaUrl(message: CatiaMessageModel): string | null {
+    return this.messageMediaUrlMap[message.id] ?? null;
+  }
+
+  isMessageMediaLoading(message: CatiaMessageModel): boolean {
+    return !!this.messageMediaLoadingMap[message.id];
+  }
+
+  getMessageMediaError(message: CatiaMessageModel): string | null {
+    return this.messageMediaErrorMap[message.id] ?? null;
+  }
+
+  getMessageMediaTitle(message: CatiaMessageModel): string {
+    switch (message.type) {
+      case 'IMAGE':
+        return 'Imagen compartida';
+      case 'VIDEO':
+        return 'Video compartido';
+      case 'AUDIO':
+        return 'Audio compartido';
+      case 'DOCUMENT':
+        return message.mediaFilename?.trim() || 'Documento compartido';
+      default:
+        return 'Archivo multimedia';
+    }
+  }
+
+  getMessageMediaSubtitle(message: CatiaMessageModel): string {
+    if (message.mediaFilename?.trim() && message.type !== 'DOCUMENT') {
+      return message.mediaFilename;
+    }
+
+    if (message.mediaMimeType?.trim()) {
+      return message.mediaMimeType;
+    }
+
+    return this.isMessageMediaLikelyExpired(message)
+      ? 'Media antigua, puede haber expirado en WhatsApp'
+      : 'Disponible bajo demanda';
+  }
+
+  getMessageMediaActionLabel(message: CatiaMessageModel): string {
+    const hasUrl = !!this.getMessageMediaUrl(message);
+    const expired = this.isMessageMediaLikelyExpired(message);
+
+    if (message.type === 'DOCUMENT') {
+      if (hasUrl) {
+        return 'Abrir documento';
+      }
+
+      return expired ? 'Intentar recuperar' : 'Descargar';
+    }
+
+    if (hasUrl) {
+      return 'Abrir en pestaña';
+    }
+
+    switch (message.type) {
+      case 'IMAGE':
+        return expired ? 'Intentar recuperar' : 'Ver imagen';
+      case 'VIDEO':
+        return expired ? 'Intentar recuperar' : 'Cargar video';
+      case 'AUDIO':
+        return expired ? 'Intentar recuperar' : 'Cargar audio';
+      default:
+        return expired ? 'Intentar recuperar' : 'Cargar archivo';
+    }
+  }
+
+  loadMessageMedia(message: CatiaMessageModel) {
+    if (!this.canLoadMessageMedia(message) || this.isMessageMediaLoading(message)) {
+      return;
+    }
+
+    const existingUrl = this.getMessageMediaUrl(message);
+
+    if (existingUrl) {
+      this.openMessageMediaUrl(message, existingUrl);
+      return;
+    }
+
+    this.messageMediaLoadingMap[message.id] = true;
+    this.messageMediaErrorMap[message.id] = null;
+
+    this.catiaService.downloadWhatsAppMedia(message.mediaId!.trim()).subscribe({
+      next: (blob) => {
+        const objectUrl = URL.createObjectURL(blob);
+        this.messageMediaUrlMap[message.id] = objectUrl;
+        this.messageMediaLoadingMap[message.id] = false;
+
+        if (message.type === 'DOCUMENT') {
+          this.openMessageMediaUrl(message, objectUrl);
+        }
+      },
+      error: (err: any) => {
+        this.messageMediaLoadingMap[message.id] = false;
+        this.messageMediaErrorMap[message.id] =
+          err?.status === 404
+            ? 'El archivo ya no está disponible en WhatsApp.'
+            : 'No fue posible recuperar este archivo.';
+        console.error('Error descargando media del mensaje:', err);
+      },
+    });
+  }
+
+  openMessageMediaUrl(message: CatiaMessageModel, url?: string | null) {
+    const targetUrl = url ?? this.getMessageMediaUrl(message);
+
+    if (!targetUrl) {
+      return;
+    }
+
+    if (message.type === 'DOCUMENT') {
+      const anchor = document.createElement('a');
+      anchor.href = targetUrl;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+      anchor.download = message.mediaFilename?.trim() || 'documento';
+      anchor.click();
+      return;
+    }
+
+    window.open(targetUrl, '_blank', 'noopener,noreferrer');
+  }
+
   getMessageBubbleText(message: CatiaMessageModel): string {
     if (message.textBody?.trim()) {
       return message.textBody;
@@ -442,7 +621,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     return new Intl.DateTimeFormat('es-EC', {
       hour: '2-digit',
       minute: '2-digit',
-    }).format(new Date(value));
+    }).format(new Date(this.normalizeEpoch(value) ?? value));
   }
 
   ensureLocationMessagesLoaded(messages: CatiaMessageModel[]) {
@@ -529,6 +708,14 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
 
     return `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+  }
+
+  private clearMessageMediaUrls() {
+    for (const url of Object.values(this.messageMediaUrlMap)) {
+      if (url) {
+        URL.revokeObjectURL(url);
+      }
+    }
   }
 
   getMessageAlertLabel(): string {
