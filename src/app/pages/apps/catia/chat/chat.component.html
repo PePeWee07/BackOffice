@@ -466,8 +466,17 @@
                                   class="relative p-4 bg-white dark:bg-zink-700 rounded-md ltr:rounded-bl-none rtl:rounded-br-none shadow-sm 2xl:max-w-sm ltr:group-[.right]/item:rounded-br-none rtl:group-[.right]/item:rounded-bl-none ltr:group-[.right]/item:rounded-bl-md rtl:group-[.right]/item:rounded-br-md group-[.right]/item:order-2"
                                   [ngClass]="canOpenMessageMetadata(message) ? 'cursor-pointer ring-1 ring-transparent hover:ring-custom-200 dark:hover:ring-custom-500/30' : ''"
                                   (click)="openMessageMetadata(message)">
+                                  @if (canOpenMessageRawAudit(message)) {
+                                    <button
+                                      type="button"
+                                      (click)="$event.stopPropagation(); openMessageRawAuditForMessage(message)"
+                                      class="absolute top-2 ltr:right-2 rtl:left-2 inline-flex items-center justify-center size-6 rounded-full bg-slate-100 text-slate-500 hover:bg-custom-100 hover:text-custom-600 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-custom-500/20 dark:hover:text-custom-300"
+                                      title="Ver JSON completo">
+                                      <lucide-angular name="info" [class]="'size-3.5'"></lucide-angular>
+                                    </button>
+                                  }
                                   @if (message.type === 'LOCATION') {
-                                    <div class="min-w-56 max-w-sm">
+                                    <div class="min-w-56 max-w-sm pr-6">
                                       <div class="flex items-start gap-3">
                                         <div class="flex items-center justify-center rounded-md size-10 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300">
                                           <lucide-angular name="map-pin" [class]="'size-5'"></lucide-angular>
@@ -493,7 +502,7 @@
                                       </div>
                                     </div>
                                   } @else {
-                                    <p class="text-sm whitespace-pre-wrap break-words">
+                                    <p class="text-sm whitespace-pre-wrap break-words pr-6">
                                       {{ getMessageBubbleText(message) }}
                                     </p>
                                   }
@@ -635,6 +644,14 @@
         <div class="h-full p-4 overflow-y-auto">
             <div class="flex items-center gap-3">
               <h6 class="text-15 grow">Detalle del mensaje</h6>
+              @if (selectedMessageDetail) {
+                <button
+                  type="button"
+                  (click)="openMessageRawAudit()"
+                  class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md shrink-0 bg-custom-500 text-white">
+                  Ver JSON completo
+                </button>
+              }
               <button
                 type="button"
                 (click)="closeMessageMetadata()"
@@ -874,6 +891,49 @@
                 </div>
                 <p class="mt-4 text-sm text-slate-500 dark:text-zink-200">
                   Selecciona un mensaje de CATIA para ver sus metadatos.
+                </p>
+              </div>
+            }
+        </div>
+    </div>
+</drawer>
+
+<drawer id="drawerMessageRaw" [position]="'drawer-end'">
+    <div class="h-screen max-h-screen">
+        <div class="h-full p-4 overflow-y-auto">
+            <div class="flex items-center gap-3">
+              <h6 class="text-15 grow">Auditoría JSON</h6>
+              @if (selectedMessageRawDetail) {
+                <button
+                  type="button"
+                  (click)="copyText(formatJsonValue(selectedMessageRawDetail))"
+                  class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                  Copiar
+                </button>
+              }
+              <button
+                type="button"
+                (click)="closeMessageRawAudit()"
+                class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500">
+                <lucide-angular name="x" [class]="'size-4 mx-auto'"></lucide-angular>
+              </button>
+            </div>
+
+            @if (isLoadingSelectedMessageRawDetail) {
+              <div class="mt-6 p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                <p class="text-sm text-slate-500 dark:text-zink-200">Cargando JSON completo del mensaje...</p>
+              </div>
+            } @else if (selectedMessageRawDetail) {
+              <div class="mt-6">
+                <pre class="p-4 text-xs whitespace-pre-wrap break-words rounded-lg border border-slate-200 bg-slate-50 dark:border-zink-700 dark:bg-zink-700/40">{{ formatJsonValue(selectedMessageRawDetail) }}</pre>
+              </div>
+            } @else {
+              <div class="flex flex-col items-center justify-center py-16 text-center">
+                <div class="size-16 rounded-full bg-slate-100 dark:bg-zink-600 flex items-center justify-center">
+                  <lucide-angular name="file-json" [class]="'size-8 text-slate-400 dark:text-zink-300'"></lucide-angular>
+                </div>
+                <p class="mt-4 text-sm text-slate-500 dark:text-zink-200">
+                  No hay detalle JSON disponible para este mensaje.
                 </p>
               </div>
             }

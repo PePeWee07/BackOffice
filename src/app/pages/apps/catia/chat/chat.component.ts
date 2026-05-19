@@ -98,12 +98,15 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   latestMessagePreview = '';
   latestMessageType = '';
   selectedMessageDetail: CatiaMessageModel | null = null;
+  selectedMessageRawDetail: CatiaMessageModel | null = null;
   selectedMessageAiResponses: AiResponse[] = [];
   selectedMessageError: MessageError | null = null;
   selectedMessagePricing: MessagePricing | null = null;
+  isLoadingSelectedMessageRawDetail = false;
   isLoadingSelectedMessageAiResponses = false;
   isLoadingSelectedMessageError = false;
   isLoadingSelectedMessagePricing = false;
+  messageRawDetailMap: Record<number, CatiaMessageModel | null> = {};
   messageAiResponseMap: Record<number, AiResponse[] | null> = {};
   messageErrorMap: Record<number, MessageError | null> = {};
   messagePricingMap: Record<number, MessagePricing | null> = {};
@@ -660,6 +663,58 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.drawerService.close('drawerMessageMeta');
   }
 
+  canOpenMessageRawAudit(message: CatiaMessageModel): boolean {
+    return !!message?.id;
+  }
+
+  openMessageRawAuditForMessage(message: CatiaMessageModel) {
+    if (!this.canOpenMessageRawAudit(message)) {
+      return;
+    }
+
+    this.selectedMessageRawDetail = null;
+    this.isLoadingSelectedMessageRawDetail = false;
+    this.drawerService.open('drawerMessageRaw');
+
+    if (
+      Object.prototype.hasOwnProperty.call(this.messageRawDetailMap, message.id)
+    ) {
+      this.selectedMessageRawDetail = this.messageRawDetailMap[message.id];
+      return;
+    }
+
+    this.isLoadingSelectedMessageRawDetail = true;
+
+    this.catiaService.findMessageId(message.id).subscribe({
+      next: (fullMessage) => {
+        this.selectedMessageRawDetail = fullMessage;
+        this.messageRawDetailMap[message.id] = fullMessage;
+        this.isLoadingSelectedMessageRawDetail = false;
+      },
+      error: (err: any) => {
+        this.selectedMessageRawDetail = null;
+        this.messageRawDetailMap[message.id] = null;
+        this.isLoadingSelectedMessageRawDetail = false;
+        this.toastr.error(JSON.stringify(err));
+        console.error('Error:', err);
+      },
+    });
+  }
+
+  openMessageRawAudit() {
+    if (!this.selectedMessageDetail?.id) {
+      return;
+    }
+
+    this.openMessageRawAuditForMessage(this.selectedMessageDetail);
+  }
+
+  closeMessageRawAudit() {
+    this.selectedMessageRawDetail = null;
+    this.isLoadingSelectedMessageRawDetail = false;
+    this.drawerService.close('drawerMessageRaw');
+  }
+
   getMessageSourceLabel(message?: CatiaMessageModel | null): string {
     if (!message) {
       return 'N/A';
@@ -721,6 +776,22 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       return JSON.stringify(parsed, null, 2);
     } catch {
       return content;
+    }
+  }
+
+  formatJsonValue(value: unknown): string {
+    if (value === null || value === undefined) {
+      return 'N/A';
+    }
+
+    if (typeof value === 'string') {
+      return this.formatStructuredText(value);
+    }
+
+    try {
+      return JSON.stringify(value, null, 2);
+    } catch {
+      return String(value);
     }
   }
 
