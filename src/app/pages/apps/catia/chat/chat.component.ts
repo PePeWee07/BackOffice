@@ -69,10 +69,11 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   } | null = null;
   formMessage!: UntypedFormGroup;
   isMenuCollapsed = false; // For Menu Collapse in false
+  isChatFinderHidden = true;
   searchTerm = '';
   searchMode: 'identificacion' | 'whatsappPhone' = 'identificacion';
   private readonly scrollThreshold = 120;
-  
+
   searchResults: CatiaUserModel[] = [];
   hasSearchedUser = false;
   isSearchingUser = false;
@@ -137,7 +138,6 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       chatMsg: ['', [Validators.required]],
     });
   }
-  // ===================================================
 
   ngAfterViewInit() {
     this.registerSearchScrollListener();
@@ -219,7 +219,19 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // ================== Consumos Servicios =======================
+  // Cargar Historial de chat
+  getMessageHistory(){
+    this.catiaService.getMessageHistory().subscribe({
+      next: () => {},
+      error: (err: any) => {
+        this.isLoadingUserChats = false;
+        this.toastr.error(JSON.stringify(err));
+        console.error('Error:', err);
+      },
+    });
+  }
+
+
   // Buscar usuario por identificacion(DNI/Pasaporte) o whatsappPhone(Numero Telefonico)
   findUserChat(params: CatiaUserFindQueryParams, reset = false) {
     const searchValue =
@@ -344,8 +356,6 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   // Send Message
   messageSave() {}
-
-  // =============== Metodos =======================
 
   submitUserSearch() {
     const searchValue = this.searchTerm.trim();
@@ -569,6 +579,10 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.isMenuCollapsed = !this.isMenuCollapsed;
   }
 
+  toggleChatFinder(): void {
+    this.isChatFinderHidden = !this.isChatFinderHidden;
+  }
+
   // Devuelve un string con los tipos de rol o 'None'
   getRolesString(roles?: RolesUsuario[]): string {
     if (!roles?.length) {
@@ -637,11 +651,14 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   // OnClick User Chat show
-  chatUsername(name: any, role: any) {
-    this.username = name;
+  selectChatUser(user: CatiaUserModel) {
+    this.selectedUser = user;
     this.chatuser = [];
     const currentDate = new Date();
-    this.role = role;
+    this.username = this.getUserDisplayName(user);
+    this.role = this.getRolesString(user.erpUser?.rolesUsuario);
+    this.isEditingUserProfile = false;
+    this.profileDraft = null;
 
     this.chatuser.push({
       name: this.username,
@@ -649,12 +666,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  openUserProfile(user: CatiaUserModel) {
-    this.selectedUser = user;
-    this.username = this.getUserDisplayName(user);
-    this.role = this.getRolesString(user.erpUser?.rolesUsuario);
-    this.isEditingUserProfile = false;
-    this.profileDraft = null;
+  openProfileTab() {
     this.showTab = true;
     this.tabContextService.changeTab('chat', 'profile');
   }
@@ -729,7 +741,10 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   private syncUpdatedUser(updatedUser: CatiaUserModel) {
-    this.searchResults = this.replaceUserInList(this.searchResults, updatedUser);
+    this.searchResults = this.replaceUserInList(
+      this.searchResults,
+      updatedUser
+    );
     this.recentChat = this.replaceUserInList(this.recentChat, updatedUser);
     this.allConversations = this.replaceUserInList(
       this.allConversations,
@@ -741,6 +756,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     users: CatiaUserModel[],
     updatedUser: CatiaUserModel
   ): CatiaUserModel[] {
-    return users.map((user) => (user.id === updatedUser.id ? updatedUser : user));
+    return users.map((user) =>
+      user.id === updatedUser.id ? updatedUser : user
+    );
   }
 }

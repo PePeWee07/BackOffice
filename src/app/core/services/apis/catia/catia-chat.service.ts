@@ -314,9 +314,6 @@ export class CatiaChatService {
     );
   }
 
-  // WhatsApp Send Doc By ID
-  // WhatsApp Send Doc By URL
-
   // WhatsApp Template All Responses
   getAllTemplateResponses(
     params: CatiaTemplateQueryParams = {}
