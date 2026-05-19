@@ -12,8 +12,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as Prism from 'prismjs';
+import { Subscription } from 'rxjs';
 
 import { CatiaChatService } from '../../../../core/services/apis/catia/catia-chat.service';
+import { CatiaMessageModel } from '../../../../core/services/apis/catia/models/catia-message';
 import { TabContextService } from '../../../../Component/tab/tab-context.service';
 import { ToastrService } from 'ngx-toastr';
 import {
@@ -52,7 +54,6 @@ import {
   ],
 })
 export class ChatComponent implements AfterViewInit, OnDestroy {
-  chatuser: any;
   username: string = 'User';
   showTab: boolean = true;
   profile: string = 'assets/images/users/user-dummy-img.jpg';
@@ -73,6 +74,21 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   searchTerm = '';
   searchMode: 'identificacion' | 'whatsappPhone' = 'identificacion';
   private readonly scrollThreshold = 120;
+
+  messages: CatiaMessageModel[] = [];
+  currentMessagePage = 0;
+  readonly messagePageSize = 20;
+  totalMessages = 0;
+  hasMoreMessages = false;
+  isLoadingMessages = false;
+  private isPrependingMessages = false;
+  private readonly handleMessageScroll = () => this.onMessageScroll();
+  private messageStreamSubscription?: Subscription;
+  isStreamingSelectedChat = false;
+  hasNewMessageAlert = false;
+  newMessageAlertCount = 0;
+  latestMessagePreview = '';
+  latestMessageType = '';
 
   searchResults: CatiaUserModel[] = [];
   hasSearchedUser = false;
@@ -120,6 +136,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('recentScrollRef') recentScrollRef: any;
   @ViewChild('allScrollRef') allScrollRef: any;
+  @ViewChild('messageScrollRef') messageScrollRef: any;
   constructor(
     public formBuilder: UntypedFormBuilder,
     public translate: TranslateService,
@@ -131,7 +148,6 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.loadInitialUserChats();
     this.loadInitialRecentChats();
-    this.chatuser = [];
 
     // Validation
     this.formMessage = this.formBuilder.group({
@@ -143,6 +159,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.registerSearchScrollListener();
     this.registerRecentChatScrollListener();
     this.registerUserChatScrollListener();
+    this.registerMessageScrollListener();
   }
 
   ngAfterContentChecked() {
@@ -153,6 +170,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.removeSearchScrollListener();
     this.removeRecentChatScrollListener();
     this.removeUserChatScrollListener();
+    this.removeMessageScrollListener();
+    this.closeMessageStream();
   }
 
   onSearchScroll() {
@@ -219,12 +238,254 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  onMessageScroll() {
+    const scrollElement = this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (
+      !scrollElement ||
+      this.isLoadingMessages ||
+      !this.hasMoreMessages ||
+      !this.selectedUser
+    ) {
+      return;
+    }
+
+    if (scrollElement.scrollTop <= this.scrollThreshold) {
+      this.loadNextMessageHistoryPage();
+    }
+  }
+
+  loadInitialMessageHistory() {
+    this.messages = [];
+    this.currentMessagePage = 0;
+    this.totalMessages = 0;
+    this.hasMoreMessages = false;
+    this.isLoadingMessages = false;
+    this.isPrependingMessages = false;
+    this.getMessageHistory(0, true);
+  }
+
+  openMessageStream(phone: string) {
+    const sanitizedPhone = phone.trim();
+
+    if (!sanitizedPhone) {
+      return;
+    }
+
+    this.closeMessageStream();
+    this.isStreamingSelectedChat = true;
+
+    this.messageStreamSubscription = this.catiaService
+      .streamMessages(sanitizedPhone)
+      .subscribe({
+        next: (streamEvent) => {
+          if (streamEvent.event === 'connected') {
+            return;
+          }
+
+          if (streamEvent.event !== 'message_update') {
+            return;
+          }
+
+          const payload =
+            streamEvent.data && typeof streamEvent.data === 'object'
+              ? (streamEvent.data as {
+                  eventType?: string;
+                  phone?: string;
+                  messageType?: string;
+                  preview?: string;
+                })
+              : null;
+
+          if (!payload?.phone || payload.phone !== sanitizedPhone) {
+            return;
+          }
+
+          this.hasNewMessageAlert = true;
+          this.newMessageAlertCount += 1;
+          this.latestMessagePreview = payload.preview?.trim() ?? '';
+          this.latestMessageType = payload.messageType?.trim() ?? '';
+        },
+        error: (err: unknown) => {
+          this.isStreamingSelectedChat = false;
+          console.error('Error en stream SSE:', err);
+        },
+        complete: () => {
+          this.isStreamingSelectedChat = false;
+        },
+      });
+  }
+
+  closeMessageStream() {
+    this.messageStreamSubscription?.unsubscribe();
+    this.messageStreamSubscription = undefined;
+    this.isStreamingSelectedChat = false;
+  }
+
+  refreshSelectedChatMessages() {
+    if (!this.selectedUser) {
+      return;
+    }
+
+    this.hasNewMessageAlert = false;
+    this.newMessageAlertCount = 0;
+    this.latestMessagePreview = '';
+    this.latestMessageType = '';
+    this.loadInitialMessageHistory();
+  }
+
+  loadNextMessageHistoryPage() {
+    if (!this.selectedUser || this.isLoadingMessages || !this.hasMoreMessages) {
+      return;
+    }
+
+    this.getMessageHistory(this.currentMessagePage + 1);
+  }
+
+  registerMessageScrollListener() {
+    const scrollElement = this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement) {
+      return;
+    }
+
+    scrollElement.addEventListener('scroll', this.handleMessageScroll);
+  }
+
+  removeMessageScrollListener() {
+    const scrollElement = this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement) {
+      return;
+    }
+
+    scrollElement.removeEventListener('scroll', this.handleMessageScroll);
+  }
+
+  ensureMessageHistoryFillViewport() {
+    const scrollElement = this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement || this.isLoadingMessages || !this.hasMoreMessages) {
+      return;
+    }
+
+    const hasScrollableOverflow =
+      scrollElement.scrollHeight > scrollElement.clientHeight + 8;
+
+    if (!hasScrollableOverflow) {
+      this.loadNextMessageHistoryPage();
+    }
+  }
+
+  isOutgoingMessage(message: CatiaMessageModel): boolean {
+    return message.direction === 'OUTBOUND';
+  }
+
+  getMessageBubbleText(message: CatiaMessageModel): string {
+    if (message.textBody?.trim()) {
+      return message.textBody;
+    }
+
+    if (message.mediaCaption?.trim()) {
+      return message.mediaCaption;
+    }
+
+    switch (message.type) {
+      case 'IMAGE':
+        return '[Imagen]';
+      case 'VIDEO':
+        return '[Video]';
+      case 'AUDIO':
+        return '[Audio]';
+      case 'DOCUMENT':
+        return `[Documento] ${message.mediaFilename ?? ''}`.trim();
+      case 'REACTION':
+        return `[Reacción] ${message.reactionEmoji ?? ''}`.trim();
+      case 'TEMPLATE':
+        return `[Template] ${message.messageTemplate?.templateName ?? ''}`.trim();
+      default:
+        return `[${message.type}]`;
+    }
+  }
+
+  getMessageTime(value?: number | null): string {
+    if (!value) {
+      return '';
+    }
+
+    return new Intl.DateTimeFormat('es-EC', {
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(value));
+  }
+
+  getMessageAlertLabel(): string {
+    if (this.newMessageAlertCount <= 1) {
+      return 'Hay un mensaje nuevo';
+    }
+
+    return `Hay ${this.newMessageAlertCount} mensajes nuevos`;
+  }
+
   // Cargar Historial de chat
-  getMessageHistory(){
-    this.catiaService.getMessageHistory().subscribe({
-      next: () => {},
+  getMessageHistory(page: number, reset = false) {
+    const phone = this.selectedUser?.whatsappPhone?.trim();
+
+    if (!phone) {
+      return;
+    }
+
+    this.isLoadingMessages = true;
+
+    const scrollElement = this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+    const previousScrollHeight = scrollElement?.scrollHeight ?? 0;
+
+    this.catiaService.getMessageHistory({
+      phone,
+      page,
+      size: this.messagePageSize,
+      direction: 'desc',
+    }).subscribe({
+      next: (pageMessages) => {
+        const incomingMessages = [...(pageMessages.content ?? [])].reverse();
+
+        if (reset || pageMessages.page.number === 0) {
+          this.messages = incomingMessages;
+        } else {
+          this.isPrependingMessages = true;
+          this.messages = [...incomingMessages, ...this.messages];
+        }
+
+        this.currentMessagePage = pageMessages.page.number;
+        this.totalMessages = pageMessages.page.totalElements;
+        this.hasMoreMessages =
+          pageMessages.page.number + 1 < pageMessages.page.totalPages;
+        this.isLoadingMessages = false;
+
+        setTimeout(() => {
+          this.registerMessageScrollListener();
+
+          const currentScrollElement =
+            this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+
+          if (!currentScrollElement) {
+            return;
+          }
+
+          if (reset) {
+            currentScrollElement.scrollTop = currentScrollElement.scrollHeight;
+          } else if (this.isPrependingMessages) {
+            const currentScrollHeight = currentScrollElement.scrollHeight;
+            currentScrollElement.scrollTop =
+              currentScrollHeight - previousScrollHeight;
+            this.isPrependingMessages = false;
+          }
+
+          this.ensureMessageHistoryFillViewport();
+        });
+      },
       error: (err: any) => {
-        this.isLoadingUserChats = false;
+        this.isLoadingMessages = false;
         this.toastr.error(JSON.stringify(err));
         console.error('Error:', err);
       },
@@ -652,18 +913,20 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   // OnClick User Chat show
   selectChatUser(user: CatiaUserModel) {
+    this.closeMessageStream();
     this.selectedUser = user;
-    this.chatuser = [];
-    const currentDate = new Date();
     this.username = this.getUserDisplayName(user);
     this.role = this.getRolesString(user.erpUser?.rolesUsuario);
     this.isEditingUserProfile = false;
     this.profileDraft = null;
-
-    this.chatuser.push({
-      name: this.username,
-      time: currentDate.getHours() + ':' + currentDate.getMinutes(),
-    });
+    this.hasNewMessageAlert = false;
+    this.newMessageAlertCount = 0;
+    this.latestMessagePreview = '';
+    this.latestMessageType = '';
+    this.loadInitialMessageHistory();
+    if (user.whatsappPhone?.trim()) {
+      this.openMessageStream(user.whatsappPhone);
+    }
   }
 
   openProfileTab() {

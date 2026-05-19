@@ -348,7 +348,7 @@
           <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full min-w-0 chat-content">
               <div class="relative flex flex-col h-full">
                   <!-- chat-header -->
-                  <div class="card-body" style="border: 1px dashed red;">
+                  <div class="card-body">
                       <div class="flex items-center gap-3">
                         @if (isMenuCollapsed){
                           <button
@@ -364,7 +364,18 @@
                               </div>
                               <div>
                                   <h6>{{username}}</h6>
-                                  <p class="text-sm text-slate-500 dark:text-zink-200">{{role}}</p>
+                                  <div class="flex items-center gap-2">
+                                      <p class="text-sm text-slate-500 dark:text-zink-200">{{role}}</p>
+                                      @if (selectedUser) {
+                                        <span
+                                          class="px-2 py-0.5 text-[10px] rounded-md"
+                                          [ngClass]="isStreamingSelectedChat
+                                            ? 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-300'
+                                            : 'bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200'">
+                                          {{ isStreamingSelectedChat ? 'En vivo' : 'Sin stream' }}
+                                        </span>
+                                      }
+                                  </div>
                               </div>
                           </a>
                           <ul class="flex items-center">
@@ -393,51 +404,87 @@
                   <div [class.hidden]="isChatFinderHidden" class="absolute inset-x-0 top-0 z-10 transition-all duration-200 ease-linear bg-white border-y border-slate-200 dark:bg-zink-700 dark:border-zink-500" id="searchChat">
                       <input type="text" class="w-full px-5 py-2 focus:outline-none" placeholder="Search for ..." autocomplete="off">
                   </div>
-                  <ngx-simplebar class="h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)]">
+                  @if (hasNewMessageAlert && selectedUser) {
+                    <div class="absolute inset-x-0 top-0 z-[11] px-4 pt-3">
+                      <div class="flex items-start gap-3 px-4 py-3 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
+                        <lucide-angular name="bell-ring" [class]="'size-4 mt-0.5 shrink-0'"></lucide-angular>
+                        <div class="min-w-0 grow">
+                          <p class="text-sm font-medium">{{ getMessageAlertLabel() }}</p>
+                          @if (latestMessagePreview) {
+                            <p class="mt-1 text-xs truncate" [title]="latestMessagePreview">
+                              {{ latestMessagePreview }}
+                            </p>
+                          }
+                          @if (latestMessageType && !latestMessagePreview) {
+                            <p class="mt-1 text-xs">
+                              Tipo: {{ latestMessageType }}
+                            </p>
+                          }
+                        </div>
+                        <button
+                          type="button"
+                          (click)="refreshSelectedChatMessages()"
+                          class="shrink-0 px-3 py-1.5 text-xs font-medium rounded-md bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-100 dark:bg-zink-700 dark:text-emerald-300 dark:border-emerald-500/30">
+                          Actualizar
+                        </button>
+                      </div>
+                    </div>
+                  }
+                  <ngx-simplebar
+                    class="h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)]"
+                    #messageScrollRef>
                     <ul class="flex flex-col gap-5 list-none card-body">
-                      @for(user of chatuser;track $index){
-                        <li class="flex chat-message group/item [&.right]:justify-end" [ngClass]="user.isSender == true ? 'right':''">
+                      @if (!selectedUser && !isLoadingMessages) {
+                        <li class="text-center text-sm text-slate-500 dark:text-zink-200">
+                          Selecciona una conversación para ver el historial.
+                        </li>
+                      }
+
+                      @if (selectedUser && hasMoreMessages) {
+                        <li class="text-center text-xs text-slate-400 dark:text-zink-300">
+                          Desplázate hacia arriba para cargar mensajes anteriores
+                        </li>
+                      }
+
+                      @if (isLoadingMessages && messages.length === 0) {
+                        <li class="text-center text-sm text-slate-500 dark:text-zink-200">
+                          Cargando mensajes...
+                        </li>
+                      }
+
+                      @for(message of messages; track message.id){
+                        <li
+                          class="flex chat-message group/item [&.right]:justify-end"
+                          [ngClass]="isOutgoingMessage(message) ? 'right' : ''">
                           <div class="flex gap-3">
                             <a href="javascript:void(0);" class="flex items-center self-end justify-center text-sm font-semibold rounded-full size-9 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 shrink-0 group-[.right]/item:order-3">
-                              <img src="{{user.avatar}}" alt="" class="object-cover rounded-full h-9">
+                              <img src="assets/images/users/user-dummy-img.jpg" alt="" class="object-cover rounded-full h-9">
                             </a>
-                            <div class="grow group-[.right]/item:order-2 flex flex-col gap-3">
+                            <div class="grow group-[.right]/item:order-2 flex flex-col gap-2">
                               <div class="flex gap-3">
                                 <div class="relative p-4 bg-white dark:bg-zink-700 rounded-md ltr:rounded-bl-none rtl:rounded-br-none shadow-sm 2xl:max-w-sm ltr:group-[.right]/item:rounded-br-none rtl:group-[.right]/item:rounded-bl-none ltr:group-[.right]/item:rounded-bl-md rtl:group-[.right]/item:rounded-br-md group-[.right]/item:order-2">
-                                  {{user.chatMsg}}
-                                  @if(user.attachments){
-                                    <div class="grid grid-cols-2 gap-4 mt-4 2xl:grid-cols-3">
-                                      @for(attachment of user.attachments;track $index){
-                                        <a href="javascript:void(0);">
-                                          <img [src]="attachment" alt="" class="rounded-md">
-                                        </a>
-                                      }
-                                    </div>
-                                  }
-                                </div>
-                                <div mndropdown class="relative transition-all duration-200 ease-linear opacity-0 dropdown shrink-0 group-hover/item:opacity-100 group-[.right]/item:order-1">
-                                  <button mndropdownToggle type="button" class="dropdown-toggle" id="dropdownMenuButton" data-bs-toggle="dropdown"><lucide-angular name="more-vertical" class="inline-block size-4 ml-1"></lucide-angular></button>
-                                  <ul mndropdownMenu class="absolute z-50 py-2 mt-1 ltr:text-left rtl:text-right list-none bg-white rounded-md shadow-md dropdown-menu min-w-[10rem] dark:bg-zink-600" aria-labelledby="dropdownMenuButton">
-                                    <li>
-                                      <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Reply</a>
-                                    </li>
-                                    <li>
-                                      <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Forward</a>
-                                    </li>
-                                    <li>
-                                      <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Copy</a>
-                                    </li>
-                                    <li>
-                                      <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Bookmark</a>
-                                    </li>
-                                    <li>
-                                      <a class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200" href="javascript:void(0);">Delete</a>
-                                    </li>
-                                  </ul>
+                                  <p class="text-sm whitespace-pre-wrap break-words">
+                                    {{ getMessageBubbleText(message) }}
+                                  </p>
+                                  <p class="mt-2 text-[11px] text-slate-400 dark:text-zink-300">
+                                    {{ getMessageTime(message.sentAt || message.timestamp) }}
+                                  </p>
                                 </div>
                               </div>
                             </div>
                           </div>
+                        </li>
+                      }
+
+                      @if (isLoadingMessages && messages.length > 0) {
+                        <li class="text-center text-xs text-slate-500 dark:text-zink-200">
+                          Cargando mensajes anteriores...
+                        </li>
+                      }
+
+                      @if (!isLoadingMessages && selectedUser && messages.length === 0) {
+                        <li class="text-center text-sm text-slate-500 dark:text-zink-200">
+                          No hay mensajes para esta conversación.
                         </li>
                       }
                     </ul>
