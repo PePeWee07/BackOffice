@@ -71,10 +71,10 @@ export interface AiResponse {
 
 export interface AiToolCall {
   id?: number;
-  toolCallId?: string;
+  callId?: string;
   toolName?: string;
-  argumentsJson?: string;
-  result?: string;
+  arguments?: string;
+  output?: string;
   status?: string;
 }
 

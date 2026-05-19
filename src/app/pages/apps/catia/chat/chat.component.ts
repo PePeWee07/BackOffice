@@ -16,9 +16,11 @@ import { Subscription } from 'rxjs';
 
 import { CatiaChatService } from '../../../../core/services/apis/catia/catia-chat.service';
 import {
+  AiResponse,
   CatiaMessageModel,
   MessageAddress,
 } from '../../../../core/services/apis/catia/models/catia-message';
+import { DrawerService } from '../../../../Component/drawer/drawer.service';
 import { TabContextService } from '../../../../Component/tab/tab-context.service';
 import { ToastrService } from 'ngx-toastr';
 import {
@@ -93,6 +95,10 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   newMessageAlertCount = 0;
   latestMessagePreview = '';
   latestMessageType = '';
+  selectedMessageDetail: CatiaMessageModel | null = null;
+  selectedMessageAiResponses: AiResponse[] = [];
+  isLoadingSelectedMessageAiResponses = false;
+  messageAiResponseMap: Record<number, AiResponse[] | null> = {};
 
   searchResults: CatiaUserModel[] = [];
   hasSearchedUser = false;
@@ -146,7 +152,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     public translate: TranslateService,
     private catiaService: CatiaChatService,
     private tabContextService: TabContextService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private drawerService: DrawerService
   ) {}
 
   ngOnInit(): void {
@@ -262,6 +269,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   loadInitialMessageHistory() {
     this.messages = [];
     this.messageAddressMap = {};
+    this.messageAiResponseMap = {};
     this.currentMessagePage = 0;
     this.totalMessages = 0;
     this.hasMoreMessages = false;
@@ -518,6 +526,134 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
 
     return `Hay ${this.newMessageAlertCount} mensajes nuevos`;
+  }
+
+  canOpenMessageMetadata(message: CatiaMessageModel): boolean {
+    const catiaOwnedSource =
+      message.source === 'IA' ||
+      message.source === 'BACK_END' ||
+      message.source === 'BACK_OFFICE';
+
+    const likelyCatiaOutbound =
+      message.direction === 'OUTBOUND' && message.source !== 'USER';
+
+    const hasAiMetadata =
+      (message.aiResponses?.length ?? 0) > 0 ||
+      Object.prototype.hasOwnProperty.call(this.messageAiResponseMap, message.id);
+
+    return catiaOwnedSource || likelyCatiaOutbound || hasAiMetadata;
+  }
+
+  openMessageMetadata(message: CatiaMessageModel) {
+    if (!this.canOpenMessageMetadata(message)) {
+      return;
+    }
+
+    this.selectedMessageDetail = message;
+    this.selectedMessageAiResponses = message.aiResponses ?? [];
+    this.isLoadingSelectedMessageAiResponses = false;
+    this.drawerService.open('drawerMessageMeta');
+
+    if (this.selectedMessageAiResponses.length > 0) {
+      this.messageAiResponseMap[message.id] = this.selectedMessageAiResponses;
+      return;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(this.messageAiResponseMap, message.id)) {
+      this.selectedMessageAiResponses =
+        this.messageAiResponseMap[message.id] ?? [];
+      return;
+    }
+
+    this.isLoadingSelectedMessageAiResponses = true;
+
+    this.catiaService.getAiResponses(message.id).subscribe({
+      next: (aiResponses) => {
+        this.selectedMessageAiResponses = aiResponses ?? [];
+        this.messageAiResponseMap[message.id] = this.selectedMessageAiResponses;
+        this.isLoadingSelectedMessageAiResponses = false;
+      },
+      error: (err: any) => {
+        this.selectedMessageAiResponses = [];
+        this.messageAiResponseMap[message.id] = [];
+        this.isLoadingSelectedMessageAiResponses = false;
+
+        if (err?.status !== 404) {
+          console.error('Error cargando metadata IA del mensaje:', err);
+        }
+      },
+    });
+  }
+
+  closeMessageMetadata() {
+    this.selectedMessageDetail = null;
+    this.selectedMessageAiResponses = [];
+    this.isLoadingSelectedMessageAiResponses = false;
+    this.drawerService.close('drawerMessageMeta');
+  }
+
+  getMessageSourceLabel(message?: CatiaMessageModel | null): string {
+    if (!message) {
+      return 'N/A';
+    }
+
+    switch (message.source) {
+      case 'IA':
+        return 'IA';
+      case 'BACK_END':
+        return 'Back-end';
+      case 'BACK_OFFICE':
+        return 'BackOffice';
+      case 'USER':
+        return 'Usuario';
+      default:
+        return message.source;
+    }
+  }
+
+  getMessageDirectionLabel(message?: CatiaMessageModel | null): string {
+    if (!message) {
+      return 'N/A';
+    }
+
+    return message.direction === 'OUTBOUND' ? 'Salida' : 'Entrada';
+  }
+
+  formatMessageDateTime(value?: number | null): string {
+    if (!value) {
+      return 'N/A';
+    }
+
+    return new Intl.DateTimeFormat('es-EC', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(new Date(value));
+  }
+
+  formatStructuredText(value?: string | null): string {
+    const content = value?.trim();
+
+    if (!content) {
+      return 'N/A';
+    }
+
+    try {
+      let parsed: unknown = JSON.parse(content);
+
+      if (typeof parsed === 'string') {
+        const nestedContent = parsed;
+
+        try {
+          parsed = JSON.parse(nestedContent);
+        } catch {
+          return nestedContent;
+        }
+      }
+
+      return JSON.stringify(parsed, null, 2);
+    } catch {
+      return content;
+    }
   }
 
   // Cargar Historial de chat

@@ -462,7 +462,10 @@
                             </a>
                             <div class="grow group-[.right]/item:order-2 flex flex-col gap-2">
                               <div class="flex gap-3">
-                                <div class="relative p-4 bg-white dark:bg-zink-700 rounded-md ltr:rounded-bl-none rtl:rounded-br-none shadow-sm 2xl:max-w-sm ltr:group-[.right]/item:rounded-br-none rtl:group-[.right]/item:rounded-bl-none ltr:group-[.right]/item:rounded-bl-md rtl:group-[.right]/item:rounded-br-md group-[.right]/item:order-2">
+                                <div
+                                  class="relative p-4 bg-white dark:bg-zink-700 rounded-md ltr:rounded-bl-none rtl:rounded-br-none shadow-sm 2xl:max-w-sm ltr:group-[.right]/item:rounded-br-none rtl:group-[.right]/item:rounded-bl-none ltr:group-[.right]/item:rounded-bl-md rtl:group-[.right]/item:rounded-br-md group-[.right]/item:order-2"
+                                  [ngClass]="canOpenMessageMetadata(message) ? 'cursor-pointer ring-1 ring-transparent hover:ring-custom-200 dark:hover:ring-custom-500/30' : ''"
+                                  (click)="openMessageMetadata(message)">
                                   @if (message.type === 'LOCATION') {
                                     <div class="min-w-56 max-w-sm">
                                       <div class="flex items-start gap-3">
@@ -479,6 +482,7 @@
                                           @if (getMessageLocationMapUrl(message); as mapUrl) {
                                             <a
                                               [href]="mapUrl"
+                                              (click)="$event.stopPropagation()"
                                               target="_blank"
                                               rel="noopener noreferrer"
                                               class="inline-flex mt-3 text-xs font-medium text-custom-500 hover:text-custom-600">
@@ -496,6 +500,14 @@
                                   <p class="mt-2 text-[11px] text-slate-400 dark:text-zink-300">
                                     {{ getMessageTime(message.sentAt || message.timestamp) }}
                                   </p>
+                                  @if (canOpenMessageMetadata(message)) {
+                                    <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                                      <lucide-angular name="info" [class]="'size-3.5'"></lucide-angular>
+                                      <p class="text-[10px]">
+                                        Ver metadata CATIA
+                                      </p>
+                                    </div>
+                                  }
                                 </div>
                               </div>
                             </div>
@@ -608,6 +620,169 @@
       </div>
     </div>
   </div>
+</drawer>
+
+<drawer id="drawerMessageMeta" [position]="'drawer-end'">
+    <div class="h-screen max-h-screen">
+        <div class="h-full p-4 overflow-y-auto">
+            <div class="flex items-center gap-3">
+              <h6 class="text-15 grow">Detalle del mensaje</h6>
+              <button
+                type="button"
+                (click)="closeMessageMetadata()"
+                class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500">
+                <lucide-angular name="x" [class]="'size-4 mx-auto'"></lucide-angular>
+              </button>
+            </div>
+
+            @if (selectedMessageDetail) {
+              <div class="mt-6 p-4 rounded-lg bg-slate-50 dark:bg-zink-700/40">
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-700 dark:bg-custom-500/20 dark:text-custom-300">
+                    {{ getMessageSourceLabel(selectedMessageDetail) }}
+                  </span>
+                  <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                    {{ getMessageDirectionLabel(selectedMessageDetail) }}
+                  </span>
+                  <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                    {{ selectedMessageDetail.type }}
+                  </span>
+                </div>
+
+                <div class="mt-4 grid grid-cols-1 gap-3">
+                  <div>
+                    <p class="text-xs text-slate-500 dark:text-zink-300">Contenido</p>
+                    <p class="mt-1 text-sm break-words">{{ getMessageBubbleText(selectedMessageDetail) }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-slate-500 dark:text-zink-300">Fecha</p>
+                    <p class="mt-1 text-sm">{{ formatMessageDateTime(selectedMessageDetail.sentAt || selectedMessageDetail.timestamp) }}</p>
+                  </div>
+                  <div>
+                    <p class="text-xs text-slate-500 dark:text-zink-300">WAMID</p>
+                    <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageDetail.wamid || 'N/A' }}</p>
+                  </div>
+                  @if (selectedMessageDetail.relatedWamid) {
+                    <div>
+                      <p class="text-xs text-slate-500 dark:text-zink-300">Relacionado con</p>
+                      <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageDetail.relatedWamid }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="mt-5">
+                <div class="flex items-center gap-2 mb-4">
+                  <p class="text-slate-500 dark:text-zink-200 grow">Metadata IA</p>
+                  <span class="px-2 py-1 text-[11px] rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                    {{ selectedMessageAiResponses.length }} respuesta(s)
+                  </span>
+                </div>
+
+                @if (isLoadingSelectedMessageAiResponses) {
+                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                    <p class="text-sm text-slate-500 dark:text-zink-200">Cargando metadata IA...</p>
+                  </div>
+                } @else if (selectedMessageAiResponses.length === 0) {
+                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                    <p class="text-sm text-slate-500 dark:text-zink-200">
+                      Este mensaje no tiene respuestas IA asociadas.
+                    </p>
+                  </div>
+                } @else {
+                  <div class="flex flex-col gap-4">
+                    @for (response of selectedMessageAiResponses; track response.id) {
+                      <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                        <div class="flex flex-wrap gap-2 mb-4">
+                          <span class="px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-700 dark:bg-custom-500/20 dark:text-custom-300">
+                            {{ response.model || 'Modelo N/A' }}
+                          </span>
+                          <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                            Tokens: {{ response.totalTokens }}
+                          </span>
+                          <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                            In: {{ response.inputTokens }} | Out: {{ response.outputTokens }}
+                          </span>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-3">
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">Fecha</p>
+                            <p class="mt-1 text-sm">{{ formatMessageDateTime(response.createdAt) }}</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">Response ID</p>
+                            <p class="mt-1 text-xs font-mono break-all">{{ response.responseId || 'N/A' }}</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">Previous Response ID</p>
+                            <p class="mt-1 text-xs font-mono break-all">{{ response.previousResponseId || 'N/A' }}</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">Prompt ID / versión</p>
+                            <p class="mt-1 text-xs font-mono break-all">
+                              {{ response.promptId || 'N/A' }} - {{ response.promptVersion || 'N/A' }}
+                            </p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">Prompt Variables</p>
+                            <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.promptVariables) }}</pre>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">Metadata</p>
+                            <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.metadata) }}</pre>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">Reasoning</p>
+                            <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.reasoning) }}</pre>
+                          </div>
+                          <div>
+                            <div class="flex items-center gap-2">
+                              <p class="text-xs text-slate-500 dark:text-zink-300 grow">Tool Calls</p>
+                              <span class="text-[11px] text-slate-400 dark:text-zink-300">{{ response.toolCalls?.length ?? 0 }}</span>
+                            </div>
+                            @if ((response.toolCalls?.length ?? 0) === 0) {
+                              <p class="mt-1 text-sm text-slate-500 dark:text-zink-200">Sin tool calls.</p>
+                            } @else {
+                              <div class="mt-2 flex flex-col gap-3">
+                                @for (toolCall of response.toolCalls ?? []; track $index) {
+                                  <div class="p-3 rounded-md bg-slate-50 dark:bg-zink-700/40">
+                                    <p class="text-sm font-medium break-words">{{ toolCall.toolName || 'Tool call' }}</p>
+                                    <p class="mt-1 text-xs text-slate-500 dark:text-zink-300">Call ID: {{ toolCall.callId || 'N/A' }}</p>
+                                    @if (toolCall.status) {
+                                      <p class="mt-1 text-xs text-slate-500 dark:text-zink-300">Status: {{ toolCall.status }}</p>
+                                    }
+                                    <div class="mt-2">
+                                      <p class="text-xs text-slate-500 dark:text-zink-300">Arguments</p>
+                                      <pre class="mt-1 text-xs whitespace-pre-wrap break-words">{{ formatStructuredText(toolCall.arguments) }}</pre>
+                                    </div>
+                                    <div class="mt-2">
+                                      <p class="text-xs text-slate-500 dark:text-zink-300">Output</p>
+                                      <pre class="mt-1 text-xs whitespace-pre-wrap break-words">{{ formatStructuredText(toolCall.output) }}</pre>
+                                    </div>
+                                  </div>
+                                }
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="flex flex-col items-center justify-center py-16 text-center">
+                <div class="size-16 rounded-full bg-slate-100 dark:bg-zink-600 flex items-center justify-center">
+                  <lucide-angular name="message-circle-more" [class]="'size-8 text-slate-400 dark:text-zink-300'"></lucide-angular>
+                </div>
+                <p class="mt-4 text-sm text-slate-500 dark:text-zink-200">
+                  Selecciona un mensaje de CATIA para ver sus metadatos.
+                </p>
+              </div>
+            }
+        </div>
+    </div>
 </drawer>
 
 <ng-template #userProfileContent>
