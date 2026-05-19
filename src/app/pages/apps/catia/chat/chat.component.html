@@ -500,6 +500,14 @@
                                   <p class="mt-2 text-[11px] text-slate-400 dark:text-zink-300">
                                     {{ getMessageTime(message.sentAt || message.timestamp) }}
                                   </p>
+                                  @if (hasMessageFailure(message)) {
+                                    <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-300">
+                                      <lucide-angular name="alert-triangle" [class]="'size-3.5'"></lucide-angular>
+                                      <p class="text-[10px]">
+                                        Mensaje con error
+                                      </p>
+                                    </div>
+                                  }
                                   @if (canOpenMessageMetadata(message)) {
                                     <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
                                       <lucide-angular name="info" [class]="'size-3.5'"></lucide-angular>
@@ -669,6 +677,94 @@
                     </div>
                   }
                 </div>
+              </div>
+
+              <div class="mt-5">
+                <div class="flex items-center gap-2 mb-4">
+                  <p class="text-slate-500 dark:text-zink-200 grow">Error</p>
+                  @if (selectedMessageError) {
+                    <span class="px-2 py-1 text-[11px] rounded-md bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-300">
+                      Con problema
+                    </span>
+                  }
+                </div>
+
+                @if (isLoadingSelectedMessageError) {
+                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                    <p class="text-sm text-slate-500 dark:text-zink-200">Cargando detalle del error...</p>
+                  </div>
+                } @else if (!selectedMessageError) {
+                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                    <p class="text-sm text-slate-500 dark:text-zink-200">
+                      Este mensaje no tiene error asociado.
+                    </p>
+                  </div>
+                } @else {
+                  <div class="p-4 rounded-lg border border-red-200 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10">
+                    <div class="grid grid-cols-1 gap-3">
+                      <div>
+                        <p class="text-xs text-red-500 dark:text-red-300">Código</p>
+                        <p class="mt-1 text-sm font-medium break-words">{{ selectedMessageError.errorCode || 'N/A' }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-red-500 dark:text-red-300">Título</p>
+                        <p class="mt-1 text-sm font-medium break-words">{{ selectedMessageError.errorTitle || 'N/A' }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-red-500 dark:text-red-300">Mensaje</p>
+                        <p class="mt-1 text-sm break-words">{{ selectedMessageError.errorMessage || 'N/A' }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-red-500 dark:text-red-300">Detalles</p>
+                        <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-white/80 dark:bg-zink-700/60">{{ formatStructuredText(selectedMessageError.errorDetails) }}</pre>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <div class="mt-5">
+                <div class="flex items-center gap-2 mb-4">
+                  <p class="text-slate-500 dark:text-zink-200 grow">Pricing</p>
+                  @if (selectedMessagePricing) {
+                    <span class="px-2 py-1 text-[11px] rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                      {{ getPricingBillableLabel(selectedMessagePricing) }}
+                    </span>
+                  }
+                </div>
+
+                @if (isLoadingSelectedMessagePricing) {
+                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                    <p class="text-sm text-slate-500 dark:text-zink-200">Cargando pricing...</p>
+                  </div>
+                } @else if (!selectedMessagePricing) {
+                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                    <p class="text-sm text-slate-500 dark:text-zink-200">
+                      Este mensaje no tiene pricing asociado.
+                    </p>
+                  </div>
+                } @else {
+                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                    <div class="grid grid-cols-1 gap-3">
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-zink-300">Estado</p>
+                        <p class="mt-1 text-sm">{{ getPricingBillableLabel(selectedMessagePricing) }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-zink-300">Modelo</p>
+                        <p class="mt-1 text-sm">{{ selectedMessagePricing.pricingModel || 'N/A' }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-zink-300">Categoría</p>
+                        <p class="mt-1 text-sm">{{ selectedMessagePricing.pricingCategory || 'N/A' }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-zink-300">Tipo</p>
+                        <p class="mt-1 text-sm break-words">{{ selectedMessagePricing.pricingType || 'N/A' }}</p>
+                      </div>
+                    </div>
+                  </div>
+                }
               </div>
 
               <div class="mt-5">

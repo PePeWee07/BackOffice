@@ -19,6 +19,8 @@ import {
   AiResponse,
   CatiaMessageModel,
   MessageAddress,
+  MessageError,
+  MessagePricing,
 } from '../../../../core/services/apis/catia/models/catia-message';
 import { DrawerService } from '../../../../Component/drawer/drawer.service';
 import { TabContextService } from '../../../../Component/tab/tab-context.service';
@@ -97,8 +99,14 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   latestMessageType = '';
   selectedMessageDetail: CatiaMessageModel | null = null;
   selectedMessageAiResponses: AiResponse[] = [];
+  selectedMessageError: MessageError | null = null;
+  selectedMessagePricing: MessagePricing | null = null;
   isLoadingSelectedMessageAiResponses = false;
+  isLoadingSelectedMessageError = false;
+  isLoadingSelectedMessagePricing = false;
   messageAiResponseMap: Record<number, AiResponse[] | null> = {};
+  messageErrorMap: Record<number, MessageError | null> = {};
+  messagePricingMap: Record<number, MessagePricing | null> = {};
 
   searchResults: CatiaUserModel[] = [];
   hasSearchedUser = false;
@@ -551,44 +559,104 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
     this.selectedMessageDetail = message;
     this.selectedMessageAiResponses = message.aiResponses ?? [];
+    this.selectedMessageError = message.messageError ?? null;
+    this.selectedMessagePricing = message.messagePricing ?? null;
     this.isLoadingSelectedMessageAiResponses = false;
+    this.isLoadingSelectedMessageError = false;
+    this.isLoadingSelectedMessagePricing = false;
     this.drawerService.open('drawerMessageMeta');
+
+    if (message.messageError) {
+      this.messageErrorMap[message.id] = message.messageError;
+    } else if (
+      Object.prototype.hasOwnProperty.call(this.messageErrorMap, message.id)
+    ) {
+      this.selectedMessageError = this.messageErrorMap[message.id] ?? null;
+    } else {
+      this.isLoadingSelectedMessageError = true;
+
+      this.catiaService.getMessageError(message.id).subscribe({
+        next: (messageError) => {
+          this.selectedMessageError = messageError;
+          this.messageErrorMap[message.id] = messageError;
+          this.isLoadingSelectedMessageError = false;
+        },
+        error: (err: any) => {
+          this.selectedMessageError = null;
+          this.messageErrorMap[message.id] = null;
+          this.isLoadingSelectedMessageError = false;
+
+          if (err?.status !== 404) {
+            console.error('Error cargando error del mensaje:', err);
+          }
+        },
+      });
+    }
+
+    if (message.messagePricing) {
+      this.messagePricingMap[message.id] = message.messagePricing;
+    } else if (
+      Object.prototype.hasOwnProperty.call(this.messagePricingMap, message.id)
+    ) {
+      this.selectedMessagePricing = this.messagePricingMap[message.id] ?? null;
+    } else {
+      this.isLoadingSelectedMessagePricing = true;
+
+      this.catiaService.getMessagePricing(message.id).subscribe({
+        next: (pricing) => {
+          this.selectedMessagePricing = pricing;
+          this.messagePricingMap[message.id] = pricing;
+          this.isLoadingSelectedMessagePricing = false;
+        },
+        error: (err: any) => {
+          this.selectedMessagePricing = null;
+          this.messagePricingMap[message.id] = null;
+          this.isLoadingSelectedMessagePricing = false;
+
+          if (err?.status !== 404) {
+            console.error('Error cargando pricing del mensaje:', err);
+          }
+        },
+      });
+    }
 
     if (this.selectedMessageAiResponses.length > 0) {
       this.messageAiResponseMap[message.id] = this.selectedMessageAiResponses;
-      return;
-    }
-
-    if (Object.prototype.hasOwnProperty.call(this.messageAiResponseMap, message.id)) {
+    } else if (
+      Object.prototype.hasOwnProperty.call(this.messageAiResponseMap, message.id)
+    ) {
       this.selectedMessageAiResponses =
         this.messageAiResponseMap[message.id] ?? [];
-      return;
+    } else {
+      this.isLoadingSelectedMessageAiResponses = true;
+
+      this.catiaService.getAiResponses(message.id).subscribe({
+        next: (aiResponses) => {
+          this.selectedMessageAiResponses = aiResponses ?? [];
+          this.messageAiResponseMap[message.id] = this.selectedMessageAiResponses;
+          this.isLoadingSelectedMessageAiResponses = false;
+        },
+        error: (err: any) => {
+          this.selectedMessageAiResponses = [];
+          this.messageAiResponseMap[message.id] = [];
+          this.isLoadingSelectedMessageAiResponses = false;
+
+          if (err?.status !== 404) {
+            console.error('Error cargando metadata IA del mensaje:', err);
+          }
+        },
+      });
     }
-
-    this.isLoadingSelectedMessageAiResponses = true;
-
-    this.catiaService.getAiResponses(message.id).subscribe({
-      next: (aiResponses) => {
-        this.selectedMessageAiResponses = aiResponses ?? [];
-        this.messageAiResponseMap[message.id] = this.selectedMessageAiResponses;
-        this.isLoadingSelectedMessageAiResponses = false;
-      },
-      error: (err: any) => {
-        this.selectedMessageAiResponses = [];
-        this.messageAiResponseMap[message.id] = [];
-        this.isLoadingSelectedMessageAiResponses = false;
-
-        if (err?.status !== 404) {
-          console.error('Error cargando metadata IA del mensaje:', err);
-        }
-      },
-    });
   }
 
   closeMessageMetadata() {
     this.selectedMessageDetail = null;
     this.selectedMessageAiResponses = [];
+    this.selectedMessageError = null;
+    this.selectedMessagePricing = null;
     this.isLoadingSelectedMessageAiResponses = false;
+    this.isLoadingSelectedMessageError = false;
+    this.isLoadingSelectedMessagePricing = false;
     this.drawerService.close('drawerMessageMeta');
   }
 
@@ -654,6 +722,32 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     } catch {
       return content;
     }
+  }
+
+  getPricingBillableLabel(pricing?: MessagePricing | null): string {
+    if (!pricing) {
+      return 'N/A';
+    }
+
+    if (pricing.pricingBillable === true) {
+      return 'Facturable';
+    }
+
+    if (pricing.pricingBillable === false) {
+      return 'No facturable';
+    }
+
+    return 'N/A';
+  }
+
+  hasMessageFailure(message?: CatiaMessageModel | null): boolean {
+    return !!(
+      message?.failedAt ||
+      message?.messageError ||
+      (message?.id &&
+        Object.prototype.hasOwnProperty.call(this.messageErrorMap, message.id) &&
+        this.messageErrorMap[message.id])
+    );
   }
 
   // Cargar Historial de chat
