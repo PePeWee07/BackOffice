@@ -533,7 +533,7 @@
                                             </p>
                                           }
 
-                                          @if (message.type === 'IMAGE' && getMessageMediaUrl(message); as imageUrl) {
+                                          @if (message.type === 'IMAGE' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as imageUrl) {
                                             <button
                                               type="button"
                                               (click)="$event.stopPropagation(); openMessageMediaUrl(message, imageUrl)"
@@ -545,7 +545,7 @@
                                             </button>
                                           }
 
-                                          @if (message.type === 'STICKER' && getMessageMediaUrl(message); as stickerUrl) {
+                                          @if (message.type === 'STICKER' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as stickerUrl) {
                                             <button
                                               type="button"
                                               (click)="$event.stopPropagation(); openMessageMediaUrl(message, stickerUrl)"
@@ -557,7 +557,7 @@
                                             </button>
                                           }
 
-                                          @if (message.type === 'VIDEO' && getMessageMediaUrl(message); as videoUrl) {
+                                          @if (message.type === 'VIDEO' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as videoUrl) {
                                             <video
                                               controls
                                               class="mt-3 rounded-md max-h-56 w-full bg-black"
@@ -566,7 +566,7 @@
                                             </video>
                                           }
 
-                                          @if (message.type === 'AUDIO' && getMessageMediaUrl(message); as audioUrl) {
+                                          @if (message.type === 'AUDIO' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as audioUrl) {
                                             <audio
                                               controls
                                               class="mt-3 block w-full min-w-64"
@@ -585,7 +585,7 @@
                                             </button>
                                           } @else {
                                             <p class="mt-3 text-xs text-slate-400 dark:text-zink-300">
-                                              Este mensaje no tiene `mediaId` disponible.
+                                              Este mensaje no tiene media disponible para recuperar.
                                             </p>
                                           }
                                         </div>

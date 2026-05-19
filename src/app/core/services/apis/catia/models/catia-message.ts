@@ -38,6 +38,7 @@ export interface CatiaMessageModel {
   readAt?: number;
   failedAt?: number;
   mediaId?: string;
+  mediaUrl?: string;
   mediaMimeType?: string;
   mediaFilename?: string;
   mediaCaption?: string;

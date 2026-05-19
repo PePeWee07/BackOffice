@@ -478,11 +478,14 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   canLoadMessageMedia(message: CatiaMessageModel): boolean {
-    return this.isMediaMessage(message) && !!message.mediaId?.trim();
+    return (
+      this.isMediaMessage(message) &&
+      (!!message.mediaId?.trim() || !!message.mediaUrl?.trim())
+    );
   }
 
   getMessageMediaUrl(message: CatiaMessageModel): string | null {
-    return this.messageMediaUrlMap[message.id] ?? null;
+    return this.messageMediaUrlMap[message.id] ?? message.mediaUrl?.trim() ?? null;
   }
 
   isMessageMediaLoading(message: CatiaMessageModel): boolean {
@@ -517,6 +520,10 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
     if (message.mediaMimeType?.trim()) {
       return message.mediaMimeType;
+    }
+
+    if (message.mediaUrl?.trim()) {
+      return 'Disponible por URL';
     }
 
     return this.isMessageMediaLikelyExpired(message)
@@ -608,6 +615,18 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
 
     window.open(targetUrl, '_blank', 'noopener,noreferrer');
+  }
+
+  shouldRenderMessageMediaInline(message: CatiaMessageModel): boolean {
+    if (!this.isMediaMessage(message)) {
+      return false;
+    }
+
+    if (message.type === 'DOCUMENT') {
+      return false;
+    }
+
+    return !!this.getMessageMediaUrl(message);
   }
 
   isRenderableSticker(message: CatiaMessageModel): boolean {
