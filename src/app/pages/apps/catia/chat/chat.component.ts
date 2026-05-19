@@ -15,7 +15,10 @@ import * as Prism from 'prismjs';
 import { Subscription } from 'rxjs';
 
 import { CatiaChatService } from '../../../../core/services/apis/catia/catia-chat.service';
-import { CatiaMessageModel } from '../../../../core/services/apis/catia/models/catia-message';
+import {
+  CatiaMessageModel,
+  MessageAddress,
+} from '../../../../core/services/apis/catia/models/catia-message';
 import { TabContextService } from '../../../../Component/tab/tab-context.service';
 import { ToastrService } from 'ngx-toastr';
 import {
@@ -81,6 +84,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   totalMessages = 0;
   hasMoreMessages = false;
   isLoadingMessages = false;
+  messageAddressMap: Record<number, MessageAddress | null> = {};
   private isPrependingMessages = false;
   private readonly handleMessageScroll = () => this.onMessageScroll();
   private messageStreamSubscription?: Subscription;
@@ -257,6 +261,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   loadInitialMessageHistory() {
     this.messages = [];
+    this.messageAddressMap = {};
     this.currentMessagePage = 0;
     this.totalMessages = 0;
     this.hasMoreMessages = false;
@@ -399,6 +404,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
         return '[Audio]';
       case 'DOCUMENT':
         return `[Documento] ${message.mediaFilename ?? ''}`.trim();
+      case 'LOCATION':
+        return '[Ubicación]';
       case 'REACTION':
         return `[Reacción] ${message.reactionEmoji ?? ''}`.trim();
       case 'TEMPLATE':
@@ -417,6 +424,92 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(value));
+  }
+
+  ensureLocationMessagesLoaded(messages: CatiaMessageModel[]) {
+    for (const message of messages) {
+      if (message.type !== 'LOCATION' || !message.id) {
+        continue;
+      }
+
+      if (message.messageAddres) {
+        this.messageAddressMap[message.id] = message.messageAddres;
+        continue;
+      }
+
+      if (
+        Object.prototype.hasOwnProperty.call(this.messageAddressMap, message.id)
+      ) {
+        continue;
+      }
+
+      this.messageAddressMap[message.id] = null;
+
+      this.catiaService.getMessageAddress(message.id).subscribe({
+        next: (address) => {
+          this.messageAddressMap[message.id] = address;
+        },
+        error: (err: unknown) => {
+          console.error('Error cargando ubicacion del mensaje:', err);
+        },
+      });
+    }
+  }
+
+  getMessageLocation(message: CatiaMessageModel): MessageAddress | null {
+    if (message.messageAddres) {
+      return message.messageAddres;
+    }
+
+    return this.messageAddressMap[message.id] ?? null;
+  }
+
+  getMessageLocationTitle(message: CatiaMessageModel): string {
+    const location = this.getMessageLocation(message);
+
+    if (!location) {
+      return 'Ubicación compartida';
+    }
+
+    return (
+      location.locationName?.trim() ||
+      location.locationAddress?.trim() ||
+      'Ubicación compartida'
+    );
+  }
+
+  getMessageLocationSubtitle(message: CatiaMessageModel): string {
+    const location = this.getMessageLocation(message);
+
+    if (!location) {
+      return 'Cargando ubicación...';
+    }
+
+    if (location.locationAddress?.trim()) {
+      return location.locationAddress;
+    }
+
+    if (
+      typeof location.latitude === 'number' &&
+      typeof location.longitude === 'number'
+    ) {
+      return `${location.latitude}, ${location.longitude}`;
+    }
+
+    return 'Ubicación compartida';
+  }
+
+  getMessageLocationMapUrl(message: CatiaMessageModel): string | null {
+    const location = this.getMessageLocation(message);
+
+    if (
+      typeof location?.latitude !== 'number' ||
+      typeof location?.longitude !== 'number'
+    ) {
+      return null;
+    }
+
+    return `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
   }
 
   getMessageAlertLabel(): string {
@@ -461,6 +554,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
         this.hasMoreMessages =
           pageMessages.page.number + 1 < pageMessages.page.totalPages;
         this.isLoadingMessages = false;
+        this.ensureLocationMessagesLoaded(incomingMessages);
 
         setTimeout(() => {
           this.registerMessageScrollListener();

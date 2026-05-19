@@ -463,9 +463,36 @@
                             <div class="grow group-[.right]/item:order-2 flex flex-col gap-2">
                               <div class="flex gap-3">
                                 <div class="relative p-4 bg-white dark:bg-zink-700 rounded-md ltr:rounded-bl-none rtl:rounded-br-none shadow-sm 2xl:max-w-sm ltr:group-[.right]/item:rounded-br-none rtl:group-[.right]/item:rounded-bl-none ltr:group-[.right]/item:rounded-bl-md rtl:group-[.right]/item:rounded-br-md group-[.right]/item:order-2">
-                                  <p class="text-sm whitespace-pre-wrap break-words">
-                                    {{ getMessageBubbleText(message) }}
-                                  </p>
+                                  @if (message.type === 'LOCATION') {
+                                    <div class="min-w-56 max-w-sm">
+                                      <div class="flex items-start gap-3">
+                                        <div class="flex items-center justify-center rounded-md size-10 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300">
+                                          <lucide-angular name="map-pin" [class]="'size-5'"></lucide-angular>
+                                        </div>
+                                        <div class="min-w-0 grow">
+                                          <p class="text-sm font-medium break-words">
+                                            {{ getMessageLocationTitle(message) }}
+                                          </p>
+                                          <p class="mt-1 text-xs text-slate-500 dark:text-zink-300 break-words">
+                                            {{ getMessageLocationSubtitle(message) }}
+                                          </p>
+                                          @if (getMessageLocationMapUrl(message); as mapUrl) {
+                                            <a
+                                              [href]="mapUrl"
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              class="inline-flex mt-3 text-xs font-medium text-custom-500 hover:text-custom-600">
+                                              Abrir en mapa
+                                            </a>
+                                          }
+                                        </div>
+                                      </div>
+                                    </div>
+                                  } @else {
+                                    <p class="text-sm whitespace-pre-wrap break-words">
+                                      {{ getMessageBubbleText(message) }}
+                                    </p>
+                                  }
                                   <p class="mt-2 text-[11px] text-slate-400 dark:text-zink-300">
                                     {{ getMessageTime(message.sentAt || message.timestamp) }}
                                   </p>
