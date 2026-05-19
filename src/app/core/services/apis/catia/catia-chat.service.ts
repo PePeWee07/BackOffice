@@ -233,9 +233,31 @@ export class CatiaChatService {
       throw new Error('El mediaId es requerido para consultar metadata');
     }
 
-    return this.http.get<ResponseMediaMetadata>(
+    return this.http
+      .get<{
+        url: string;
+        mimeType?: string;
+        mime_type?: string;
+        sha256?: string;
+        fileSize?: number;
+        file_size?: number;
+        id: string;
+        messagingProduct?: string;
+        messaging_product?: string;
+      }>(
       `${this.apiURL}/whatsapp/media/${sanitizedMediaId}`
-    );
+      )
+      .pipe(
+        map((response) => ({
+          url: response.url,
+          mimeType: response.mimeType ?? response.mime_type,
+          sha256: response.sha256,
+          fileSize: response.fileSize ?? response.file_size,
+          id: response.id,
+          messagingProduct:
+            response.messagingProduct ?? response.messaging_product,
+        }))
+      );
   }
 
   // WhatsApp Send Image By ID

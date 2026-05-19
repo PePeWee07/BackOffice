@@ -82,6 +82,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   searchTerm = '';
   searchMode: 'identificacion' | 'whatsappPhone' = 'identificacion';
   private readonly scrollThreshold = 120;
+  private nowTimestamp = Date.now();
+  private timeAgoIntervalId?: ReturnType<typeof setInterval>;
 
   messages: CatiaMessageModel[] = [];
   currentMessagePage = 0;
@@ -177,6 +179,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   ngOnInit(): void {
     this.loadInitialUserChats();
     this.loadInitialRecentChats();
+    this.startTimeAgoClock();
 
     // Validation
     this.formMessage = this.formBuilder.group({
@@ -202,6 +205,20 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.removeMessageScrollListener();
     this.closeMessageStream();
     this.clearMessageMediaUrls();
+    this.stopTimeAgoClock();
+  }
+
+  private startTimeAgoClock() {
+    this.timeAgoIntervalId = setInterval(() => {
+      this.nowTimestamp = Date.now();
+    }, 60_000);
+  }
+
+  private stopTimeAgoClock() {
+    if (this.timeAgoIntervalId) {
+      clearInterval(this.timeAgoIntervalId);
+      this.timeAgoIntervalId = undefined;
+    }
   }
 
   onSearchScroll() {
@@ -1556,7 +1573,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
     const date = value instanceof Date ? value : new Date(value);
 
-    const diff = Date.now() - date.getTime();
+    const diff = this.nowTimestamp - date.getTime();
     const mins = Math.floor(diff / 1000 / 60);
     if (mins < 60) {
       return `${mins} min atrás`;
