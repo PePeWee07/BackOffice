@@ -109,3 +109,12 @@ export interface MessageError {
   errorDetails?: string;
   errorMessage?: string;
 }
+
+export interface ResponseMediaMetadata {
+  url: string;
+  mimeType?: string;
+  sha256?: string;
+  fileSize?: number;
+  id: string;
+  messagingProduct?: string;
+}

@@ -514,7 +514,9 @@
                                                 ? 'video'
                                                 : message.type === 'AUDIO'
                                                   ? 'mic'
-                                                  : 'file-text'"
+                                                  : message.type === 'STICKER'
+                                                    ? 'sticker'
+                                                    : 'file-text'"
                                             [class]="'size-5'"></lucide-angular>
                                         </div>
                                         <div class="min-w-0 grow">
@@ -540,6 +542,18 @@
                                                 [src]="imageUrl"
                                                 alt="Imagen compartida"
                                                 class="rounded-md max-h-56 border border-slate-200 dark:border-zink-600">
+                                            </button>
+                                          }
+
+                                          @if (message.type === 'STICKER' && getMessageMediaUrl(message); as stickerUrl) {
+                                            <button
+                                              type="button"
+                                              (click)="$event.stopPropagation(); openMessageMediaUrl(message, stickerUrl)"
+                                              class="mt-3 block">
+                                              <img
+                                                [src]="stickerUrl"
+                                                alt="Sticker compartido"
+                                                class="rounded-md max-h-48 max-w-[180px] border border-slate-200 dark:border-zink-600 bg-white/70">
                                             </button>
                                           }
 
@@ -1001,6 +1015,57 @@
               </div>
             } @else if (selectedMessageRawDetail) {
               <div class="mt-6">
+                @if (selectedMessageRawDetail.mediaId) {
+                  <div class="mb-5">
+                    <div class="flex items-center gap-2 mb-4">
+                      <p class="text-slate-500 dark:text-zink-200 grow">Media Metadata</p>
+                      <span class="px-2 py-1 text-[11px] rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                        WhatsApp
+                      </span>
+                    </div>
+
+                    @if (isLoadingSelectedMessageMediaMetadata) {
+                      <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                        <p class="text-sm text-slate-500 dark:text-zink-200">Cargando metadata del media...</p>
+                      </div>
+                    } @else if (!selectedMessageMediaMetadata) {
+                      <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                        <p class="text-sm text-slate-500 dark:text-zink-200">
+                          No hay metadata de media disponible para este archivo.
+                        </p>
+                      </div>
+                    } @else {
+                      <div class="mb-4 p-4 rounded-lg border border-slate-200 bg-slate-50 dark:border-zink-700 dark:bg-zink-700/40">
+                        <div class="grid grid-cols-1 gap-3">
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">Media ID</p>
+                            <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageMediaMetadata.id || 'N/A' }}</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">MIME Type</p>
+                            <p class="mt-1 text-sm break-words">{{ selectedMessageMediaMetadata.mimeType || 'N/A' }}</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">File Size</p>
+                            <p class="mt-1 text-sm">{{ formatFileSize(selectedMessageMediaMetadata.fileSize) }}</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">SHA256</p>
+                            <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageMediaMetadata.sha256 || 'N/A' }}</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">Messaging Product</p>
+                            <p class="mt-1 text-sm">{{ selectedMessageMediaMetadata.messagingProduct || 'N/A' }}</p>
+                          </div>
+                          <div>
+                            <p class="text-xs text-slate-500 dark:text-zink-300">Media URL</p>
+                            <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageMediaMetadata.url || 'N/A' }}</p>
+                          </div>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
                 <pre class="p-4 text-xs whitespace-pre-wrap break-words rounded-lg border border-slate-200 bg-slate-50 dark:border-zink-700 dark:bg-zink-700/40">{{ formatJsonValue(selectedMessageRawDetail) }}</pre>
               </div>
             } @else {

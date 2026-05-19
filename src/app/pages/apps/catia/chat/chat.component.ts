@@ -21,6 +21,7 @@ import {
   MessageAddress,
   MessageError,
   MessagePricing,
+  ResponseMediaMetadata,
 } from '../../../../core/services/apis/catia/models/catia-message';
 import { DrawerService } from '../../../../Component/drawer/drawer.service';
 import { TabContextService } from '../../../../Component/tab/tab-context.service';
@@ -102,14 +103,17 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   latestMessageType = '';
   selectedMessageDetail: CatiaMessageModel | null = null;
   selectedMessageRawDetail: CatiaMessageModel | null = null;
+  selectedMessageMediaMetadata: ResponseMediaMetadata | null = null;
   selectedMessageAiResponses: AiResponse[] = [];
   selectedMessageError: MessageError | null = null;
   selectedMessagePricing: MessagePricing | null = null;
   isLoadingSelectedMessageRawDetail = false;
+  isLoadingSelectedMessageMediaMetadata = false;
   isLoadingSelectedMessageAiResponses = false;
   isLoadingSelectedMessageError = false;
   isLoadingSelectedMessagePricing = false;
   messageRawDetailMap: Record<number, CatiaMessageModel | null> = {};
+  messageMediaMetadataMap: Record<string, ResponseMediaMetadata | null> = {};
   messageAiResponseMap: Record<number, AiResponse[] | null> = {};
   messageErrorMap: Record<number, MessageError | null> = {};
   messagePricingMap: Record<number, MessagePricing | null> = {};
@@ -438,7 +442,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       message.type === 'IMAGE' ||
       message.type === 'VIDEO' ||
       message.type === 'AUDIO' ||
-      message.type === 'DOCUMENT'
+      message.type === 'DOCUMENT' ||
+      message.type === 'STICKER'
     );
   }
 
@@ -481,6 +486,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
         return 'Audio compartido';
       case 'DOCUMENT':
         return message.mediaFilename?.trim() || 'Documento compartido';
+      case 'STICKER':
+        return 'Sticker compartido';
       default:
         return 'Archivo multimedia';
     }
@@ -523,6 +530,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
         return expired ? 'Intentar recuperar' : 'Cargar video';
       case 'AUDIO':
         return expired ? 'Intentar recuperar' : 'Cargar audio';
+      case 'STICKER':
+        return expired ? 'Intentar recuperar' : 'Ver sticker';
       default:
         return expired ? 'Intentar recuperar' : 'Cargar archivo';
     }
@@ -582,6 +591,13 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
 
     window.open(targetUrl, '_blank', 'noopener,noreferrer');
+  }
+
+  isRenderableSticker(message: CatiaMessageModel): boolean {
+    return (
+      message.type === 'STICKER' &&
+      (!!this.getMessageMediaUrl(message) || this.canLoadMessageMedia(message))
+    );
   }
 
   getMessageBubbleText(message: CatiaMessageModel): string {
@@ -867,6 +883,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       Object.prototype.hasOwnProperty.call(this.messageRawDetailMap, message.id)
     ) {
       this.selectedMessageRawDetail = this.messageRawDetailMap[message.id];
+      this.loadSelectedMessageMediaMetadata(this.selectedMessageRawDetail);
       return;
     }
 
@@ -877,6 +894,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
         this.selectedMessageRawDetail = fullMessage;
         this.messageRawDetailMap[message.id] = fullMessage;
         this.isLoadingSelectedMessageRawDetail = false;
+        this.loadSelectedMessageMediaMetadata(fullMessage);
       },
       error: (err: any) => {
         this.selectedMessageRawDetail = null;
@@ -898,8 +916,63 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   closeMessageRawAudit() {
     this.selectedMessageRawDetail = null;
+    this.selectedMessageMediaMetadata = null;
     this.isLoadingSelectedMessageRawDetail = false;
+    this.isLoadingSelectedMessageMediaMetadata = false;
     this.drawerService.close('drawerMessageRaw');
+  }
+
+  loadSelectedMessageMediaMetadata(message?: CatiaMessageModel | null) {
+    const mediaId = message?.mediaId?.trim();
+
+    this.selectedMessageMediaMetadata = null;
+    this.isLoadingSelectedMessageMediaMetadata = false;
+
+    if (!mediaId) {
+      return;
+    }
+
+    if (
+      Object.prototype.hasOwnProperty.call(this.messageMediaMetadataMap, mediaId)
+    ) {
+      this.selectedMessageMediaMetadata = this.messageMediaMetadataMap[mediaId];
+      return;
+    }
+
+    this.isLoadingSelectedMessageMediaMetadata = true;
+
+    this.catiaService.getMediaMetadata(mediaId).subscribe({
+      next: (metadata) => {
+        this.selectedMessageMediaMetadata = metadata;
+        this.messageMediaMetadataMap[mediaId] = metadata;
+        this.isLoadingSelectedMessageMediaMetadata = false;
+      },
+      error: (err: any) => {
+        this.selectedMessageMediaMetadata = null;
+        this.messageMediaMetadataMap[mediaId] = null;
+        this.isLoadingSelectedMessageMediaMetadata = false;
+
+        if (err?.status !== 404) {
+          console.error('Error cargando metadata del media:', err);
+        }
+      },
+    });
+  }
+
+  formatFileSize(bytes?: number): string {
+    if (!bytes || bytes <= 0) {
+      return 'N/A';
+    }
+
+    if (bytes < 1024) {
+      return `${bytes} B`;
+    }
+
+    if (bytes < 1024 * 1024) {
+      return `${(bytes / 1024).toFixed(1)} KB`;
+    }
+
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   }
 
   getMessageSourceLabel(message?: CatiaMessageModel | null): string {

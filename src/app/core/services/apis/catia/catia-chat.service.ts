@@ -23,6 +23,7 @@ import {
   MessageError,
   MessagePricing,
   MessageTemplate,
+  ResponseMediaMetadata,
 } from './models/catia-message';
 import { CatiaMessageStreamEvent } from './models/catia-message-stream';
 import { CatiaPage } from './models/catia-page';
@@ -221,6 +222,19 @@ export class CatiaChatService {
       {
         responseType: 'blob',
       }
+    );
+  }
+
+  // WhatsApp Media Metadata
+  getMediaMetadata(mediaId: string): Observable<ResponseMediaMetadata> {
+    const sanitizedMediaId = mediaId.trim();
+
+    if (!sanitizedMediaId) {
+      throw new Error('El mediaId es requerido para consultar metadata');
+    }
+
+    return this.http.get<ResponseMediaMetadata>(
+      `${this.apiURL}/whatsapp/media/${sanitizedMediaId}`
     );
   }
 
