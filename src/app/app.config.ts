@@ -2,7 +2,6 @@ import { ApplicationConfig, importProvidersFrom, isDevMode } from '@angular/core
 import { InMemoryScrollingFeature, InMemoryScrollingOptions, provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
-import { provideClientHydration } from '@angular/platform-browser';
 import { provideStore } from '@ngrx/store';
 import { rootReducer } from './store';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -49,7 +48,6 @@ export const appConfig: ApplicationConfig = {
       useClass: FakeBackendInterceptor,
       multi: true,
     },
-    provideClientHydration(),
     provideStore(rootReducer),
     provideEffects(
       EcommerceEffects,

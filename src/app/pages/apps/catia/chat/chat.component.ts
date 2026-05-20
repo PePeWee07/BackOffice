@@ -376,11 +376,15 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
             return;
           }
 
+          if (this.isMessageScrollNearBottom()) {
+            this.scheduleSelectedChatRefresh(7000);
+            return;
+          }
+
           this.hasNewMessageAlert = true;
           this.newMessageAlertCount += 1;
           this.latestMessagePreview = payload.preview?.trim() ?? '';
           this.latestMessageType = payload.messageType?.trim() ?? '';
-          this.scheduleSelectedChatRefresh(700);
         },
         error: (err: unknown) => {
           this.isStreamingSelectedChat = false;
@@ -414,15 +418,18 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }, delayMs);
   }
 
-  refreshSelectedChatMessages() {
+  refreshSelectedChatMessages(clearAlert = false) {
     if (!this.selectedUser) {
       return;
     }
 
-    this.hasNewMessageAlert = false;
-    this.newMessageAlertCount = 0;
-    this.latestMessagePreview = '';
-    this.latestMessageType = '';
+    if (clearAlert) {
+      this.hasNewMessageAlert = false;
+      this.newMessageAlertCount = 0;
+      this.latestMessagePreview = '';
+      this.latestMessageType = '';
+    }
+
     this.loadInitialMessageHistory();
   }
 
@@ -470,6 +477,21 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     if (!hasScrollableOverflow) {
       this.loadNextMessageHistoryPage();
     }
+  }
+
+  private isMessageScrollNearBottom(threshold = this.scrollThreshold): boolean {
+    const scrollElement =
+      this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+
+    if (!scrollElement) {
+      return true;
+    }
+
+    const distanceToBottom =
+      scrollElement.scrollHeight -
+      (scrollElement.scrollTop + scrollElement.clientHeight);
+
+    return distanceToBottom <= threshold;
   }
 
   isOutgoingMessage(message: CatiaMessageModel): boolean {
