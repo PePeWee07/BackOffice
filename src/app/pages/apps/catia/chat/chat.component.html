@@ -638,15 +638,105 @@
                 </div> <!-- chat-body -->
 
                   <!-- chat-footer -->
-                  <div class="card-body">
-                      <form (ngSubmit)="messageSave()" [formGroup]="formMessage" class="flex items-center gap-2">
+                  <div class="card-body relative">
+                      <input
+                        #imageFileInput
+                        type="file"
+                        multiple
+                        accept="image/png,image/jpeg,image/jpg"
+                        class="hidden"
+                        (change)="onImageFileSelected($event)">
+
+                      @if (showAttachmentMenu) {
+                        <div class="absolute bottom-full left-0 mb-3 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-zink-700 dark:bg-zink-800 z-20">
+                          <button
+                            type="button"
+                            (click)="openFileAttachmentPicker(imageFileInput)"
+                            class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 dark:text-zink-100 dark:hover:bg-zink-700">
+                            <lucide-angular name="image" [class]="'size-4 text-custom-500'"></lucide-angular>
+                            <span>Fotos</span>
+                          </button>
+                          <button
+                            type="button"
+                            (click)="openImageUrlComposer()"
+                            class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 dark:text-zink-100 dark:hover:bg-zink-700">
+                            <lucide-angular name="link" [class]="'size-4 text-custom-500'"></lucide-angular>
+                            <span>Foto por URL</span>
+                          </button>
+                        </div>
+                      }
+
+                      @if (pendingImageUploads.length > 0 || showImageUrlComposer) {
+                        <div class="absolute bottom-full left-0 right-0 mb-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl dark:border-zink-700 dark:bg-zink-800 z-10">
+                          <div class="mb-2 flex items-center gap-2">
+                            <p class="text-sm font-medium text-slate-700 dark:text-zink-100 grow">Adjuntos</p>
+                            <p class="text-[11px] text-slate-500 dark:text-zink-300">
+                              {{ getPendingAttachmentHint() }}
+                            </p>
+                            <button
+                              type="button"
+                              (click)="clearPendingImageState()"
+                              class="inline-flex items-center justify-center size-7 rounded-md bg-slate-100 text-slate-500 dark:bg-zink-700 dark:text-zink-200">
+                              <lucide-angular name="x" [class]="'size-4'"></lucide-angular>
+                            </button>
+                          </div>
+
+                          @if (pendingImageUploads.length > 0) {
+                            <div class="mb-2 flex gap-2 overflow-x-auto pb-1">
+                              @for (upload of pendingImageUploads; track upload.localId) {
+                                <div class="relative shrink-0">
+                                  <img
+                                    [src]="upload.previewUrl"
+                                    [alt]="upload.file.name"
+                                    class="size-20 rounded-xl border border-slate-200 object-cover dark:border-zink-600">
+                                  <button
+                                    type="button"
+                                    (click)="removePendingImageUpload(upload.localId)"
+                                    class="absolute -right-1 -top-1 inline-flex size-5 items-center justify-center rounded-full bg-slate-900/80 text-white">
+                                    <lucide-angular name="x" [class]="'size-3'"></lucide-angular>
+                                  </button>
+                                  <div class="absolute inset-x-1 bottom-1 rounded bg-slate-900/70 px-1 py-0.5 text-[10px] text-white">
+                                    @if (upload.uploading) {
+                                      <span>Subiendo...</span>
+                                    } @else if (upload.error) {
+                                      <span>Error</span>
+                                    } @else {
+                                      <span>Lista</span>
+                                    }
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                            <button
+                              type="button"
+                              (click)="openFileAttachmentPicker(imageFileInput)"
+                              class="inline-flex px-3 py-1.5 text-xs font-medium rounded-md bg-custom-500 text-white hover:bg-custom-600"
+                              [disabled]="isUploadingMedia">
+                              Agregar más imágenes
+                            </button>
+                          }
+
+                          @if (showImageUrlComposer) {
+                            <div class="mt-2">
+                              <input
+                                type="url"
+                                [(ngModel)]="pendingImageUrl"
+                                [ngModelOptions]="{ standalone: true }"
+                                class="form-input w-full border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100"
+                                placeholder="https://ejemplo.com/imagen.png">
+                            </div>
+                          }
+                        </div>
+                      }
+
+                      <form (ngSubmit)="messageSave()" [formGroup]="formMessage" class="flex items-end gap-2">
                           <div class="grow">
-                              <input type="text" id="inputText" formControlName="chatMsg" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Escribe tu mensaje..." required autocomplete="off">
+                              <input type="text" id="inputText" formControlName="chatMsg" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Escribe tu mensaje..." autocomplete="off">
                           </div>
                           <div class="flex gap-2 shrink-0">
                               <button type="button" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular name="mic" [class]="'size-4'"></lucide-angular></button>
-                              <button type="button" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular name="image" [class]="'size-4'"></lucide-angular></button>
-                              <button type="submit" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20 disabled:opacity-60 disabled:cursor-not-allowed" [disabled]="!selectedUser || formMessage.invalid || isSendingMessage"><lucide-angular name="send" [class]="'inline-block size-4 mr-1 align-middle'"></lucide-angular> <span class="align-middle">{{ isSendingMessage ? 'Enviando...' : 'Enviar' }}</span></button>
+                              <button type="button" (click)="toggleAttachmentMenu()" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50" [class.text-custom-500]="pendingImageUploads.length > 0 || showImageUrlComposer || (uploadMode === catiaUploadMode.IMAGE_URL && pendingImageUrl.trim())"><lucide-angular name="plus" [class]="'size-4'"></lucide-angular></button>
+                              <button type="submit" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20 disabled:opacity-60 disabled:cursor-not-allowed" [disabled]="!canSendCurrentMessage()"><lucide-angular name="send" [class]="'inline-block size-4 mr-1 align-middle'"></lucide-angular> <span class="align-middle">{{ isSendingMessage ? 'Enviando...' : 'Enviar' }}</span></button>
                           </div>
                       </form>
                   </div> <!-- chat-footer -->

@@ -7,12 +7,12 @@ import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lu
 import { DrawerModule } from '../../../../Component/drawer';
 import { MDModalModule } from '../../../../Component/modals';
 import { MnDropdownComponent } from '../../../../Component/dropdown';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as Prism from 'prismjs';
-import { Subscription } from 'rxjs';
+import { concatMap, from, Subscription, toArray } from 'rxjs';
 
 import { CatiaChatService } from '../../../../core/services/apis/catia/catia-chat.service';
 import {
@@ -33,6 +33,11 @@ import {
   CatiaUserModel,
   RolesUsuario,
 } from '../../../../core/services/apis/catia/models/catia-user';
+import {
+  CATIA_ALLOWED_IMAGE_UPLOADS,
+  PendingImageUpload,
+  CatiaUploadMode,
+} from '../../../../core/services/apis/catia/models/catia-whatsapp';
 import { CatiaMessageSource, CatiaMessageType } from '../../../../core/services/apis/catia/models/catia-enum';
 
 @Component({
@@ -81,6 +86,13 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   } | null = null;
   formMessage!: UntypedFormGroup;
   isSendingMessage = false;
+  uploadMode = CatiaUploadMode.NONE;
+  readonly catiaUploadMode = CatiaUploadMode;
+  pendingImageUploads: PendingImageUpload[] = [];
+  pendingImageUrl = '';
+  isUploadingMedia = false;
+  showAttachmentMenu = false;
+  showImageUrlComposer = false;
   isMenuCollapsed = false; // For Menu Collapse in false
   isChatFinderHidden = true;
   searchTerm = '';
@@ -189,7 +201,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
     // Validation
     this.formMessage = this.formBuilder.group({
-      chatMsg: ['', [Validators.required]],
+      chatMsg: [''],
     });
     this.updateMessageInputState();
   }
@@ -212,6 +224,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.removeMessageScrollListener();
     this.closeMessageStream();
     this.clearMessageMediaUrls();
+    this.clearPendingImageState();
     this.stopTimeAgoClock();
     this.clearScheduledMessageRefresh();
   }
@@ -1395,13 +1408,281 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  toggleAttachmentMenu() {
+    if (!this.selectedUser || this.isSendingMessage) {
+      return;
+    }
+
+    this.showAttachmentMenu = !this.showAttachmentMenu;
+  }
+
+  openFileAttachmentPicker(fileInput: HTMLInputElement) {
+    if (this.uploadMode !== CatiaUploadMode.IMAGE_FILE) {
+      this.clearPendingImageState();
+    }
+
+    this.uploadMode = CatiaUploadMode.IMAGE_FILE;
+    this.showAttachmentMenu = false;
+    this.showImageUrlComposer = false;
+    this.openImageFilePicker(fileInput);
+  }
+
+  openImageUrlComposer() {
+    if (this.uploadMode !== CatiaUploadMode.IMAGE_URL) {
+      this.clearPendingImageState();
+    }
+
+    this.uploadMode = CatiaUploadMode.IMAGE_URL;
+    this.showAttachmentMenu = false;
+    this.showImageUrlComposer = true;
+  }
+
+  closeImageUrlComposer() {
+    this.showImageUrlComposer = false;
+
+    if (this.uploadMode === CatiaUploadMode.IMAGE_URL && !this.pendingImageUrl.trim()) {
+      this.clearPendingImageState();
+    }
+  }
+
+  openImageFilePicker(fileInput: HTMLInputElement) {
+    fileInput.click();
+  }
+
+  onImageFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const files = Array.from(input.files ?? []);
+    input.value = '';
+
+    if (!files.length) {
+      return;
+    }
+
+    this.uploadMode = CatiaUploadMode.IMAGE_FILE;
+    this.showImageUrlComposer = false;
+    let addedCount = 0;
+
+    files.forEach((file) => {
+      const rule = CATIA_ALLOWED_IMAGE_UPLOADS.find(
+        (item) => item.mimeType === file.type
+      );
+
+      if (!rule) {
+        this.toastr.error(
+          `"${file.name}" no es válido. Solo se permiten archivos JPG o PNG.`
+        );
+        return;
+      }
+
+      if (file.size > rule.maxBytes) {
+        this.toastr.error(`"${file.name}" supera el límite de 5 MB.`);
+        return;
+      }
+
+      const upload: PendingImageUpload = {
+        localId: this.buildPendingImageLocalId(),
+        file,
+        previewUrl: URL.createObjectURL(file),
+        mediaId: null,
+        uploading: true,
+        error: null,
+      };
+
+      this.pendingImageUploads = [...this.pendingImageUploads, upload];
+      this.syncUploadingMediaState();
+      this.uploadPendingImage(upload.localId);
+      addedCount += 1;
+    });
+
+    if (addedCount > 0) {
+      this.toastr.success(
+        addedCount === 1
+          ? 'Imagen agregada para envío'
+          : `${addedCount} imágenes agregadas para envío`
+      );
+    }
+  }
+
+  private buildPendingImageLocalId(): string {
+    if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+      return crypto.randomUUID();
+    }
+
+    return `img-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  }
+
+  private uploadPendingImage(localId: string) {
+    const upload = this.pendingImageUploads.find((item) => item.localId === localId);
+
+    if (!upload) {
+      return;
+    }
+
+    this.catiaService.uploadWhatsAppMedia(upload.file).subscribe({
+      next: (mediaId) => {
+        this.pendingImageUploads = this.pendingImageUploads.map((item) =>
+          item.localId === localId
+            ? { ...item, mediaId, uploading: false, error: null }
+            : item
+        );
+        this.syncUploadingMediaState();
+      },
+      error: (err: any) => {
+        this.pendingImageUploads = this.pendingImageUploads.map((item) =>
+          item.localId === localId
+            ? {
+                ...item,
+                uploading: false,
+                mediaId: null,
+                error: this.extractAttachmentErrorMessage(err),
+              }
+            : item
+        );
+        this.syncUploadingMediaState();
+        this.toastr.error(
+          `No se pudo cargar "${upload.file.name}". ${
+            this.extractAttachmentErrorMessage(err)
+          }`
+        );
+        console.error('Error:', err);
+      },
+    });
+  }
+
+  private extractAttachmentErrorMessage(err: any): string {
+    return (
+      err?.error?.message ||
+      err?.error?.error ||
+      err?.message ||
+      'Error inesperado al cargar la imagen.'
+    );
+  }
+
+  private syncUploadingMediaState() {
+    this.isUploadingMedia = this.pendingImageUploads.some(
+      (item) => item.uploading
+    );
+  }
+
+  removePendingImageUpload(localId: string) {
+    const upload = this.pendingImageUploads.find((item) => item.localId === localId);
+
+    if (upload?.previewUrl) {
+      URL.revokeObjectURL(upload.previewUrl);
+    }
+
+    this.pendingImageUploads = this.pendingImageUploads.filter(
+      (item) => item.localId !== localId
+    );
+    this.syncUploadingMediaState();
+
+    if (!this.pendingImageUploads.length && !this.pendingImageUrl.trim()) {
+      this.uploadMode = CatiaUploadMode.NONE;
+    }
+  }
+
+  private clearPendingImageUploadsOnly() {
+    this.pendingImageUploads.forEach((item) => {
+      if (item.previewUrl) {
+        URL.revokeObjectURL(item.previewUrl);
+      }
+    });
+
+    this.pendingImageUploads = [];
+  }
+
+  clearPendingImageState() {
+    this.clearPendingImageUploadsOnly();
+    this.uploadMode = CatiaUploadMode.NONE;
+    this.pendingImageUrl = '';
+    this.isUploadingMedia = false;
+    this.showAttachmentMenu = false;
+    this.showImageUrlComposer = false;
+  }
+
+  hasPendingAttachment(): boolean {
+    return (
+      (this.uploadMode === CatiaUploadMode.IMAGE_FILE &&
+        this.pendingImageUploads.length > 0) ||
+      (this.uploadMode === CatiaUploadMode.IMAGE_URL &&
+        !!this.pendingImageUrl.trim())
+    );
+  }
+
+  getPendingImageReadyCount(): number {
+    return this.pendingImageUploads.filter((item) => !!item.mediaId).length;
+  }
+
+  hasPendingImageErrors(): boolean {
+    return this.pendingImageUploads.some((item) => !!item.error);
+  }
+
+  canSendCurrentMessage(): boolean {
+    if (!this.selectedUser || this.isSendingMessage) {
+      return false;
+    }
+
+    const messageText = this.formMessage.get('chatMsg')?.value?.trim() ?? '';
+    const hasContent = !!messageText || this.hasPendingAttachment();
+
+    if (!hasContent) {
+      return false;
+    }
+
+    if (this.uploadMode === CatiaUploadMode.IMAGE_FILE) {
+      if (!this.pendingImageUploads.length) {
+        return !!messageText;
+      }
+
+      return (
+        !this.isUploadingMedia &&
+        !this.pendingImageUploads.some((item) => !item.mediaId || !!item.error)
+      );
+    }
+
+    if (this.uploadMode === CatiaUploadMode.IMAGE_URL) {
+      return !!messageText || !!this.pendingImageUrl.trim();
+    }
+
+    return true;
+  }
+
+  getPendingAttachmentHint(): string {
+    if (this.uploadMode === CatiaUploadMode.IMAGE_URL) {
+      return 'La imagen se enviará usando la URL indicada.';
+    }
+
+    if (!this.pendingImageUploads.length) {
+      return 'JPG o PNG, máximo 5 MB por imagen.';
+    }
+
+    const ready = this.getPendingImageReadyCount();
+    const total = this.pendingImageUploads.length;
+
+    if (this.isUploadingMedia) {
+      return `Preparando ${ready}/${total} imágenes...`;
+    }
+
+    if (this.hasPendingImageErrors()) {
+      return 'Quita o reemplaza las imágenes con error antes de enviar.';
+    }
+
+    if (total > 1) {
+      return `Listas ${ready}/${total}. El texto se enviará solo con la primera imagen.`;
+    }
+
+    return 'Imagen lista para enviar.';
+  }
+
   // Send Message
   messageSave() {
     const messageText = this.formMessage.get('chatMsg')?.value?.trim() ?? '';
     const destinationPhone = this.selectedUser?.whatsappPhone?.trim();
+    const imageUrl = this.pendingImageUrl.trim();
 
-    if (!messageText) {
+    if (!messageText && !this.hasPendingAttachment()) {
       this.formMessage.get('chatMsg')?.markAsTouched();
+      this.toastr.info('Escribe un mensaje o adjunta una imagen');
       return;
     }
 
@@ -1430,26 +1711,87 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
+    if (!this.canSendCurrentMessage()) {
+      if (this.isUploadingMedia) {
+        this.toastr.info('Espera a que todas las imágenes terminen de cargarse');
+        return;
+      }
+
+      if (this.hasPendingImageErrors()) {
+        this.toastr.error('Hay imágenes con error. Quítalas o vuelve a cargarlas.');
+        return;
+      }
+
+      return;
+    }
+
     this.isSendingMessage = true;
     this.updateMessageInputState();
 
-    this.catiaService
-      .sendWhatsAppMessage({
-        number,
-        message: messageText,
-        sentBy: this.getCurrentOperatorName(),
-        source: CatiaMessageSource.BACK_OFFICE,
-        businessPhoneNumber:  this.businessPhoneNumber,
-        type: CatiaMessageType.TEXT,
-      })
+    const basePayload = {
+      number,
+      sentBy: this.getCurrentOperatorName(),
+      source: CatiaMessageSource.BACK_OFFICE,
+      businessPhoneNumber: this.businessPhoneNumber,
+    };
+
+    const requests: any[] = [];
+
+    if (
+      this.uploadMode === CatiaUploadMode.IMAGE_FILE &&
+      this.pendingImageUploads.length
+    ) {
+      const readyUploads = this.pendingImageUploads.filter((item) => !!item.mediaId);
+
+      readyUploads.forEach((item, index) => {
+        requests.push(
+          this.catiaService.sendImageById(
+            {
+              ...basePayload,
+              message: index === 0 ? messageText : '',
+              type: CatiaMessageType.IMAGE,
+            },
+            item.mediaId!
+          )
+        );
+      });
+    } else if (this.uploadMode === CatiaUploadMode.IMAGE_URL && imageUrl) {
+      requests.push(
+        this.catiaService.sendImageByUrl(
+          {
+            ...basePayload,
+            message: messageText,
+            type: CatiaMessageType.IMAGE,
+          },
+          imageUrl
+        )
+      );
+    } else {
+      requests.push(
+        this.catiaService.sendWhatsAppMessage({
+          ...basePayload,
+          message: messageText,
+          type: CatiaMessageType.TEXT,
+        })
+      );
+    }
+
+    from(requests)
+      .pipe(concatMap((request$) => request$), toArray())
       .subscribe({
         next: () => {
+          const sentCount = requests.length;
           this.isSendingMessage = false;
           this.formMessage.reset({ chatMsg: '' });
+          this.clearPendingImageState();
           this.updateMessageInputState();
           this.scheduleSelectedChatRefresh(800);
           setTimeout(() => this.refreshSelectedChatMessages(), 2200);
-          this.toastr.success('Mensaje enviado correctamente');
+          this.toastr.success(
+            sentCount > 1
+              ? `Se enviaron ${sentCount} imágenes correctamente`
+              : 'Mensaje enviado correctamente'
+          );
         },
         error: (err: any) => {
           this.isSendingMessage = false;
@@ -1756,6 +2098,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   // OnClick User Chat show
   selectChatUser(user: CatiaUserModel) {
     this.closeMessageStream();
+    this.clearPendingImageState();
     this.selectedUser = user;
     this.username = this.getUserDisplayName(user);
     this.role = this.getRolesString(user.erpUser?.rolesUsuario);
