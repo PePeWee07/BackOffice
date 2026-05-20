@@ -1,0 +1,22 @@
+export enum CatiaMessageType {
+  CONTACTS = 'CONTACTS',
+  LOCATION = 'LOCATION',
+  AUDIO = 'AUDIO',
+  REACTION = 'REACTION',
+  TEMPLATE = 'TEMPLATE',
+  IMAGE = 'IMAGE',
+  TEXT = 'TEXT',
+  UNSUPPORTED = 'UNSUPPORTED',
+  VIDEO = 'VIDEO',
+  STICKER = 'STICKER',
+  DOCUMENT = 'DOCUMENT',
+  UNKNOWN = 'UNKNOWN',
+}
+
+export enum CatiaMessageSource {
+  BACK_END = 'BACK_END',
+  IA = 'IA',
+  BACK_OFFICE = 'BACK_OFFICE',
+  UNKNOWN = 'UNKNOWN',
+  USER = 'USER',
+}

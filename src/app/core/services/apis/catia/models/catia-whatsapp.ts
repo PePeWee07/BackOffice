@@ -1,17 +1,11 @@
 export interface CatiaSendWhatsAppMessageRequest {
-  to: string;
-  type?: string;
-  message?: string;
-  textBody?: string;
-  mediaId?: string;
-  mediaUrl?: string;
-  mimeType?: string;
-  filename?: string;
-  caption?: string;
-  templateName?: string;
-  templateLanguage?: string;
-  templateParameters?: unknown[];
-  [key: string]: unknown;
+  number: number,
+  message: string,
+  sentBy: string,
+  source: string,
+  businessPhoneNumber: number,
+  type: string,
+  contextId?: string,
 }
 
 export interface ResponseWhatsapp {

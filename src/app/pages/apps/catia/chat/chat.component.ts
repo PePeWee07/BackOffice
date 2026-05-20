@@ -26,12 +26,14 @@ import {
 import { DrawerService } from '../../../../Component/drawer/drawer.service';
 import { TabContextService } from '../../../../Component/tab/tab-context.service';
 import { ToastrService } from 'ngx-toastr';
+import { AuthenticationService } from '../../../../core/services/auth/auth.service';
 import {
   CatiaUserChatQueryParams,
   CatiaUserFindQueryParams,
   CatiaUserModel,
   RolesUsuario,
 } from '../../../../core/services/apis/catia/models/catia-user';
+import { CatiaMessageSource, CatiaMessageType } from '../../../../core/services/apis/catia/models/catia-enum';
 
 @Component({
   selector: 'app-chat',
@@ -62,6 +64,7 @@ import {
   ],
 })
 export class ChatComponent implements AfterViewInit, OnDestroy {
+  businessPhoneNumber = 15556323669;
   username: string = 'User';
   showTab: boolean = true;
   profile: string = 'assets/images/users/user-dummy-img.jpg';
@@ -77,6 +80,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     blockingReason: string;
   } | null = null;
   formMessage!: UntypedFormGroup;
+  isSendingMessage = false;
   isMenuCollapsed = false; // For Menu Collapse in false
   isChatFinderHidden = true;
   searchTerm = '';
@@ -84,6 +88,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   private readonly scrollThreshold = 120;
   private nowTimestamp = Date.now();
   private timeAgoIntervalId?: ReturnType<typeof setInterval>;
+  private refreshMessagesTimeoutId?: ReturnType<typeof setTimeout>;
 
   messages: CatiaMessageModel[] = [];
   currentMessagePage = 0;
@@ -171,6 +176,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     public formBuilder: UntypedFormBuilder,
     public translate: TranslateService,
     private catiaService: CatiaChatService,
+    private authenticationService: AuthenticationService,
     private tabContextService: TabContextService,
     private toastr: ToastrService,
     private drawerService: DrawerService
@@ -185,6 +191,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.formMessage = this.formBuilder.group({
       chatMsg: ['', [Validators.required]],
     });
+    this.updateMessageInputState();
   }
 
   ngAfterViewInit() {
@@ -206,6 +213,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.closeMessageStream();
     this.clearMessageMediaUrls();
     this.stopTimeAgoClock();
+    this.clearScheduledMessageRefresh();
   }
 
   private startTimeAgoClock() {
@@ -286,7 +294,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   onMessageScroll() {
-    const scrollElement = this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+    const scrollElement =
+      this.messageScrollRef?.SimpleBar?.getScrollElement?.();
 
     if (
       !scrollElement ||
@@ -358,6 +367,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
           this.newMessageAlertCount += 1;
           this.latestMessagePreview = payload.preview?.trim() ?? '';
           this.latestMessageType = payload.messageType?.trim() ?? '';
+          this.scheduleSelectedChatRefresh(700);
         },
         error: (err: unknown) => {
           this.isStreamingSelectedChat = false;
@@ -373,6 +383,22 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.messageStreamSubscription?.unsubscribe();
     this.messageStreamSubscription = undefined;
     this.isStreamingSelectedChat = false;
+  }
+
+  private clearScheduledMessageRefresh() {
+    if (this.refreshMessagesTimeoutId) {
+      clearTimeout(this.refreshMessagesTimeoutId);
+      this.refreshMessagesTimeoutId = undefined;
+    }
+  }
+
+  private scheduleSelectedChatRefresh(delayMs = 800) {
+    this.clearScheduledMessageRefresh();
+
+    this.refreshMessagesTimeoutId = setTimeout(() => {
+      this.refreshMessagesTimeoutId = undefined;
+      this.refreshSelectedChatMessages();
+    }, delayMs);
   }
 
   refreshSelectedChatMessages() {
@@ -396,7 +422,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   registerMessageScrollListener() {
-    const scrollElement = this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+    const scrollElement =
+      this.messageScrollRef?.SimpleBar?.getScrollElement?.();
 
     if (!scrollElement) {
       return;
@@ -406,7 +433,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   removeMessageScrollListener() {
-    const scrollElement = this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+    const scrollElement =
+      this.messageScrollRef?.SimpleBar?.getScrollElement?.();
 
     if (!scrollElement) {
       return;
@@ -416,7 +444,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   ensureMessageHistoryFillViewport() {
-    const scrollElement = this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+    const scrollElement =
+      this.messageScrollRef?.SimpleBar?.getScrollElement?.();
 
     if (!scrollElement || this.isLoadingMessages || !this.hasMoreMessages) {
       return;
@@ -485,7 +514,9 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   getMessageMediaUrl(message: CatiaMessageModel): string | null {
-    return this.messageMediaUrlMap[message.id] ?? message.mediaUrl?.trim() ?? null;
+    return (
+      this.messageMediaUrlMap[message.id] ?? message.mediaUrl?.trim() ?? null
+    );
   }
 
   isMessageMediaLoading(message: CatiaMessageModel): boolean {
@@ -562,7 +593,10 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   loadMessageMedia(message: CatiaMessageModel) {
-    if (!this.canLoadMessageMedia(message) || this.isMessageMediaLoading(message)) {
+    if (
+      !this.canLoadMessageMedia(message) ||
+      this.isMessageMediaLoading(message)
+    ) {
       return;
     }
 
@@ -659,7 +693,9 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       case 'REACTION':
         return `[Reacción] ${message.reactionEmoji ?? ''}`.trim();
       case 'TEMPLATE':
-        return `[Template] ${message.messageTemplate?.templateName ?? ''}`.trim();
+        return `[Template] ${
+          message.messageTemplate?.templateName ?? ''
+        }`.trim();
       default:
         return `[${message.type}]`;
     }
@@ -789,7 +825,10 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
     const hasAiMetadata =
       (message.aiResponses?.length ?? 0) > 0 ||
-      Object.prototype.hasOwnProperty.call(this.messageAiResponseMap, message.id);
+      Object.prototype.hasOwnProperty.call(
+        this.messageAiResponseMap,
+        message.id
+      );
 
     return catiaOwnedSource || likelyCatiaOutbound || hasAiMetadata;
   }
@@ -865,7 +904,10 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     if (this.selectedMessageAiResponses.length > 0) {
       this.messageAiResponseMap[message.id] = this.selectedMessageAiResponses;
     } else if (
-      Object.prototype.hasOwnProperty.call(this.messageAiResponseMap, message.id)
+      Object.prototype.hasOwnProperty.call(
+        this.messageAiResponseMap,
+        message.id
+      )
     ) {
       this.selectedMessageAiResponses =
         this.messageAiResponseMap[message.id] ?? [];
@@ -875,7 +917,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       this.catiaService.getAiResponses(message.id).subscribe({
         next: (aiResponses) => {
           this.selectedMessageAiResponses = aiResponses ?? [];
-          this.messageAiResponseMap[message.id] = this.selectedMessageAiResponses;
+          this.messageAiResponseMap[message.id] =
+            this.selectedMessageAiResponses;
           this.isLoadingSelectedMessageAiResponses = false;
         },
         error: (err: any) => {
@@ -969,7 +1012,10 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
 
     if (
-      Object.prototype.hasOwnProperty.call(this.messageMediaMetadataMap, mediaId)
+      Object.prototype.hasOwnProperty.call(
+        this.messageMediaMetadataMap,
+        mediaId
+      )
     ) {
       this.selectedMessageMediaMetadata = this.messageMediaMetadataMap[mediaId];
       return;
@@ -1112,7 +1158,10 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       message?.failedAt ||
       message?.messageError ||
       (message?.id &&
-        Object.prototype.hasOwnProperty.call(this.messageErrorMap, message.id) &&
+        Object.prototype.hasOwnProperty.call(
+          this.messageErrorMap,
+          message.id
+        ) &&
         this.messageErrorMap[message.id])
     );
   }
@@ -1127,62 +1176,65 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
     this.isLoadingMessages = true;
 
-    const scrollElement = this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+    const scrollElement =
+      this.messageScrollRef?.SimpleBar?.getScrollElement?.();
     const previousScrollHeight = scrollElement?.scrollHeight ?? 0;
 
-    this.catiaService.getMessageHistory({
-      phone,
-      page,
-      size: this.messagePageSize,
-      direction: 'desc',
-    }).subscribe({
-      next: (pageMessages) => {
-        const incomingMessages = [...(pageMessages.content ?? [])].reverse();
+    this.catiaService
+      .getMessageHistory({
+        phone,
+        page,
+        size: this.messagePageSize,
+        direction: 'desc',
+      })
+      .subscribe({
+        next: (pageMessages) => {
+          const incomingMessages = [...(pageMessages.content ?? [])].reverse();
 
-        if (reset || pageMessages.page.number === 0) {
-          this.messages = incomingMessages;
-        } else {
-          this.isPrependingMessages = true;
-          this.messages = [...incomingMessages, ...this.messages];
-        }
-
-        this.currentMessagePage = pageMessages.page.number;
-        this.totalMessages = pageMessages.page.totalElements;
-        this.hasMoreMessages =
-          pageMessages.page.number + 1 < pageMessages.page.totalPages;
-        this.isLoadingMessages = false;
-        this.ensureLocationMessagesLoaded(incomingMessages);
-
-        setTimeout(() => {
-          this.registerMessageScrollListener();
-
-          const currentScrollElement =
-            this.messageScrollRef?.SimpleBar?.getScrollElement?.();
-
-          if (!currentScrollElement) {
-            return;
+          if (reset || pageMessages.page.number === 0) {
+            this.messages = incomingMessages;
+          } else {
+            this.isPrependingMessages = true;
+            this.messages = [...incomingMessages, ...this.messages];
           }
 
-          if (reset) {
-            currentScrollElement.scrollTop = currentScrollElement.scrollHeight;
-          } else if (this.isPrependingMessages) {
-            const currentScrollHeight = currentScrollElement.scrollHeight;
-            currentScrollElement.scrollTop =
-              currentScrollHeight - previousScrollHeight;
-            this.isPrependingMessages = false;
-          }
+          this.currentMessagePage = pageMessages.page.number;
+          this.totalMessages = pageMessages.page.totalElements;
+          this.hasMoreMessages =
+            pageMessages.page.number + 1 < pageMessages.page.totalPages;
+          this.isLoadingMessages = false;
+          this.ensureLocationMessagesLoaded(incomingMessages);
 
-          this.ensureMessageHistoryFillViewport();
-        });
-      },
-      error: (err: any) => {
-        this.isLoadingMessages = false;
-        this.toastr.error(JSON.stringify(err));
-        console.error('Error:', err);
-      },
-    });
+          setTimeout(() => {
+            this.registerMessageScrollListener();
+
+            const currentScrollElement =
+              this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+
+            if (!currentScrollElement) {
+              return;
+            }
+
+            if (reset) {
+              currentScrollElement.scrollTop =
+                currentScrollElement.scrollHeight;
+            } else if (this.isPrependingMessages) {
+              const currentScrollHeight = currentScrollElement.scrollHeight;
+              currentScrollElement.scrollTop =
+                currentScrollHeight - previousScrollHeight;
+              this.isPrependingMessages = false;
+            }
+
+            this.ensureMessageHistoryFillViewport();
+          });
+        },
+        error: (err: any) => {
+          this.isLoadingMessages = false;
+          this.toastr.error(JSON.stringify(err));
+          console.error('Error:', err);
+        },
+      });
   }
-
 
   // Buscar usuario por identificacion(DNI/Pasaporte) o whatsappPhone(Numero Telefonico)
   findUserChat(params: CatiaUserFindQueryParams, reset = false) {
@@ -1306,8 +1358,107 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  private sanitizePhoneToNumber(value?: string | null): number | null {
+    const digits = value?.replace(/\D/g, '') ?? '';
+
+    if (!digits) {
+      return null;
+    }
+
+    const parsed = Number(digits);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private getCurrentOperatorName(): string {
+    return (
+      this.authenticationService.currentUserValue?.username?.trim() ||
+      'Anonymus'
+    );
+  }
+
+  private updateMessageInputState() {
+    const chatControl = this.formMessage?.get('chatMsg');
+
+    if (!chatControl) {
+      return;
+    }
+
+    const shouldDisable = !this.selectedUser || this.isSendingMessage;
+
+    if (shouldDisable && chatControl.enabled) {
+      chatControl.disable({ emitEvent: false });
+      return;
+    }
+
+    if (!shouldDisable && chatControl.disabled) {
+      chatControl.enable({ emitEvent: false });
+    }
+  }
+
   // Send Message
-  messageSave() {}
+  messageSave() {
+    const messageText = this.formMessage.get('chatMsg')?.value?.trim() ?? '';
+    const destinationPhone = this.selectedUser?.whatsappPhone?.trim();
+
+    if (!messageText) {
+      this.formMessage.get('chatMsg')?.markAsTouched();
+      return;
+    }
+
+    if (!destinationPhone) {
+      this.toastr.info(
+        'Selecciona una conversación antes de enviar un mensaje'
+      );
+      return;
+    }
+
+    if (!this.businessPhoneNumber) {
+      this.toastr.error(
+        'No fue posible inferir el número de negocio para esta conversación'
+      );
+      return;
+    }
+
+    const number = this.sanitizePhoneToNumber(destinationPhone);
+
+    if (!number || !this.businessPhoneNumber) {
+      this.toastr.error('No fue posible preparar los números para el envío');
+      return;
+    }
+
+    if (this.isSendingMessage) {
+      return;
+    }
+
+    this.isSendingMessage = true;
+    this.updateMessageInputState();
+
+    this.catiaService
+      .sendWhatsAppMessage({
+        number,
+        message: messageText,
+        sentBy: this.getCurrentOperatorName(),
+        source: CatiaMessageSource.BACK_OFFICE,
+        businessPhoneNumber:  this.businessPhoneNumber,
+        type: CatiaMessageType.TEXT,
+      })
+      .subscribe({
+        next: () => {
+          this.isSendingMessage = false;
+          this.formMessage.reset({ chatMsg: '' });
+          this.updateMessageInputState();
+          this.scheduleSelectedChatRefresh(800);
+          setTimeout(() => this.refreshSelectedChatMessages(), 2200);
+          this.toastr.success('Mensaje enviado correctamente');
+        },
+        error: (err: any) => {
+          this.isSendingMessage = false;
+          this.updateMessageInputState();
+          this.toastr.error(JSON.stringify(err));
+          console.error('Error:', err);
+        },
+      });
+  }
 
   submitUserSearch() {
     const searchValue = this.searchTerm.trim();
@@ -1614,6 +1765,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.newMessageAlertCount = 0;
     this.latestMessagePreview = '';
     this.latestMessageType = '';
+    this.updateMessageInputState();
     this.loadInitialMessageHistory();
     if (user.whatsappPhone?.trim()) {
       this.openMessageStream(user.whatsappPhone);
