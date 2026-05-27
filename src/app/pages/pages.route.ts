@@ -47,6 +47,10 @@ export const PAGE_ROUTES: Route[] = [
   {
     path: '',
     component: IndexComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['ROLE_ADMIN', 'ROLE_USER'],
+    },
   },
   {
     path: 'apps-chat',
@@ -59,11 +63,26 @@ export const PAGE_ROUTES: Route[] = [
   {
     path: 'apps-calendar',
     component: CalendarComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['ROLE_ADMIN', 'ROLE_USER'],
+    },
   },
-  { path: 'apps-calendar-month-grid', component: MonthGridComponent },
+  {
+    path: 'apps-calendar-month-grid',
+    component: MonthGridComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['ROLE_ADMIN', 'ROLE_USER'],
+    },
+  },
   {
     path: 'apps-calendar-multi-month-stack',
     component: MultiMonthStackComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['ROLE_ADMIN', 'ROLE_USER'],
+    },
   },
   { path: 'product-list', component: ListComponent },
   { path: 'product-grid', component: GridComponent },
