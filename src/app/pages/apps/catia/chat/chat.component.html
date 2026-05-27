@@ -5,813 +5,810 @@
 ></app-page-title>
 
 <div class="container-fluid group-data-[content=boxed]:max-w-boxed mx-auto relative">
-    <div class="flex flex-col gap-5 mt-5 pb-24 xl:pb-0 xl:flex-row">
-
-        <!-- SideBar -->
-        <div class="fixed inset-x-0 bottom-0 z-[20] text-center md:inset-x-auto md:w-96 xl:relative xl:inset-auto xl:bottom-auto xl:w-20 shrink-0">
-            <div class="block w-full xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] xl:inline-block card xl:h-[calc(100%_-_theme('spacing.5'))] shadow-lg xl:shadow-md">
-                <div class="flex flex-row items-center justify-between w-full px-3 py-2 xl:h-full xl:flex-col xl:justify-start xl:p-4">
-                    <a href="javascript:void(0);" class="hidden xl:block"><img src="assets/images/logo-sm.png" alt="" class="h-7 mx-auto"></a>
-                    <app-nav [tabSetName]="'chat'" [defaultActiveKey]="'chat'" class="mobile-bottom-nav nav-tabs text-center xl:pt-8">
-                        <app-nav-item [tabSetName]="'chat'" [eventKey]="'chat'" (click)="setMainView('chat')" class="group/item tabs chatTab">
-                            <a href="javascript:void(0);" data-tab-toggle data-target="mainChatList" class="inline-flex items-center justify-center  w-12 h-12  transition-all duration-200 ease-linear rounded-md mainChatList"><lucide-angular name="messages-square" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
-                        </app-nav-item>
-                        <app-nav-item [tabSetName]="'chat'" [eventKey]="'AI'" (click)="setMainView('ai')" class="group/item botTab">
-                            <a href="javascript:void(0);" data-tab-toggle data-target="botChat" class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear rounded-md botChat"><lucide-angular name="bot" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
-                        </app-nav-item>
-                        <app-nav-item [tabSetName]="'chat'" [eventKey]="'profile'" class="group/item tabs">
-                            <a href="javascript:void(0);" data-tab-toggle data-target="profile" class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear rounded-md"><lucide-angular name="user" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
-                        </app-nav-item>
-                    </app-nav>
-                    <ul class="flex items-center gap-2 my-auto text-center xl:mb-0 xl:mt-auto xl:pt-4 xl:flex-col">
-                      <li>
-                          <a routerLink="#" class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="settings" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
-                      </li>
-                      <li class=" md:block">
-                        <div class="relative inline-block">
-                          <a href="javascript:void(0);" type="button" class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear bg-pink-100 rounded-md group/item dropdown-toggle dark:bg-pink-500/20">
-                            <img src="assets/images/users/catia-off-background.png" alt="" class=" rounded-md">
-                          </a>
-                        </div>
-                      </li>
-                    </ul>
-                </div>
+  <div class="flex flex-col gap-5 mt-5 pb-24 xl:pb-0 xl:flex-row">
+    <!-- SideBar -->
+    <div class="fixed inset-x-0 bottom-0 z-[20] text-center md:inset-x-auto md:w-96 xl:relative xl:inset-auto xl:bottom-auto xl:w-20 shrink-0">
+        <div class="block w-full xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] xl:inline-block card xl:h-[calc(100%_-_theme('spacing.5'))] shadow-lg xl:shadow-md">
+            <div class="flex flex-row items-center justify-between w-full px-3 py-2 xl:h-full xl:flex-col xl:justify-start xl:p-4">
+                <a href="javascript:void(0);" class="hidden xl:block"><img src="assets/images/logo-sm.png" alt="" class="h-7 mx-auto"></a>
+                <app-nav [tabSetName]="'chat'" [defaultActiveKey]="'chat'" class="mobile-bottom-nav nav-tabs text-center xl:pt-8">
+                    <app-nav-item [tabSetName]="'chat'" [eventKey]="'chat'" (click)="setMainView('chat')" class="group/item tabs chatTab">
+                        <a href="javascript:void(0);" data-tab-toggle data-target="mainChatList" class="inline-flex items-center justify-center  w-12 h-12  transition-all duration-200 ease-linear rounded-md mainChatList"><lucide-angular name="messages-square" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
+                    </app-nav-item>
+                    <app-nav-item [tabSetName]="'chat'" [eventKey]="'AI'" (click)="setMainView('ai')" class="group/item botTab">
+                        <a href="javascript:void(0);" data-tab-toggle data-target="botChat" class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear rounded-md botChat"><lucide-angular name="bot" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
+                    </app-nav-item>
+                    <app-nav-item [tabSetName]="'chat'" [eventKey]="'profile'" class="group/item tabs">
+                        <a href="javascript:void(0);" data-tab-toggle data-target="profile" class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear rounded-md"><lucide-angular name="user" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
+                    </app-nav-item>
+                </app-nav>
+                <ul class="flex items-center gap-2 my-auto text-center xl:mb-0 xl:mt-auto xl:pt-4 xl:flex-col">
+                  <li>
+                      <a routerLink="#" class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="settings" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
+                  </li>
+                  <li class=" md:block">
+                    <div class="relative inline-block">
+                      <a href="javascript:void(0);" type="button" class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear bg-pink-100 rounded-md group/item dropdown-toggle dark:bg-pink-500/20">
+                        <img src="assets/images/users/catia-off-background.png" alt="" class=" rounded-md">
+                      </a>
+                    </div>
+                  </li>
+                </ul>
             </div>
         </div>
-        <!-- SideBar End -->
+    </div><!-- SideBar End -->
 
-        <!-- Menu Content -->
-        <div class="menu-content shrink-0 overflow-hidden transition-all duration-300 ease-in-out" [ngClass]="{
-            'xl:w-80': !isMenuCollapsed,
-            'xl:w-0': isMenuCollapsed
-          }">
-            @if (!isMenuCollapsed) {
-              <div class="w-full h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card xl:h-[calc(100%_-_theme('spacing.5'))]">
-                  <div class="flex flex-col h-full">
-                      <div class="tab-content">
-                          <!-- Menu Chats -->
-                          <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'chat'" class="block tab-pane" id="mainChatList">
-                            <!-- FINDER -->
-                            <div class="card-body">
-                                <div class="flex items-center gap-3">
-                                    <button
-                                      type="button"
-                                      (click)="toggleMenuCollapse()"
-                                      class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
-                                      <lucide-angular name="chevron-left" [class]="'size-4 mx-auto'"></lucide-angular>
-                                    </button>
-                                    <h6 class="text-15 grow">Chats</h6>
-                                </div>
-                                <div class="flex items-center gap-2 mt-4">
-                                    <button
-                                      type="button"
-                                      (click)="searchMode = 'identificacion'"
-                                      [class]="searchMode === 'identificacion'
-                                        ? 'px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-400'
-                                        : 'px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200'">
-                                      Identificación
-                                    </button>
-                                    <button
-                                      type="button"
-                                      (click)="searchMode = 'whatsappPhone'"
-                                      [class]="searchMode === 'whatsappPhone'
-                                        ? 'px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-400'
-                                        : 'px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200'">
-                                      Teléfono
-                                    </button>
-                                </div>
-                                <div class="relative mt-5">
-                                    <input
-                                      type="text"
-                                      [(ngModel)]="searchTerm"
-                                      (keydown.enter)="submitUserSearch()"
-                                      class="ltr:pl-8 rtl:pr-20 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-                                      [placeholder]="'Buscar por ' + searchModeLabel + '...'"
-                                      autocomplete="off">
-                                    <lucide-angular name="search" [class]="'inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600'"></lucide-angular>
-                                    <div class="absolute top-1.5 ltr:right-1.5 rtl:left-1.5 flex items-center gap-1">
-                                      @if (searchTerm) {
-                                        <button
-                                          type="button"
-                                          (click)="clearUserSearch()"
-                                          class="inline-flex items-center justify-center size-7 rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
-                                          <lucide-angular name="x" [class]="'size-4'"></lucide-angular>
-                                        </button>
-                                      }
-                                      <button
-                                        type="button"
-                                        (click)="submitUserSearch()"
-                                        class="inline-flex items-center justify-center size-7 rounded-md bg-custom-500 text-white">
-                                        <lucide-angular name="arrow-right" [class]="'size-4'"></lucide-angular>
-                                      </button>
-                                    </div>
-                                </div>
-                                @if (isSearchingUser) {
-                                  <p class="mt-2 text-xs text-slate-500 dark:text-zink-200">
-                                    Buscando usuario...
-                                  </p>
-                                }
-                            </div>
-
-                            @if (hasSearchedUser) {
-                              <div class="px-5">
-                                <p class="mb-2 text-amber-500 dark:text-green-200">
-                                  Search Result ({{ searchResults.length }}/{{ totalSearchResults }})
-                                </p>
-                              </div>
-                              <ngx-simplebar class="max-h-44 xl:max-h-52 mb-4" #searchScrollRef>
-                                <ul class="flex flex-col gap-1">
-                                      @for(item of searchResults;track item.id){
-                                        <li (click)="selectChatUser(item)">
-                                        <a href="javascript:void(0);" [ngClass]="{'active': item.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-amber-50 group/item dark:[&.active]:bg-green-600 online border-y border-amber-100 dark:border-green-700">
-                                          <div class="relative flex items-center justify-center font-semibold rounded-full text-amber-500 dark:text-green-200 size-9 bg-amber-100 dark:bg-green-600">
-                                            <img src="assets/images/users/user-dummy-img.jpg" alt="avatar" class="rounded-full h-9">
-                                            <span [ngClass]="'online' == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-amber-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-green-700 rounded-full  dark:group-[.offline]/item:bg-green-500"></span>
-                                          </div>
-                                          <div class="overflow-hidden grow">
-                                            <h6 class="mb-1">{{item.erpUser?.nombres || "Anonymus"}}</h6>
-                                            <p class="text-xs truncate text-amber-500 dark:text-green-200">DNI: {{item.erpUser?.identificacion || "none"}}</p>
-                                          </div>
-                                          <div class="self-start shrink-0 text-amber-500 dark:text-green-200">
-                                            <small>{{getTimeAgo(item.lastInteraction)}}</small>
-                                          </div>
-                                        </a>
-                                      </li>
-                                    }
-
-                                    @if (isSearchingUser) {
-                                      <li class="px-5 py-3">
-                                        <p class="text-xs text-center text-amber-500 dark:text-green-200">
-                                          Cargando resultados...
-                                        </p>
-                                      </li>
-                                    }
-
-                                    @if (!hasMoreSearchResults && searchResults.length > 0) {
-                                      <li class="px-5 py-3">
-                                        <p class="text-xs text-center text-amber-400 dark:text-green-300">
-                                          No hay más resultados para cargar.
-                                        </p>
-                                      </li>
-                                    }
-
-                                    @if (!isSearchingUser && searchResults.length === 0) {
-                                      <li class="px-5 py-3">
-                                        <p class="text-xs text-center text-amber-400 dark:text-green-300">
-                                          No se encontraron resultados.
-                                        </p>
-                                      </li>
-                                    }
-                                </ul>
-                              </ngx-simplebar>
-                            }
-
-                            <!-- Contacts -->
-                            <div class="px-5">
-                              <p class="mb-2 text-slate-500 dark:text-zink-200">Recent Chats ({{ totalRecentChats }})</p>
-                            </div>
-                            <ngx-simplebar class="max-h-44 xl:max-h-52" #recentScrollRef>
-                                <ul class="flex flex-col gap-1" id="recentChatList">
-                                      @for(data of recentChat;track data.id ){
-                                      <li (click)="selectChatUser(data)">
-                                      <a href="javascript:void(0);" [ngClass]="{'active': data.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600 group/item online">
-                                            <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
-                                                <img src="assets/images/users/user-dummy-img.jpg" alt="" class="rounded-full h-9">
-                                                <span [ngClass]="'online' == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-slate-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-zink-700 rounded-full  dark:group-[.offline]/item:bg-zink-500"></span>
-                                            </div>
-                                            <div class="overflow-hidden grow">
-                                                <h6 class="mb-1">{{data.erpUser?.nombres || "Anonymus"}}</h6>
-                                                <p class="text-xs truncate text-slate-500 dark:text-zink-200">DNI: {{data.erpUser?.identificacion || "none"}}</p>
-                                            </div>
-                                            <div class="self-start shrink-0 text-slate-500 dark:text-zink-200">
-                                                <small>{{getTimeAgo(data.lastInteraction)}}</small>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    }
-
-                                    @if (isLoadingRecentChats) {
-                                      <li class="px-5 py-3">
-                                        <p class="text-xs text-center text-slate-500 dark:text-zink-200">
-                                          Cargando recientes...
-                                        </p>
-                                      </li>
-                                    }
-
-                                    @if (!hasMoreRecentChats && recentChat.length > 0) {
-                                      <li class="px-5 py-3">
-                                        <p class="text-xs text-center text-slate-400 dark:text-zink-300">
-                                          No hay más recientes para cargar.
-                                        </p>
-                                      </li>
-                                    }
-                                </ul>
-                            </ngx-simplebar>
-
-                            <div class="px-5 mt-4">
-                              <p class="mb-2 text-slate-500 dark:text-zink-200">All Conversion ({{ totalUserChats }})</p>
-                            </div>
-                            <ngx-simplebar class="max-h-[calc(100vh_-_560px)] xl:max-h-[calc(100vh_-_470px)]" #allScrollRef>
-                                <ul class="flex flex-col gap-1" id="chatList">
-                                      @for(item of allConversations;track item.id){
-                                        <li (click)="selectChatUser(item)">
-                                        <a href="javascript:void(0);" [ngClass]="{'active': item.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 group/item dark:[&.active]:bg-zink-600 online">
-                                          <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
-                                            <img src="assets/images/users/user-dummy-img.jpg" alt="avatar" class="rounded-full h-9">
-                                            <span [ngClass]="'online' == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-slate-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-zink-700 rounded-full  dark:group-[.offline]/item:bg-zink-500"></span>
-                                          </div>
-                                          <div class="overflow-hidden grow">
-                                            <h6 class="mb-1">{{item.erpUser?.nombres || "Anonymus"}}</h6>
-                                            <p class="text-xs truncate text-slate-500 dark:text-zink-200">DNI: {{item.erpUser?.identificacion || "none"}}</p>
-                                          </div>
-                                          <div class="self-start shrink-0 text-slate-500 dark:text-zink-200">
-                                            <small>{{getTimeAgo(item.lastInteraction)}}</small>
-                                          </div>
-                                        </a>
-                                      </li>
-                                    }
-
-                                    @if (isLoadingUserChats) {
-                                      <li class="px-5 py-3">
-                                        <p class="text-xs text-center text-slate-500 dark:text-zink-200">
-                                          Cargando más conversaciones...
-                                        </p>
-                                      </li>
-                                    }
-
-                                    @if (!hasMoreUserChats && allConversations.length > 0) {
-                                      <li class="px-5 py-3">
-                                        <p class="text-xs text-center text-slate-400 dark:text-zink-300">
-                                          No hay más conversaciones para cargar.
-                                        </p>
-                                      </li>
-                                    }
-                                </ul>
-                            </ngx-simplebar>
-                          </mn-tab-pane>
-
-                          <!-- Menu AI -->
-                          <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'AI'" class="tab-pane" id="botChat">
-                              <div class="card-body">
-                                  <div class="flex items-center gap-3">
-                                    <button
-                                      type="button"
-                                      (click)="toggleMenuCollapse()"
-                                      class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
-                                      <lucide-angular
-                                        name="chevron-left"
-                                        [class]="isMenuCollapsed ? 'size-4 mx-auto rotate-180 transition-transform duration-200' : 'size-4 mx-auto transition-transform duration-200'">
-                                      </lucide-angular>
-                                    </button>
-                                      <h6 class="text-15 grow">AI Bot</h6>
-                                  </div>
-                                  <div class="relative mt-5">
-                                      <input type="text" class="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Search for ..." autocomplete="off">
-                                      <lucide-angular name="search" [class]="'inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600'"></lucide-angular>
-                                  </div>
-                              </div>
-                              <p class="mx-5 mb-2 text-slate-500 dark:text-zink-200">Recent Find</p>
-                              <ngx-simplebar class="max-h-[calc(100vh_-_410px)] xl:max-h-[calc(100vh_-_330px)]">
-                                  <ul class="flex flex-col gap-1">
-                                      <li>
-                                          <a href="javascript:void(0);" class="flex items-center gap-3 px-5 py-2.5 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600 active">
-                                              <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 size-7 dark:text-zink-200 shrink-0">
-                                                  <lucide-angular name="messages-square" [class]="'size-4'"></lucide-angular>
-                                              </div>
-                                              <h6 class="font-medium truncate grow">What is Tailwind CSS, and what is Utility-First CSS?</h6>
-                                          </a>
-                                      </li>
-                                      <li>
-                                          <a href="javascript:void(0);" class="flex items-center gap-3 px-5 py-2.5 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600">
-                                              <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 size-7 dark:text-zink-200 shrink-0">
-                                                  <lucide-angular name="messages-square" [class]="'size-4'"></lucide-angular>
-                                              </div>
-                                              <h6 class="font-medium truncate grow">How to install and set up Tailwind CSS in a project?</h6>
-                                          </a>
-                                      </li>
-                                  </ul>
-                              </ngx-simplebar>
-                          </mn-tab-pane>
-
-                          <!-- Menu Profile -->
-                          <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'profile'" class="tab-pane" id="profile">
-                              <ngx-simplebar class="max-h-[calc(100vh_-_250px)] xl:max-h-full card-body">
-                                  <div class="flex items-center gap-3">
-                                    <button
-                                        type="button"
-                                        (click)="toggleMenuCollapse()"
-                                        class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
-                                      <lucide-angular name="chevron-left" [class]="'size-4 mx-auto'"></lucide-angular>
-                                    </button>
-                                      <h6 class="text-15 grow">Profile</h6>
-                                      @if (selectedUser && !isEditingUserProfile) {
-                                        <button
-                                          type="button"
-                                          (click)="startUserProfileEdit()"
-                                          class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md shrink-0 bg-custom-500 text-white">
-                                          Editar
-                                        </button>
-                                      }
-                                      @if (selectedUser && isEditingUserProfile) {
-                                        <div class="flex items-center gap-2 shrink-0">
-                                          <button
-                                            type="button"
-                                            (click)="cancelUserProfileEdit()"
-                                            class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
-                                            Cancelar
-                                          </button>
-                                          <button
-                                            type="button"
-                                            (click)="saveUserProfile()"
-                                            class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md bg-custom-500 text-white"
-                                            [disabled]="isSavingUserProfile">
-                                            {{ isSavingUserProfile ? 'Guardando...' : 'Guardar' }}
-                                          </button>
-                                        </div>
-                                      }
-                                      <button
-                                        type="button"
-                                        (click)="closeUserProfile()"
-                                        class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500"><lucide-angular name="x" [class]="'size-4 mx-auto' "></lucide-angular></button>
-                                  </div>
-                                  <ng-container [ngTemplateOutlet]="userProfileContent"></ng-container>
-                              </ngx-simplebar>
-                          </mn-tab-pane>
-                      </div>
-                  </div>
-              </div>
-            }
-        </div><!--Menu Content End -->
-
-        @if(showTab){
-          <!-- Chat Content -->
-          <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full min-w-0 chat-content">
-              <div class="relative flex flex-col h-full">
-                  <!-- chat-header -->
-                  <div class="card-body">
-                      <div class="flex items-center gap-3">
-                        @if (isMenuCollapsed){
-                          <button
-                                type="button"
-                                (click)="toggleMenuCollapse()"
-                                class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
-                                <lucide-angular name="chevrons-left" [class]="'size-4 mx-auto'"></lucide-angular>
-                          </button>
-                        }
-                          <a href="javascript:void(0);" [DrawerTrigger]="'drawerEnd'" class="flex items-center gap-3 ltr:mr-auto rtl:ml-auto shrink-0" id="userChatProfile">
-                              <div class="size-10 h-10 rounded-full bg-slate-100 dark:bg-zink-600">
-                                  <img src="{{profile}}" alt="" class="h-10 rounded-full">
-                              </div>
-                              <div>
-                                  <h6>{{username}}</h6>
-                                  <div class="flex items-center gap-2">
-                                      <p class="text-sm text-slate-500 dark:text-zink-200">{{role}}</p>
-                                      @if (selectedUser) {
-                                        <span
-                                          class="px-2 py-0.5 text-[10px] rounded-md"
-                                          [ngClass]="isStreamingSelectedChat
-                                            ? 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-300'
-                                            : 'bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200'">
-                                          {{ isStreamingSelectedChat ? 'En vivo' : 'Sin stream' }}
-                                        </span>
-                                      }
-                                  </div>
-                              </div>
-                          </a>
-                          <ul class="flex items-center">
-                              <li>
-                                  <a [appModalTrigger]="'callModal'" href="javascript:void(0);" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="phone" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular></a>
-                              </li>
-                              <li>
-                                  <a href="javascript:void(0);" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="video" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular></a>
-                              </li>
-                              <li>
-                                  <a (click)="toggleChatFinder()" href="javascript:void(0);" id="searchChatButton" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item">
-                                    <lucide-angular name="search" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular>
-                                  </a>
-                              </li>
-                              <li class="hidden md:block">
-                                  <a href="javascript:void(0);" [DrawerTrigger]="'drawerEnd'" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item">
-                                      <lucide-angular name="panel-right-open" class="size-4 mx-auto transition-all duration-200 ease-linear fill-slate-100 dark:fill-zink-600 dark:text-zink-200 text-slate-500 group-hover/item:text-custom-500 group-hover/item:fill-custom-100 dark:group-hover/item:fill-custom-500/20 dark:group-hover/item:text-custom-500 group-[.active]/item:hidden block"></lucide-angular>
-                                  </a>
-                              </li>
-                          </ul>
-                      </div>
-                  </div><!-- chat-header -->
-
-                  <!-- chat-body -->
-                <div class="relative bg-slate-50 dark:bg-zink-600/50 grow">
-                  <div [class.hidden]="isChatFinderHidden" class="absolute inset-x-0 top-0 z-10 transition-all duration-200 ease-linear bg-white border-y border-slate-200 dark:bg-zink-700 dark:border-zink-500" id="searchChat">
-                      <input type="text" class="w-full px-5 py-2 focus:outline-none" placeholder="Search for ..." autocomplete="off">
-                  </div>
-                  @if (hasNewMessageAlert && selectedUser) {
-                    <div class="absolute inset-x-0 top-0 z-[11] px-4 pt-3">
-                      <div class="flex items-start gap-3 px-4 py-3 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
-                        <lucide-angular name="bell-ring" [class]="'size-4 mt-0.5 shrink-0'"></lucide-angular>
-                        <div class="min-w-0 grow">
-                          <p class="text-sm font-medium">{{ getMessageAlertLabel() }}</p>
-                          @if (latestMessagePreview) {
-                            <p class="mt-1 text-xs truncate" [title]="latestMessagePreview">
-                              {{ latestMessagePreview }}
-                            </p>
-                          }
-                          @if (latestMessageType && !latestMessagePreview) {
-                            <p class="mt-1 text-xs">
-                              Tipo: {{ latestMessageType }}
-                            </p>
-                          }
-                        </div>
+    <!-- Menu Content -->
+    <div class="menu-content shrink-0 overflow-hidden transition-all duration-300 ease-in-out" [ngClass]="{'xl:w-80': !isMenuCollapsed,'xl:w-0': isMenuCollapsed}">
+      @if (!isMenuCollapsed) {
+        <div class="w-full h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card xl:h-[calc(100%_-_theme('spacing.5'))]">
+          <div class="flex flex-col h-full">
+            <div class="tab-content">
+              <!-- Menu Chats -->
+              <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'chat'" class="block tab-pane" id="mainChatList">
+                <!-- FINDER -->
+                <div class="card-body">
+                    <div class="flex items-center gap-3">
+                      <h6 class="text-15 grow">Chats</h6>
+                      <button
+                        type="button"
+                        (click)="toggleMenuCollapse()"
+                        class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
+                        <lucide-angular name="chevron-right" [class]="'size-4 mx-auto'"></lucide-angular>
+                      </button>
+                    </div>
+                    <div class="flex items-center gap-2 mt-4">
                         <button
                           type="button"
-                          (click)="refreshSelectedChatMessages(true)"
-                          class="shrink-0 px-3 py-1.5 text-xs font-medium rounded-md bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-100 dark:bg-zink-700 dark:text-emerald-300 dark:border-emerald-500/30">
-                          Actualizar
+                          (click)="searchMode = 'identificacion'"
+                          [class]="searchMode === 'identificacion'
+                            ? 'px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-400'
+                            : 'px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200'">
+                          Identificación
                         </button>
-                      </div>
+                        <button
+                          type="button"
+                          (click)="searchMode = 'whatsappPhone'"
+                          [class]="searchMode === 'whatsappPhone'
+                            ? 'px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-400'
+                            : 'px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200'">
+                          Teléfono
+                        </button>
                     </div>
-                  }
-                  <ngx-simplebar
-                    class="h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)]"
-                    #messageScrollRef>
-                    <ul class="flex flex-col gap-5 list-none card-body">
-                      @if (!selectedUser && !isLoadingMessages) {
-                        <li class="text-center text-sm text-slate-500 dark:text-zink-200">
-                          Selecciona una conversación para ver el historial.
-                        </li>
-                      }
-
-                      @if (selectedUser && hasMoreMessages) {
-                        <li class="text-center text-xs text-slate-400 dark:text-zink-300">
-                          Desplázate hacia arriba para cargar mensajes anteriores
-                        </li>
-                      }
-
-                      @if (isLoadingMessages && messages.length === 0) {
-                        <li class="text-center text-sm text-slate-500 dark:text-zink-200">
-                          Cargando mensajes...
-                        </li>
-                      }
-
-                      @for(message of messages; track message.id){
-                        <li
-                          class="flex chat-message group/item [&.right]:justify-end"
-                          [ngClass]="isOutgoingMessage(message) ? 'right' : ''">
-                          <div class="flex gap-3">
-                            <a href="javascript:void(0);" class="flex items-center self-end justify-center text-sm font-semibold rounded-full size-9 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 shrink-0 group-[.right]/item:order-3">
-                              <img [src]="getMessageAvatar(message)" alt="" class="object-cover rounded-full h-9">
-                            </a>
-                            <div class="grow group-[.right]/item:order-2 flex flex-col gap-2">
-                              <div class="flex gap-3">
-                                <div
-                                  class="relative p-4 bg-white dark:bg-zink-700 rounded-md ltr:rounded-bl-none rtl:rounded-br-none shadow-sm 2xl:max-w-sm ltr:group-[.right]/item:rounded-br-none rtl:group-[.right]/item:rounded-bl-none ltr:group-[.right]/item:rounded-bl-md rtl:group-[.right]/item:rounded-br-md group-[.right]/item:order-2"
-                                  [ngClass]="canOpenMessageMetadata(message) ? 'cursor-pointer ring-1 ring-transparent hover:ring-custom-200 dark:hover:ring-custom-500/30' : ''"
-                                  (click)="openMessageMetadata(message)">
-                                  @if (canOpenMessageRawAudit(message)) {
-                                    <button
-                                      type="button"
-                                      (click)="$event.stopPropagation(); openMessageRawAuditForMessage(message)"
-                                      class="absolute top-2 ltr:right-2 rtl:left-2 inline-flex items-center justify-center size-6 rounded-full bg-slate-100 text-slate-500 hover:bg-custom-100 hover:text-custom-600 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-custom-500/20 dark:hover:text-custom-300"
-                                      title="Ver JSON completo">
-                                      <lucide-angular name="info" [class]="'size-3.5'"></lucide-angular>
-                                    </button>
-                                  }
-                                  @if (message.type === 'LOCATION') {
-                                    <div class="min-w-56 max-w-sm pr-6">
-                                      <div class="flex items-start gap-3">
-                                        <div class="flex items-center justify-center rounded-md size-10 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300">
-                                          <lucide-angular name="map-pin" [class]="'size-5'"></lucide-angular>
-                                        </div>
-                                        <div class="min-w-0 grow">
-                                          <p class="text-sm font-medium break-words">
-                                            {{ getMessageLocationTitle(message) }}
-                                          </p>
-                                          <p class="mt-1 text-xs text-slate-500 dark:text-zink-300 break-words">
-                                            {{ getMessageLocationSubtitle(message) }}
-                                          </p>
-                                          @if (getMessageLocationMapUrl(message); as mapUrl) {
-                                            <a
-                                              [href]="mapUrl"
-                                              (click)="$event.stopPropagation()"
-                                              target="_blank"
-                                              rel="noopener noreferrer"
-                                              class="inline-flex mt-3 text-xs font-medium text-custom-500 hover:text-custom-600">
-                                              Abrir en mapa
-                                            </a>
-                                          }
-                                        </div>
-                                      </div>
-                                    </div>
-                                  } @else if (isMediaMessage(message)) {
-                                    <div
-                                      class="pr-6"
-                                      [ngClass]="message.type === 'AUDIO' ? 'min-w-72 max-w-md' : 'min-w-56 max-w-sm'">
-                                      <div class="flex items-start gap-3">
-                                        <div class="flex items-center justify-center rounded-md size-10 bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-300">
-                                          <lucide-angular
-                                            [name]="message.type === 'IMAGE'
-                                              ? 'image'
-                                              : message.type === 'VIDEO'
-                                                ? 'video'
-                                                : message.type === 'AUDIO'
-                                                  ? 'mic'
-                                                  : message.type === 'STICKER'
-                                                    ? 'image'
-                                                    : 'file-text'"
-                                            [class]="'size-5'"></lucide-angular>
-                                        </div>
-                                        <div class="min-w-0 grow">
-                                          <p class="text-sm font-medium break-words">
-                                            {{ getMessageMediaTitle(message) }}
-                                          </p>
-                                          <p class="mt-1 text-xs text-slate-500 dark:text-zink-300 break-words">
-                                            {{ getMessageMediaSubtitle(message) }}
-                                          </p>
-
-                                          @if (getMessageMediaError(message)) {
-                                            <p class="mt-2 text-xs text-red-500 dark:text-red-300 break-words">
-                                              {{ getMessageMediaError(message) }}
-                                            </p>
-                                          }
-
-                                          @if (message.type === 'IMAGE' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as imageUrl) {
-                                            <button
-                                              type="button"
-                                              (click)="$event.stopPropagation(); openMessageMediaUrl(message, imageUrl)"
-                                              class="mt-3 block">
-                                              <img
-                                                [src]="imageUrl"
-                                                alt="Imagen compartida"
-                                                class="rounded-md max-h-56 border border-slate-200 dark:border-zink-600">
-                                            </button>
-                                          }
-
-                                          @if (message.type === 'STICKER' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as stickerUrl) {
-                                            <button
-                                              type="button"
-                                              (click)="$event.stopPropagation(); openMessageMediaUrl(message, stickerUrl)"
-                                              class="mt-3 block">
-                                              <img
-                                                [src]="stickerUrl"
-                                                alt="Sticker compartido"
-                                                class="rounded-md max-h-48 max-w-[180px] border border-slate-200 dark:border-zink-600 bg-white/70">
-                                            </button>
-                                          }
-
-                                          @if (message.type === 'VIDEO' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as videoUrl) {
-                                            <video
-                                              controls
-                                              class="mt-3 rounded-md max-h-56 w-full bg-black"
-                                              (click)="$event.stopPropagation()">
-                                              <source [src]="videoUrl" [type]="message.mediaMimeType || 'video/mp4'">
-                                            </video>
-                                          }
-
-                                          @if (message.type === 'AUDIO' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as audioUrl) {
-                                            <audio
-                                              controls
-                                              class="mt-3 block w-full min-w-64"
-                                              (click)="$event.stopPropagation()">
-                                              <source [src]="audioUrl" [type]="message.mediaMimeType || 'audio/mpeg'">
-                                            </audio>
-                                          }
-
-                                          @if (canLoadMessageMedia(message)) {
-                                            <button
-                                              type="button"
-                                              (click)="$event.stopPropagation(); loadMessageMedia(message)"
-                                              class="inline-flex mt-3 px-3 py-1.5 text-xs font-medium rounded-md bg-custom-500 text-white hover:bg-custom-600"
-                                              [disabled]="isMessageMediaLoading(message)">
-                                              {{ isMessageMediaLoading(message) ? 'Cargando...' : getMessageMediaActionLabel(message) }}
-                                            </button>
-                                          } @else {
-                                            <p class="mt-3 text-xs text-slate-400 dark:text-zink-300">
-                                              Este mensaje no tiene media disponible para recuperar.
-                                            </p>
-                                          }
-                                        </div>
-                                      </div>
-                                    </div>
-                                  } @else {
-                                    <p class="text-sm whitespace-pre-wrap break-words pr-6">
-                                      {{ getMessageBubbleText(message) }}
-                                    </p>
-                                  }
-                                  <div class="mt-2 flex items-center gap-1 text-[11px] text-slate-400 dark:text-zink-300">
-                                    <p>
-                                      {{ getMessageTime(message.sentAt || message.timestamp) }}
-                                    </p>
-                                    @if (shouldShowOutgoingReceipt(message)) {
-                                      <span
-                                        class="inline-flex items-center"
-                                        [title]="getOutgoingReceiptLabel(message)">
-                                        <lucide-angular
-                                          [name]="getOutgoingReceiptIconName(message)"
-                                          [class]="'size-3.5 ' + getOutgoingReceiptClass(message)"></lucide-angular>
-                                      </span>
-                                    }
-                                  </div>
-                                  @if (hasMessageFailure(message)) {
-                                    <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-300">
-                                      <lucide-angular name="alert-triangle" [class]="'size-3.5'"></lucide-angular>
-                                      <p class="text-[10px]">
-                                        Mensaje con error
-                                      </p>
-                                    </div>
-                                  }
-                                  @if (canOpenMessageMetadata(message)) {
-                                    <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
-                                      <lucide-angular name="info" [class]="'size-3.5'"></lucide-angular>
-                                      <p class="text-[10px]">
-                                        Ver metadata CATIA
-                                      </p>
-                                    </div>
-                                  }
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </li>
-                      }
-
-                      @if (isLoadingMessages && messages.length > 0) {
-                        <li class="text-center text-xs text-slate-500 dark:text-zink-200">
-                          Cargando mensajes anteriores...
-                        </li>
-                      }
-
-                      @if (!isLoadingMessages && selectedUser && messages.length === 0) {
-                        <li class="text-center text-sm text-slate-500 dark:text-zink-200">
-                          No hay mensajes para esta conversación.
-                        </li>
-                      }
-                    </ul>
-                  </ngx-simplebar>
-                </div> <!-- chat-body -->
-
-                  <!-- chat-footer -->
-                  <div class="card-body relative">
-                      <input
-                        #imageFileInput
-                        type="file"
-                        multiple
-                        accept="image/png,image/jpeg,image/jpg"
-                        class="hidden"
-                        (change)="onImageFileSelected($event)">
-
-                      @if (showAttachmentMenu) {
-                        <div class="absolute bottom-full left-0 mb-3 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-zink-700 dark:bg-zink-800 z-20">
-                          <button
-                            type="button"
-                            (click)="openFileAttachmentPicker(imageFileInput)"
-                            class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 dark:text-zink-100 dark:hover:bg-zink-700">
-                            <lucide-angular name="image" [class]="'size-4 text-custom-500'"></lucide-angular>
-                            <span>Fotos</span>
-                          </button>
-                          <button
-                            type="button"
-                            (click)="openImageUrlComposer()"
-                            class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 dark:text-zink-100 dark:hover:bg-zink-700">
-                            <lucide-angular name="link" [class]="'size-4 text-custom-500'"></lucide-angular>
-                            <span>Foto por URL</span>
-                          </button>
-                        </div>
-                      }
-
-                      @if (pendingImageUploads.length > 0 || showImageUrlComposer) {
-                        <div class="absolute bottom-full left-0 right-0 mb-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl dark:border-zink-700 dark:bg-zink-800 z-10">
-                          <div class="mb-2 flex items-center gap-2">
-                            <p class="text-sm font-medium text-slate-700 dark:text-zink-100 grow">Adjuntos</p>
-                            <p class="text-[11px] text-slate-500 dark:text-zink-300">
-                              {{ getPendingAttachmentHint() }}
-                            </p>
+                    <div class="relative mt-5">
+                        <input
+                          type="text"
+                          [(ngModel)]="searchTerm"
+                          (keydown.enter)="submitUserSearch()"
+                          class="ltr:pl-8 rtl:pr-20 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                          [placeholder]="'Buscar por ' + searchModeLabel + '...'"
+                          autocomplete="off">
+                        <lucide-angular name="search" [class]="'inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600'"></lucide-angular>
+                        <div class="absolute top-1.5 ltr:right-1.5 rtl:left-1.5 flex items-center gap-1">
+                          @if (searchTerm) {
                             <button
                               type="button"
-                              (click)="clearPendingImageState()"
-                              class="inline-flex items-center justify-center size-7 rounded-md bg-slate-100 text-slate-500 dark:bg-zink-700 dark:text-zink-200">
+                              (click)="clearUserSearch()"
+                              class="inline-flex items-center justify-center size-7 rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
                               <lucide-angular name="x" [class]="'size-4'"></lucide-angular>
                             </button>
-                          </div>
-
-                          @if (pendingImageUploads.length > 0) {
-                            <div class="mb-2 flex gap-2 overflow-x-auto pb-1">
-                              @for (upload of pendingImageUploads; track upload.localId) {
-                                <div class="relative shrink-0">
-                                  <img
-                                    [src]="upload.previewUrl"
-                                    [alt]="upload.file.name"
-                                    class="size-20 rounded-xl border border-slate-200 object-cover dark:border-zink-600">
-                                  <button
-                                    type="button"
-                                    (click)="removePendingImageUpload(upload.localId)"
-                                    class="absolute -right-1 -top-1 inline-flex size-5 items-center justify-center rounded-full bg-slate-900/80 text-white">
-                                    <lucide-angular name="x" [class]="'size-3'"></lucide-angular>
-                                  </button>
-                                  <div class="absolute inset-x-1 bottom-1 rounded bg-slate-900/70 px-1 py-0.5 text-[10px] text-white">
-                                    @if (upload.uploading) {
-                                      <span>Subiendo...</span>
-                                    } @else if (upload.error) {
-                                      <span>Error</span>
-                                    } @else {
-                                      <span>Lista</span>
-                                    }
-                                  </div>
-                                </div>
-                              }
-                            </div>
-                            <button
-                              type="button"
-                              (click)="openFileAttachmentPicker(imageFileInput)"
-                              class="inline-flex px-3 py-1.5 text-xs font-medium rounded-md bg-custom-500 text-white hover:bg-custom-600"
-                              [disabled]="isUploadingMedia">
-                              Agregar más imágenes
-                            </button>
                           }
-
-                          @if (showImageUrlComposer) {
-                            <div class="mt-2">
-                              <input
-                                type="url"
-                                [(ngModel)]="pendingImageUrl"
-                                [ngModelOptions]="{ standalone: true }"
-                                class="form-input w-full border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100"
-                                placeholder="https://ejemplo.com/imagen.png">
-                            </div>
-                          }
+                          <button
+                            type="button"
+                            (click)="submitUserSearch()"
+                            class="inline-flex items-center justify-center size-7 rounded-md bg-custom-500 text-white">
+                            <lucide-angular name="arrow-right" [class]="'size-4'"></lucide-angular>
+                          </button>
                         </div>
-                      }
+                    </div>
+                    @if (isSearchingUser) {
+                      <p class="mt-2 text-xs text-slate-500 dark:text-zink-200">
+                        Buscando usuario...
+                      </p>
+                    }
+                </div>
 
-                      <form (ngSubmit)="messageSave()" [formGroup]="formMessage" class="flex items-end gap-2">
-                          <div class="grow">
-                              <input type="text" id="inputText" formControlName="chatMsg" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Escribe tu mensaje..." autocomplete="off">
-                          </div>
-                          <div class="flex gap-2 shrink-0">
-                              <button type="button" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular name="mic" [class]="'size-4'"></lucide-angular></button>
-                              <button type="button" (click)="toggleAttachmentMenu()" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50" [class.text-custom-500]="pendingImageUploads.length > 0 || showImageUrlComposer || (uploadMode === catiaUploadMode.IMAGE_URL && pendingImageUrl.trim())"><lucide-angular name="plus" [class]="'size-4'"></lucide-angular></button>
-                              <button type="submit" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20 disabled:opacity-60 disabled:cursor-not-allowed" [disabled]="!canSendCurrentMessage()"><lucide-angular name="send" [class]="'inline-block size-4 mr-1 align-middle'"></lucide-angular> <span class="align-middle">{{ isSendingMessage ? 'Enviando...' : 'Enviar' }}</span></button>
-                          </div>
-                      </form>
-                  </div> <!-- chat-footer -->
-              </div>
-          </div><!--Chat Content End-->
-        }@else {
-          <!-- IA Content -->
-          <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full min-w-0 bot-content">
-              <div class="relative">
-                <div class="container flex items-center gap-3 card-body">
-                  @if (isMenuCollapsed){
-                    <button
+                @if (hasSearchedUser) {
+                  <div class="px-5">
+                    <p class="mb-2 text-amber-500 dark:text-green-200">
+                      Search Result ({{ searchResults.length }}/{{ totalSearchResults }})
+                    </p>
+                  </div>
+                  <ngx-simplebar class="max-h-44 xl:max-h-52 mb-4" #searchScrollRef>
+                    <ul class="flex flex-col gap-1">
+                          @for(item of searchResults;track item.id){
+                            <li (click)="selectChatUser(item)">
+                            <a href="javascript:void(0);" [ngClass]="{'active': item.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-amber-50 group/item dark:[&.active]:bg-green-600 online border-y border-amber-100 dark:border-green-700">
+                              <div class="relative flex items-center justify-center font-semibold rounded-full text-amber-500 dark:text-green-200 size-9 bg-amber-100 dark:bg-green-600">
+                                <img src="assets/images/users/user-dummy-img.jpg" alt="avatar" class="rounded-full h-9">
+                                <span [ngClass]="'online' == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-amber-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-green-700 rounded-full  dark:group-[.offline]/item:bg-green-500"></span>
+                              </div>
+                              <div class="overflow-hidden grow">
+                                <h6 class="mb-1">{{item.erpUser?.nombres || "Anonymus"}}</h6>
+                                <p class="text-xs truncate text-amber-500 dark:text-green-200">DNI: {{item.erpUser?.identificacion || "none"}}</p>
+                              </div>
+                              <div class="self-start shrink-0 text-amber-500 dark:text-green-200">
+                                <small>{{getTimeAgo(item.lastInteraction)}}</small>
+                              </div>
+                            </a>
+                          </li>
+                        }
+
+                        @if (isSearchingUser) {
+                          <li class="px-5 py-3">
+                            <p class="text-xs text-center text-amber-500 dark:text-green-200">
+                              Cargando resultados...
+                            </p>
+                          </li>
+                        }
+
+                        @if (!hasMoreSearchResults && searchResults.length > 0) {
+                          <li class="px-5 py-3">
+                            <p class="text-xs text-center text-amber-400 dark:text-green-300">
+                              No hay más resultados para cargar.
+                            </p>
+                          </li>
+                        }
+
+                        @if (!isSearchingUser && searchResults.length === 0) {
+                          <li class="px-5 py-3">
+                            <p class="text-xs text-center text-amber-400 dark:text-green-300">
+                              No se encontraron resultados.
+                            </p>
+                          </li>
+                        }
+                    </ul>
+                  </ngx-simplebar>
+                }
+
+                <!-- Contacts -->
+                <div class="px-5">
+                  <p class="mb-2 text-slate-500 dark:text-zink-200">Recent Chats ({{ totalRecentChats }})</p>
+                </div>
+                <ngx-simplebar class="max-h-44 xl:max-h-52" #recentScrollRef>
+                    <ul class="flex flex-col gap-1" id="recentChatList">
+                          @for(data of recentChat;track data.id ){
+                          <li (click)="selectChatUser(data)">
+                          <a href="javascript:void(0);" [ngClass]="{'active': data.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600 group/item online">
+                                <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
+                                    <img src="assets/images/users/user-dummy-img.jpg" alt="" class="rounded-full h-9">
+                                    <span [ngClass]="'online' == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-slate-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-zink-700 rounded-full  dark:group-[.offline]/item:bg-zink-500"></span>
+                                </div>
+                                <div class="overflow-hidden grow">
+                                    <h6 class="mb-1">{{data.erpUser?.nombres || "Anonymus"}}</h6>
+                                    <p class="text-xs truncate text-slate-500 dark:text-zink-200">DNI: {{data.erpUser?.identificacion || "none"}}</p>
+                                </div>
+                                <div class="self-start shrink-0 text-slate-500 dark:text-zink-200">
+                                    <small>{{getTimeAgo(data.lastInteraction)}}</small>
+                                </div>
+                            </a>
+                        </li>
+                        }
+
+                        @if (isLoadingRecentChats) {
+                          <li class="px-5 py-3">
+                            <p class="text-xs text-center text-slate-500 dark:text-zink-200">
+                              Cargando recientes...
+                            </p>
+                          </li>
+                        }
+
+                        @if (!hasMoreRecentChats && recentChat.length > 0) {
+                          <li class="px-5 py-3">
+                            <p class="text-xs text-center text-slate-400 dark:text-zink-300">
+                              No hay más recientes para cargar.
+                            </p>
+                          </li>
+                        }
+                    </ul>
+                </ngx-simplebar>
+
+                <div class="px-5 mt-4">
+                  <p class="mb-2 text-slate-500 dark:text-zink-200">All Conversion ({{ totalUserChats }})</p>
+                </div>
+                <ngx-simplebar class="max-h-[calc(100vh_-_560px)] xl:max-h-[calc(100vh_-_470px)]" #allScrollRef>
+                    <ul class="flex flex-col gap-1" id="chatList">
+                          @for(item of allConversations;track item.id){
+                            <li (click)="selectChatUser(item)">
+                            <a href="javascript:void(0);" [ngClass]="{'active': item.erpUser?.nombres || 'Anonymus'}" class="flex items-center gap-3 px-5 py-2 [&.active]:bg-slate-50 group/item dark:[&.active]:bg-zink-600 online">
+                              <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 dark:text-zink-200 size-9 bg-slate-100 dark:bg-zink-600">
+                                <img src="assets/images/users/user-dummy-img.jpg" alt="avatar" class="rounded-full h-9">
+                                <span [ngClass]="'online' == 'online'? 'group-[.online]/item:bg-green-400':'bg-red-500'" class="group-[.online]/item:bg-green-400':'group-[.offline]/item:bg-slate-400 absolute bottom-0 ltr:right-0 rtl:left-0 size-2.5 border-2 border-white dark:border-zink-700 rounded-full  dark:group-[.offline]/item:bg-zink-500"></span>
+                              </div>
+                              <div class="overflow-hidden grow">
+                                <h6 class="mb-1">{{item.erpUser?.nombres || "Anonymus"}}</h6>
+                                <p class="text-xs truncate text-slate-500 dark:text-zink-200">DNI: {{item.erpUser?.identificacion || "none"}}</p>
+                              </div>
+                              <div class="self-start shrink-0 text-slate-500 dark:text-zink-200">
+                                <small>{{getTimeAgo(item.lastInteraction)}}</small>
+                              </div>
+                            </a>
+                          </li>
+                        }
+
+                        @if (isLoadingUserChats) {
+                          <li class="px-5 py-3">
+                            <p class="text-xs text-center text-slate-500 dark:text-zink-200">
+                              Cargando más conversaciones...
+                            </p>
+                          </li>
+                        }
+
+                        @if (!hasMoreUserChats && allConversations.length > 0) {
+                          <li class="px-5 py-3">
+                            <p class="text-xs text-center text-slate-400 dark:text-zink-300">
+                              No hay más conversaciones para cargar.
+                            </p>
+                          </li>
+                        }
+                    </ul>
+                </ngx-simplebar>
+              </mn-tab-pane>
+
+              <!-- Menu AI -->
+              <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'AI'" class="tab-pane" id="botChat">
+                  <div class="card-body">
+                      <div class="flex items-center gap-3">
+                        <h6 class="text-15 grow">AI Bot</h6>
+                        <button
                           type="button"
                           (click)="toggleMenuCollapse()"
                           class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
-                          <lucide-angular name="chevrons-left" [class]="'size-4 mx-auto'"></lucide-angular>
-                    </button>
-                  }
-                </div>
-                  <ngx-simplebar class="h-[calc(100vh_-_320px)] xl:h-[calc(100vh_-_250px)]">
-                      <div class="sticky top-0 flex items-center gap-3 shadow-sm bg-white/60 dark:bg-zink-700/30 backdrop-blur-sm card-body">
-                          <div class="relative flex items-center justify-center size-8 font-semibold rounded-full text-slate-500 bg-slate-100 dark:text-zink-200 dark:bg-zink-600">
-                              <img src="assets/images/users/user-2.jpg" alt="" class="h-8 rounded-full">
-                          </div>
-                          <h6>What is Tailwind CSS, and what is Utility-First CSS?</h6>
+                          <lucide-angular
+                            name="chevron-right"
+                            [class]="isMenuCollapsed ? 'size-4 mx-auto rotate-180 transition-transform duration-200' : 'size-4 mx-auto transition-transform duration-200'">
+                          </lucide-angular>
+                        </button>
                       </div>
-                      <div class="flex gap-3 card-body bg-slate-50 dark:bg-zink-600">
-                          <div class="flex items-center justify-center size-8 font-semibold rounded-full text-slate-500 bg-slate-100 shrink-0 dark:text-zink-200 dark:bg-zink-600">
-                              <lucide-angular name="bot" class="size-5"></lucide-angular>
-                          </div>
-                          <div class="grow">
-                              <p class="mb-2">Tailwind CSS is a <b>utility-first</b> CSS framework designed for rapid UI development. Instead of providing pre-built components, it offers low-level utility classes that let you build custom designs without ever leaving your HTML.</p>
-                              <p class="mb-0">Utility-first CSS is an approach where you use small, single-purpose classes to build your user interface. These utility classes are composed to create complex designs directly in the HTML, rather than relying on custom CSS. This approach favors composition over inheritance, making it easier to maintain and scale your codebase.</p>
-                          </div>
-                      </div>
-                      <div class="sticky top-0 flex items-center gap-3 shadow-sm bg-white/60 backdrop-blur-sm card-body dark:bg-zink-700/30">
-                          <div class="relative flex items-center justify-center size-8 font-semibold rounded-full text-slate-500 bg-slate-100">
-                              <img src="assets/images/users/user-2.jpg" alt="" class="h-8 rounded-full">
-                          </div>
-                          <h6>How to install and set up Tailwind CSS in a project?</h6>
-                      </div>
-                  </ngx-simplebar>
-                  <div class="card-body">
-                      <div class="flex items-center gap-2">
-                          <div class="grow">
-                              <input type="text" id="inputText" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Type your message here ..." required autocomplete="off">
-                          </div>
-                          <div class="flex gap-2 shrink-0">
-                              <button type="button" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular name="mic" [class]="'size-4'"></lucide-angular></button>
-                              <button type="button" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"><lucide-angular name="send" [class]="'inline-block size-4 mr-1 align-middle'"></lucide-angular> <span class="align-middle">Send</span></button>
-                          </div>
+                      <div class="relative mt-5">
+                          <input type="text" class="ltr:pl-8 rtl:pr-8 search form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Search for ..." autocomplete="off">
+                          <lucide-angular name="search" [class]="'inline-block size-4 absolute ltr:left-2.5 rtl:right-2.5 top-2.5 text-slate-500 dark:text-zink-200 fill-slate-100 dark:fill-zink-600'"></lucide-angular>
                       </div>
                   </div>
+                  <p class="mx-5 mb-2 text-slate-500 dark:text-zink-200">Recent Find</p>
+                  <ngx-simplebar class="max-h-[calc(100vh_-_410px)] xl:max-h-[calc(100vh_-_330px)]">
+                      <ul class="flex flex-col gap-1">
+                          <li>
+                              <a href="javascript:void(0);" class="flex items-center gap-3 px-5 py-2.5 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600 active">
+                                  <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 size-7 dark:text-zink-200 shrink-0">
+                                      <lucide-angular name="messages-square" [class]="'size-4'"></lucide-angular>
+                                  </div>
+                                  <h6 class="font-medium truncate grow">What is Tailwind CSS, and what is Utility-First CSS?</h6>
+                              </a>
+                          </li>
+                          <li>
+                              <a href="javascript:void(0);" class="flex items-center gap-3 px-5 py-2.5 [&.active]:bg-slate-50 dark:[&.active]:bg-zink-600">
+                                  <div class="relative flex items-center justify-center font-semibold rounded-full text-slate-500 size-7 dark:text-zink-200 shrink-0">
+                                      <lucide-angular name="messages-square" [class]="'size-4'"></lucide-angular>
+                                  </div>
+                                  <h6 class="font-medium truncate grow">How to install and set up Tailwind CSS in a project?</h6>
+                              </a>
+                          </li>
+                      </ul>
+                  </ngx-simplebar>
+              </mn-tab-pane>
+
+              <!-- Menu Profile -->
+              <mn-tab-pane [tabSetName]="'chat'" [eventKey]="'profile'" class="tab-pane" id="profile">
+                  <ngx-simplebar class="max-h-[calc(100vh_-_250px)] xl:max-h-full card-body">
+                      <div class="flex items-center gap-3">
+                        <button
+                            type="button"
+                            (click)="toggleMenuCollapse()"
+                            class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
+                          <lucide-angular name="chevron-left" [class]="'size-4 mx-auto'"></lucide-angular>
+                        </button>
+                          <h6 class="text-15 grow">Profile</h6>
+                          @if (selectedUser && !isEditingUserProfile) {
+                            <button
+                              type="button"
+                              (click)="startUserProfileEdit()"
+                              class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md shrink-0 bg-custom-500 text-white">
+                              Editar
+                            </button>
+                          }
+                          @if (selectedUser && isEditingUserProfile) {
+                            <div class="flex items-center gap-2 shrink-0">
+                              <button
+                                type="button"
+                                (click)="cancelUserProfileEdit()"
+                                class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                                Cancelar
+                              </button>
+                              <button
+                                type="button"
+                                (click)="saveUserProfile()"
+                                class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md bg-custom-500 text-white"
+                                [disabled]="isSavingUserProfile">
+                                {{ isSavingUserProfile ? 'Guardando...' : 'Guardar' }}
+                              </button>
+                            </div>
+                          }
+                          <button
+                            type="button"
+                            (click)="closeUserProfile()"
+                            class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500"><lucide-angular name="x" [class]="'size-4 mx-auto' "></lucide-angular></button>
+                      </div>
+                      <ng-container [ngTemplateOutlet]="userProfileContent"></ng-container>
+                  </ngx-simplebar>
+              </mn-tab-pane>
+            </div>
+          </div>
+        </div>
+      }
+    </div><!--Menu Content End -->
+
+    @if(showTab){
+      <!-- Chat Content -->
+      <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full min-w-0 chat-content">
+          <div class="relative flex flex-col h-full">
+            <!-- chat-header -->
+            <div class="card-body">
+              <div class="flex items-center gap-3">
+                @if (isMenuCollapsed){
+                  <button
+                    type="button"
+                    (click)="toggleMenuCollapse()"
+                    class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
+                    <lucide-angular name="chevrons-left" [class]="'size-4 mx-auto'"></lucide-angular>
+                  </button>
+                }
+                <a href="javascript:void(0);" [DrawerTrigger]="'drawerEnd'" class="flex items-center gap-3 ltr:mr-auto rtl:ml-auto shrink-0" id="userChatProfile">
+                  <div class="size-10 h-10 rounded-full bg-slate-100 dark:bg-zink-600">
+                    <img src="{{profile}}" alt="" class="h-10 rounded-full">
+                  </div>
+                  <div>
+                    <h6>{{ selectedUser ? getUserFullName(selectedUser) : username }}</h6>
+                    <div class="flex items-center gap-2">
+                      <p class="text-sm text-slate-500 dark:text-zink-200">{{role}}</p>
+                      @if (selectedUser) {
+                        <span
+                          class="px-2 py-0.5 text-[10px] rounded-md"
+                          [ngClass]="isStreamingSelectedChat
+                            ? 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-300'
+                            : 'bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200'">
+                          {{ isStreamingSelectedChat ? 'En vivo' : 'Sin stream' }}
+                        </span>
+                      }
+                    </div>
+                  </div>
+                </a>
+                <ul class="flex items-center">
+                  <li>
+                    <a [appModalTrigger]="'callModal'" href="javascript:void(0);" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="phone" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular></a>
+                  </li>
+                  <li>
+                    <a (click)="toggleChatFinder()" href="javascript:void(0);" id="searchChatButton" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item">
+                      <lucide-angular name="search" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular>
+                    </a>
+                  </li>
+                  <li class="hidden md:block">
+                    <a href="javascript:void(0);" [DrawerTrigger]="'drawerEnd'" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item">
+                        <lucide-angular name="book-user" class="size-4 mx-auto transition-all duration-200 ease-linear fill-slate-100 dark:fill-zink-600 dark:text-zink-200 text-slate-500 group-hover/item:text-custom-500 group-hover/item:fill-custom-100 dark:group-hover/item:fill-custom-500/20 dark:group-hover/item:text-custom-500 group-[.active]/item:hidden block"></lucide-angular>
+                    </a>
+                  </li>
+                </ul>
               </div>
-          </div><!--IA Content End-->
-        }
-    </div>
+            </div><!-- chat-header -->
+
+            <!-- chat-body -->
+            <div class="relative bg-slate-50 dark:bg-zink-600/50 grow">
+              <div [class.hidden]="isChatFinderHidden" class="absolute inset-x-0 top-0 z-10 transition-all duration-200 ease-linear bg-white border-y border-slate-200 dark:bg-zink-700 dark:border-zink-500" id="searchChat">
+                  <input type="text" class="w-full px-5 py-2 focus:outline-none" placeholder="Search for ..." autocomplete="off">
+              </div>
+              @if (hasNewMessageAlert && selectedUser) {
+                <div class="absolute inset-x-0 top-0 z-[11] px-4 pt-3">
+                  <div class="flex items-start gap-3 px-4 py-3 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 shadow-sm dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300">
+                    <lucide-angular name="bell-ring" [class]="'size-4 mt-0.5 shrink-0'"></lucide-angular>
+                    <div class="min-w-0 grow">
+                      <p class="text-sm font-medium">{{ getMessageAlertLabel() }}</p>
+                      @if (latestMessagePreview) {
+                        <p class="mt-1 text-xs truncate" [title]="latestMessagePreview">
+                          {{ latestMessagePreview }}
+                        </p>
+                      }
+                      @if (latestMessageType && !latestMessagePreview) {
+                        <p class="mt-1 text-xs">
+                          Tipo: {{ latestMessageType }}
+                        </p>
+                      }
+                    </div>
+                    <button
+                      type="button"
+                      (click)="refreshSelectedChatMessages(true)"
+                      class="shrink-0 px-3 py-1.5 text-xs font-medium rounded-md bg-white text-emerald-700 border border-emerald-200 hover:bg-emerald-100 dark:bg-zink-700 dark:text-emerald-300 dark:border-emerald-500/30">
+                      Actualizar
+                    </button>
+                  </div>
+                </div>
+              }
+              <ngx-simplebar class="h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)]" #messageScrollRef>
+                <ul class="flex flex-col gap-5 list-none card-body">
+                  @if (!selectedUser && !isLoadingMessages) {
+                    <li class="text-center text-sm text-slate-500 dark:text-zink-200">
+                      Selecciona una conversación para ver el historial.
+                    </li>
+                  }
+
+                  @if (selectedUser && hasMoreMessages) {
+                    <li class="text-center text-xs text-slate-400 dark:text-zink-300">
+                      Desplázate hacia arriba para cargar mensajes anteriores
+                    </li>
+                  }
+
+                  @if (isLoadingMessages && messages.length === 0) {
+                    <li class="text-center text-sm text-slate-500 dark:text-zink-200">
+                      Cargando mensajes...
+                    </li>
+                  }
+
+                  @for(message of messages; track message.id){
+                    <li
+                      class="flex chat-message group/item [&.right]:justify-end"
+                      [ngClass]="isOutgoingMessage(message) ? 'right' : ''">
+                      <div class="flex gap-3">
+                        <a href="javascript:void(0);" class="flex items-center self-end justify-center text-sm font-semibold rounded-full size-9 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 shrink-0 group-[.right]/item:order-3">
+                          <img [src]="getMessageAvatar(message)" alt="" class="object-cover rounded-full h-9">
+                        </a>
+                        <div class="grow group-[.right]/item:order-2 flex flex-col gap-2">
+                          <div class="flex gap-3">
+                            <div
+                              class="relative p-4 bg-white dark:bg-zink-700 rounded-md ltr:rounded-bl-none rtl:rounded-br-none shadow-sm 2xl:max-w-sm ltr:group-[.right]/item:rounded-br-none rtl:group-[.right]/item:rounded-bl-none ltr:group-[.right]/item:rounded-bl-md rtl:group-[.right]/item:rounded-br-md group-[.right]/item:order-2"
+                              [ngClass]="canOpenMessageMetadata(message) ? 'cursor-pointer ring-1 ring-transparent hover:ring-custom-200 dark:hover:ring-custom-500/30' : ''"
+                              (click)="openMessageMetadata(message)">
+                              @if (canOpenMessageRawAudit(message)) {
+                                <button
+                                  type="button"
+                                  (click)="$event.stopPropagation(); openMessageRawAuditForMessage(message)"
+                                  class="absolute top-2 ltr:right-2 rtl:left-2 inline-flex items-center justify-center size-6 rounded-full bg-slate-100 text-slate-500 hover:bg-custom-100 hover:text-custom-600 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-custom-500/20 dark:hover:text-custom-300"
+                                  title="Ver JSON completo">
+                                  <lucide-angular name="info" [class]="'size-3.5'"></lucide-angular>
+                                </button>
+                              }
+                              @if (message.type === 'LOCATION') {
+                                <div class="min-w-56 max-w-sm pr-6">
+                                  <div class="flex items-start gap-3">
+                                    <div class="flex items-center justify-center rounded-md size-10 bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-300">
+                                      <lucide-angular name="map-pin" [class]="'size-5'"></lucide-angular>
+                                    </div>
+                                    <div class="min-w-0 grow">
+                                      <p class="text-sm font-medium break-words">
+                                        {{ getMessageLocationTitle(message) }}
+                                      </p>
+                                      <p class="mt-1 text-xs text-slate-500 dark:text-zink-300 break-words">
+                                        {{ getMessageLocationSubtitle(message) }}
+                                      </p>
+                                      @if (getMessageLocationMapUrl(message); as mapUrl) {
+                                        <a
+                                          [href]="mapUrl"
+                                          (click)="$event.stopPropagation()"
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          class="inline-flex mt-3 text-xs font-medium text-custom-500 hover:text-custom-600">
+                                          Abrir en mapa
+                                        </a>
+                                      }
+                                    </div>
+                                  </div>
+                                </div>
+                              } @else if (isMediaMessage(message)) {
+                                <div
+                                  class="pr-6"
+                                  [ngClass]="message.type === 'AUDIO' ? 'min-w-72 max-w-md' : 'min-w-56 max-w-sm'">
+                                  <div class="flex items-start gap-3">
+                                    <div class="flex items-center justify-center rounded-md size-10 bg-sky-100 text-sky-600 dark:bg-sky-500/20 dark:text-sky-300">
+                                      <lucide-angular
+                                        [name]="message.type === 'IMAGE'
+                                          ? 'image'
+                                          : message.type === 'VIDEO'
+                                            ? 'video'
+                                            : message.type === 'AUDIO'
+                                              ? 'mic'
+                                              : message.type === 'STICKER'
+                                                ? 'image'
+                                                : 'file-text'"
+                                        [class]="'size-5'"></lucide-angular>
+                                    </div>
+                                    <div class="min-w-0 grow">
+                                      <p class="text-sm font-medium break-words">
+                                        {{ getMessageMediaTitle(message) }}
+                                      </p>
+                                      <p class="mt-1 text-xs text-slate-500 dark:text-zink-300 break-words">
+                                        {{ getMessageMediaSubtitle(message) }}
+                                      </p>
+
+                                      @if (getMessageMediaError(message)) {
+                                        <p class="mt-2 text-xs text-red-500 dark:text-red-300 break-words">
+                                          {{ getMessageMediaError(message) }}
+                                        </p>
+                                      }
+
+                                      @if (message.type === 'IMAGE' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as imageUrl) {
+                                        <button
+                                          type="button"
+                                          (click)="$event.stopPropagation(); openMessageMediaUrl(message, imageUrl)"
+                                          class="mt-3 block">
+                                          <img
+                                            [src]="imageUrl"
+                                            alt="Imagen compartida"
+                                            class="rounded-md max-h-56 border border-slate-200 dark:border-zink-600">
+                                        </button>
+                                      }
+
+                                      @if (message.type === 'STICKER' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as stickerUrl) {
+                                        <button
+                                          type="button"
+                                          (click)="$event.stopPropagation(); openMessageMediaUrl(message, stickerUrl)"
+                                          class="mt-3 block">
+                                          <img
+                                            [src]="stickerUrl"
+                                            alt="Sticker compartido"
+                                            class="rounded-md max-h-48 max-w-[180px] border border-slate-200 dark:border-zink-600 bg-white/70">
+                                        </button>
+                                      }
+
+                                      @if (message.type === 'VIDEO' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as videoUrl) {
+                                        <video
+                                          controls
+                                          class="mt-3 rounded-md max-h-56 w-full bg-black"
+                                          (click)="$event.stopPropagation()">
+                                          <source [src]="videoUrl" [type]="message.mediaMimeType || 'video/mp4'">
+                                        </video>
+                                      }
+
+                                      @if (message.type === 'AUDIO' && shouldRenderMessageMediaInline(message) && getMessageMediaUrl(message); as audioUrl) {
+                                        <audio
+                                          controls
+                                          class="mt-3 block w-full min-w-64"
+                                          (click)="$event.stopPropagation()">
+                                          <source [src]="audioUrl" [type]="message.mediaMimeType || 'audio/mpeg'">
+                                        </audio>
+                                      }
+
+                                      @if (canLoadMessageMedia(message)) {
+                                        <button
+                                          type="button"
+                                          (click)="$event.stopPropagation(); loadMessageMedia(message)"
+                                          class="inline-flex mt-3 px-3 py-1.5 text-xs font-medium rounded-md bg-custom-500 text-white hover:bg-custom-600"
+                                          [disabled]="isMessageMediaLoading(message)">
+                                          {{ isMessageMediaLoading(message) ? 'Cargando...' : getMessageMediaActionLabel(message) }}
+                                        </button>
+                                      } @else {
+                                        <p class="mt-3 text-xs text-slate-400 dark:text-zink-300">
+                                          Este mensaje no tiene media disponible para recuperar.
+                                        </p>
+                                      }
+                                    </div>
+                                  </div>
+                                </div>
+                              } @else {
+                                <p class="text-sm whitespace-pre-wrap break-words pr-6">
+                                  {{ getMessageBubbleText(message) }}
+                                </p>
+                              }
+                              <div class="mt-2 flex items-center gap-1 text-[11px] text-slate-400 dark:text-zink-300">
+                                <p>
+                                  {{ getMessageTime(message.sentAt || message.timestamp) }}
+                                </p>
+                                @if (shouldShowOutgoingReceipt(message)) {
+                                  <span
+                                    class="inline-flex items-center"
+                                    [title]="getOutgoingReceiptLabel(message)">
+                                    <lucide-angular
+                                      [name]="getOutgoingReceiptIconName(message)"
+                                      [class]="'size-3.5 ' + getOutgoingReceiptClass(message)"></lucide-angular>
+                                  </span>
+                                }
+                              </div>
+                              @if (hasMessageFailure(message)) {
+                                <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-300">
+                                  <lucide-angular name="alert-triangle" [class]="'size-3.5'"></lucide-angular>
+                                  <p class="text-[10px]">
+                                    Mensaje con error
+                                  </p>
+                                </div>
+                              }
+                              @if (canOpenMessageMetadata(message)) {
+                                <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                                  <lucide-angular name="info" [class]="'size-3.5'"></lucide-angular>
+                                  <p class="text-[10px]">
+                                    Ver metadata CATIA
+                                  </p>
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  }
+
+                  @if (isLoadingMessages && messages.length > 0) {
+                    <li class="text-center text-xs text-slate-500 dark:text-zink-200">
+                      Cargando mensajes anteriores...
+                    </li>
+                  }
+
+                  @if (!isLoadingMessages && selectedUser && messages.length === 0) {
+                    <li class="text-center text-sm text-slate-500 dark:text-zink-200">
+                      No hay mensajes para esta conversación.
+                    </li>
+                  }
+                </ul>
+              </ngx-simplebar>
+            </div> <!-- chat-body -->
+
+            <!-- chat-footer -->
+            <div class="card-body relative">
+                <input
+                  #imageFileInput
+                  type="file"
+                  multiple
+                  accept="image/png,image/jpeg,image/jpg"
+                  class="hidden"
+                  (change)="onImageFileSelected($event)">
+
+                @if (showAttachmentMenu) {
+                  <div class="absolute bottom-full left-0 mb-3 w-56 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl dark:border-zink-700 dark:bg-zink-800 z-20">
+                    <button
+                      type="button"
+                      (click)="openFileAttachmentPicker(imageFileInput)"
+                      class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 dark:text-zink-100 dark:hover:bg-zink-700">
+                      <lucide-angular name="image" [class]="'size-4 text-custom-500'"></lucide-angular>
+                      <span>Fotos</span>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="openImageUrlComposer()"
+                      class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 dark:text-zink-100 dark:hover:bg-zink-700">
+                      <lucide-angular name="link" [class]="'size-4 text-custom-500'"></lucide-angular>
+                      <span>Foto por URL</span>
+                    </button>
+                  </div>
+                }
+
+                @if (pendingImageUploads.length > 0 || showImageUrlComposer) {
+                  <div class="absolute bottom-full left-0 right-0 mb-3 rounded-2xl border border-slate-200 bg-white p-3 shadow-xl dark:border-zink-700 dark:bg-zink-800 z-10">
+                    <div class="mb-2 flex items-center gap-2">
+                      <p class="text-sm font-medium text-slate-700 dark:text-zink-100 grow">Adjuntos</p>
+                      <p class="text-[11px] text-slate-500 dark:text-zink-300">
+                        {{ getPendingAttachmentHint() }}
+                      </p>
+                      <button
+                        type="button"
+                        (click)="clearPendingImageState()"
+                        class="inline-flex items-center justify-center size-7 rounded-md bg-slate-100 text-slate-500 dark:bg-zink-700 dark:text-zink-200">
+                        <lucide-angular name="x" [class]="'size-4'"></lucide-angular>
+                      </button>
+                    </div>
+
+                    @if (pendingImageUploads.length > 0) {
+                      <div class="mb-2 flex gap-2 overflow-x-auto pb-1">
+                        @for (upload of pendingImageUploads; track upload.localId) {
+                          <div class="relative shrink-0">
+                            <img
+                              [src]="upload.previewUrl"
+                              [alt]="upload.file.name"
+                              class="size-20 rounded-xl border border-slate-200 object-cover dark:border-zink-600">
+                            <button
+                              type="button"
+                              (click)="removePendingImageUpload(upload.localId)"
+                              class="absolute -right-1 -top-1 inline-flex size-5 items-center justify-center rounded-full bg-slate-900/80 text-white">
+                              <lucide-angular name="x" [class]="'size-3'"></lucide-angular>
+                            </button>
+                            <div class="absolute inset-x-1 bottom-1 rounded bg-slate-900/70 px-1 py-0.5 text-[10px] text-white">
+                              @if (upload.uploading) {
+                                <span>Subiendo...</span>
+                              } @else if (upload.error) {
+                                <span>Error</span>
+                              } @else {
+                                <span>Lista</span>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      <button
+                        type="button"
+                        (click)="openFileAttachmentPicker(imageFileInput)"
+                        class="inline-flex px-3 py-1.5 text-xs font-medium rounded-md bg-custom-500 text-white hover:bg-custom-600"
+                        [disabled]="isUploadingMedia">
+                        Agregar más imágenes
+                      </button>
+                    }
+
+                    @if (showImageUrlComposer) {
+                      <div class="mt-2">
+                        <input
+                          type="url"
+                          [(ngModel)]="pendingImageUrl"
+                          [ngModelOptions]="{ standalone: true }"
+                          class="form-input w-full border-slate-200 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-100"
+                          placeholder="https://ejemplo.com/imagen.png">
+                      </div>
+                    }
+                  </div>
+                }
+
+                <form (ngSubmit)="messageSave()" [formGroup]="formMessage" class="flex items-end gap-2">
+                    <div class="grow">
+                        <input type="text" id="inputText" formControlName="chatMsg" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Escribe tu mensaje..." autocomplete="off">
+                    </div>
+                    <div class="flex gap-2 shrink-0">
+                        <button type="button" (click)="toggleAttachmentMenu()" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50" [class.text-custom-500]="pendingImageUploads.length > 0 || showImageUrlComposer || (uploadMode === catiaUploadMode.IMAGE_URL && pendingImageUrl.trim())"><lucide-angular name="plus" [class]="'size-4'"></lucide-angular></button>
+                        <button type="submit" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20 disabled:opacity-60 disabled:cursor-not-allowed" [disabled]="!canSendCurrentMessage()"><lucide-angular name="send" [class]="'inline-block size-4 mr-1 align-middle'"></lucide-angular> <span class="align-middle">{{ isSendingMessage ? 'Enviando...' : 'Enviar' }}</span></button>
+                    </div>
+                </form>
+            </div> <!-- chat-footer -->
+          </div>
+      </div><!--Chat Content End-->
+    }@else {
+      <!-- IA Content -->
+      <div class="h-[calc(100vh_-_theme('spacing.10')_*_6)] xl:min-h-[calc(100vh_-_theme('height.header')_*_2.4)] card w-full min-w-0 bot-content">
+        <div class="relative flex flex-col h-full">
+          <!-- IA-header -->
+          <div class="card-body">
+            <div class="flex items-center gap-3">
+              @if (isMenuCollapsed){
+                <button
+                      type="button"
+                      (click)="toggleMenuCollapse()"
+                      class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200 hover:text-custom-500 dark:hover:text-custom-500">
+                      <lucide-angular name="chevrons-left" [class]="'size-4 mx-auto'"></lucide-angular>
+                </button>
+              }
+            </div>
+          </div><!-- IA-header -->
+
+          <!-- IA-body -->
+          <div class="relative bg-slate-50 dark:bg-zink-600/50 grow">
+            <ngx-simplebar class="h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)]">
+              <div class="sticky top-0 flex items-center gap-3 shadow-sm bg-white/60 dark:bg-zink-700/30 backdrop-blur-sm card-body">
+                <div class="relative flex items-center justify-center size-8 font-semibold rounded-full text-slate-500 bg-slate-100 dark:text-zink-200 dark:bg-zink-600">
+                  <img src="assets/images/users/user-2.jpg" alt="" class="h-8 rounded-full">
+                </div>
+                <h6>What is Tailwind CSS, and what is Utility-First CSS?</h6>
+              </div>
+              <div class="flex gap-3 card-body bg-slate-50 dark:bg-zink-600">
+                <div class="flex items-center justify-center size-8 font-semibold rounded-full text-slate-500 bg-slate-100 shrink-0 dark:text-zink-200 dark:bg-zink-600">
+                  <lucide-angular name="bot" class="size-5"></lucide-angular>
+                </div>
+                <div class="grow">
+                  <p class="mb-2">Tailwind CSS is a <b>utility-first</b> CSS framework designed for rapid UI development. Instead of providing pre-built components, it offers low-level utility classes that let you build custom designs without ever leaving your HTML.</p>
+                  <p class="mb-0">Utility-first CSS is an approach where you use small, single-purpose classes to build your user interface. These utility classes are composed to create complex designs directly in the HTML, rather than relying on custom CSS. This approach favors composition over inheritance, making it easier to maintain and scale your codebase.</p>
+                </div>
+              </div>
+              <div class="sticky top-0 flex items-center gap-3 shadow-sm bg-white/60 backdrop-blur-sm card-body dark:bg-zink-700/30">
+                <div class="relative flex items-center justify-center size-8 font-semibold rounded-full text-slate-500 bg-slate-100">
+                  <img src="assets/images/users/user-2.jpg" alt="" class="h-8 rounded-full">
+                </div>
+                <h6>How to install and set up Tailwind CSS in a project?</h6>
+              </div>
+            </ngx-simplebar>
+          </div><!-- IA-body -->
+
+          <!-- IA-footer -->
+          <div class="card-body">
+              <div class="flex items-center gap-2">
+                  <div class="grow">
+                      <input type="text" id="inputText" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Type your message here ..." required autocomplete="off">
+                  </div>
+                  <div class="flex gap-2 shrink-0">
+                      <button type="button" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50"><lucide-angular name="mic" [class]="'size-4'"></lucide-angular></button>
+                      <button type="button" class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"><lucide-angular name="send" [class]="'inline-block size-4 mr-1 align-middle'"></lucide-angular> <span class="align-middle">Send</span></button>
+                  </div>
+              </div>
+          </div><!-- IA-footer -->
+        </div>
+      </div><!--IA Content End-->
+    }
+  </div>
 </div>
 
-
 <drawer id="drawerEnd" [position]="'drawer-end'">
-    <div class="h-screen max-h-screen">
-        <div class="h-full p-4 overflow-y-auto">
-            <div>
+  <div class="h-screen max-h-screen">
+    <div class="h-full p-4 overflow-y-auto">
+      <div>
         <div class="flex items-center gap-3">
           <h6 class="text-15 grow">Profile</h6>
           @if (selectedUser) {
@@ -831,368 +828,368 @@
 </drawer>
 
 <drawer id="drawerMessageMeta" [position]="'drawer-end'">
-    <div class="h-screen max-h-screen">
-        <div class="h-full p-4 overflow-y-auto">
-            <div class="flex items-center gap-3">
-              <h6 class="text-15 grow">Detalle del mensaje</h6>
-              @if (selectedMessageDetail) {
-                <button
-                  type="button"
-                  (click)="openMessageRawAudit()"
-                  class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md shrink-0 bg-custom-500 text-white">
-                  Ver JSON completo
-                </button>
-              }
+  <div class="h-screen max-h-screen">
+      <div class="h-full p-4 overflow-y-auto">
+          <div class="flex items-center gap-3">
+            <h6 class="text-15 grow">Detalle del mensaje</h6>
+            @if (selectedMessageDetail) {
               <button
                 type="button"
-                (click)="closeMessageMetadata()"
-                class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500">
-                <lucide-angular name="x" [class]="'size-4 mx-auto'"></lucide-angular>
+                (click)="openMessageRawAudit()"
+                class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md shrink-0 bg-custom-500 text-white">
+                Ver JSON completo
               </button>
+            }
+            <button
+              type="button"
+              (click)="closeMessageMetadata()"
+              class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500">
+              <lucide-angular name="x" [class]="'size-4 mx-auto'"></lucide-angular>
+            </button>
+          </div>
+
+          @if (selectedMessageDetail) {
+            <div class="mt-6 p-4 rounded-lg bg-slate-50 dark:bg-zink-700/40">
+              <div class="flex flex-wrap gap-2">
+                <span class="px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-700 dark:bg-custom-500/20 dark:text-custom-300">
+                  {{ getMessageSourceLabel(selectedMessageDetail) }}
+                </span>
+                <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                  {{ getMessageDirectionLabel(selectedMessageDetail) }}
+                </span>
+                <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                  {{ selectedMessageDetail.type }}
+                </span>
+              </div>
+
+              <div class="mt-4 grid grid-cols-1 gap-3">
+                <div>
+                  <p class="text-xs text-slate-500 dark:text-zink-300">Contenido</p>
+                  <p class="mt-1 text-sm break-words">{{ getMessageBubbleText(selectedMessageDetail) }}</p>
+                </div>
+                <div>
+                  <p class="text-xs text-slate-500 dark:text-zink-300">Fecha</p>
+                  <p class="mt-1 text-sm">{{ formatMessageDateTime(selectedMessageDetail.sentAt || selectedMessageDetail.timestamp) }}</p>
+                </div>
+                @if (selectedMessageDetail.direction === 'OUTBOUND') {
+                  <div>
+                    <p class="text-xs text-slate-500 dark:text-zink-300">Fecha de leído</p>
+                    <p class="mt-1 text-sm">
+                      {{
+                        selectedMessageDetail.readAt
+                          ? formatMessageDateTime(selectedMessageDetail.readAt)
+                          : 'Sin confirmación de lectura'
+                      }}
+                    </p>
+                  </div>
+                }
+                <div>
+                  <p class="text-xs text-slate-500 dark:text-zink-300">WAMID</p>
+                  <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageDetail.wamid || 'N/A' }}</p>
+                </div>
+                @if (selectedMessageDetail.relatedWamid) {
+                  <div>
+                    <p class="text-xs text-slate-500 dark:text-zink-300">Relacionado con</p>
+                    <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageDetail.relatedWamid }}</p>
+                  </div>
+                }
+              </div>
             </div>
 
-            @if (selectedMessageDetail) {
-              <div class="mt-6 p-4 rounded-lg bg-slate-50 dark:bg-zink-700/40">
-                <div class="flex flex-wrap gap-2">
-                  <span class="px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-700 dark:bg-custom-500/20 dark:text-custom-300">
-                    {{ getMessageSourceLabel(selectedMessageDetail) }}
+            <div class="mt-5">
+              <div class="flex items-center gap-2 mb-4">
+                <p class="text-slate-500 dark:text-zink-200 grow">Error</p>
+                @if (selectedMessageError) {
+                  <span class="px-2 py-1 text-[11px] rounded-md bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-300">
+                    Con problema
                   </span>
-                  <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
-                    {{ getMessageDirectionLabel(selectedMessageDetail) }}
-                  </span>
-                  <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
-                    {{ selectedMessageDetail.type }}
-                  </span>
-                </div>
-
-                <div class="mt-4 grid grid-cols-1 gap-3">
-                  <div>
-                    <p class="text-xs text-slate-500 dark:text-zink-300">Contenido</p>
-                    <p class="mt-1 text-sm break-words">{{ getMessageBubbleText(selectedMessageDetail) }}</p>
-                  </div>
-                  <div>
-                    <p class="text-xs text-slate-500 dark:text-zink-300">Fecha</p>
-                    <p class="mt-1 text-sm">{{ formatMessageDateTime(selectedMessageDetail.sentAt || selectedMessageDetail.timestamp) }}</p>
-                  </div>
-                  @if (selectedMessageDetail.direction === 'OUTBOUND') {
-                    <div>
-                      <p class="text-xs text-slate-500 dark:text-zink-300">Fecha de leído</p>
-                      <p class="mt-1 text-sm">
-                        {{
-                          selectedMessageDetail.readAt
-                            ? formatMessageDateTime(selectedMessageDetail.readAt)
-                            : 'Sin confirmación de lectura'
-                        }}
-                      </p>
-                    </div>
-                  }
-                  <div>
-                    <p class="text-xs text-slate-500 dark:text-zink-300">WAMID</p>
-                    <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageDetail.wamid || 'N/A' }}</p>
-                  </div>
-                  @if (selectedMessageDetail.relatedWamid) {
-                    <div>
-                      <p class="text-xs text-slate-500 dark:text-zink-300">Relacionado con</p>
-                      <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageDetail.relatedWamid }}</p>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <div class="mt-5">
-                <div class="flex items-center gap-2 mb-4">
-                  <p class="text-slate-500 dark:text-zink-200 grow">Error</p>
-                  @if (selectedMessageError) {
-                    <span class="px-2 py-1 text-[11px] rounded-md bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-300">
-                      Con problema
-                    </span>
-                  }
-                </div>
-
-                @if (isLoadingSelectedMessageError) {
-                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                    <p class="text-sm text-slate-500 dark:text-zink-200">Cargando detalle del error...</p>
-                  </div>
-                } @else if (!selectedMessageError) {
-                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                    <p class="text-sm text-slate-500 dark:text-zink-200">
-                      Este mensaje no tiene error asociado.
-                    </p>
-                  </div>
-                } @else {
-                  <div class="p-4 rounded-lg border border-red-200 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10">
-                    <div class="grid grid-cols-1 gap-3">
-                      <div>
-                        <p class="text-xs text-red-500 dark:text-red-300">Código</p>
-                        <p class="mt-1 text-sm font-medium break-words">{{ selectedMessageError.errorCode || 'N/A' }}</p>
-                      </div>
-                      <div>
-                        <p class="text-xs text-red-500 dark:text-red-300">Título</p>
-                        <p class="mt-1 text-sm font-medium break-words">{{ selectedMessageError.errorTitle || 'N/A' }}</p>
-                      </div>
-                      <div>
-                        <p class="text-xs text-red-500 dark:text-red-300">Mensaje</p>
-                        <p class="mt-1 text-sm break-words">{{ selectedMessageError.errorMessage || 'N/A' }}</p>
-                      </div>
-                      <div>
-                        <p class="text-xs text-red-500 dark:text-red-300">Detalles</p>
-                        <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-white/80 dark:bg-zink-700/60">{{ formatStructuredText(selectedMessageError.errorDetails) }}</pre>
-                      </div>
-                    </div>
-                  </div>
                 }
               </div>
 
-              <div class="mt-5">
-                <div class="flex items-center gap-2 mb-4">
-                  <p class="text-slate-500 dark:text-zink-200 grow">Pricing</p>
-                  @if (selectedMessagePricing) {
-                    <span class="px-2 py-1 text-[11px] rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
-                      {{ getPricingBillableLabel(selectedMessagePricing) }}
-                    </span>
-                  }
+              @if (isLoadingSelectedMessageError) {
+                <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                  <p class="text-sm text-slate-500 dark:text-zink-200">Cargando detalle del error...</p>
                 </div>
-
-                @if (isLoadingSelectedMessagePricing) {
-                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                    <p class="text-sm text-slate-500 dark:text-zink-200">Cargando pricing...</p>
-                  </div>
-                } @else if (!selectedMessagePricing) {
-                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                    <p class="text-sm text-slate-500 dark:text-zink-200">
-                      Este mensaje no tiene pricing asociado.
-                    </p>
-                  </div>
-                } @else {
-                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                    <div class="grid grid-cols-1 gap-3">
-                      <div>
-                        <p class="text-xs text-slate-500 dark:text-zink-300">Estado</p>
-                        <p class="mt-1 text-sm">{{ getPricingBillableLabel(selectedMessagePricing) }}</p>
-                      </div>
-                      <div>
-                        <p class="text-xs text-slate-500 dark:text-zink-300">Modelo</p>
-                        <p class="mt-1 text-sm">{{ selectedMessagePricing.pricingModel || 'N/A' }}</p>
-                      </div>
-                      <div>
-                        <p class="text-xs text-slate-500 dark:text-zink-300">Categoría</p>
-                        <p class="mt-1 text-sm">{{ selectedMessagePricing.pricingCategory || 'N/A' }}</p>
-                      </div>
-                      <div>
-                        <p class="text-xs text-slate-500 dark:text-zink-300">Tipo</p>
-                        <p class="mt-1 text-sm break-words">{{ selectedMessagePricing.pricingType || 'N/A' }}</p>
-                      </div>
+              } @else if (!selectedMessageError) {
+                <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                  <p class="text-sm text-slate-500 dark:text-zink-200">
+                    Este mensaje no tiene error asociado.
+                  </p>
+                </div>
+              } @else {
+                <div class="p-4 rounded-lg border border-red-200 bg-red-50 dark:border-red-500/30 dark:bg-red-500/10">
+                  <div class="grid grid-cols-1 gap-3">
+                    <div>
+                      <p class="text-xs text-red-500 dark:text-red-300">Código</p>
+                      <p class="mt-1 text-sm font-medium break-words">{{ selectedMessageError.errorCode || 'N/A' }}</p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-red-500 dark:text-red-300">Título</p>
+                      <p class="mt-1 text-sm font-medium break-words">{{ selectedMessageError.errorTitle || 'N/A' }}</p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-red-500 dark:text-red-300">Mensaje</p>
+                      <p class="mt-1 text-sm break-words">{{ selectedMessageError.errorMessage || 'N/A' }}</p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-red-500 dark:text-red-300">Detalles</p>
+                      <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-white/80 dark:bg-zink-700/60">{{ formatStructuredText(selectedMessageError.errorDetails) }}</pre>
                     </div>
                   </div>
-                }
-              </div>
+                </div>
+              }
+            </div>
 
-              <div class="mt-5">
-                <div class="flex items-center gap-2 mb-4">
-                  <p class="text-slate-500 dark:text-zink-200 grow">Metadata IA</p>
+            <div class="mt-5">
+              <div class="flex items-center gap-2 mb-4">
+                <p class="text-slate-500 dark:text-zink-200 grow">Pricing</p>
+                @if (selectedMessagePricing) {
                   <span class="px-2 py-1 text-[11px] rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
-                    {{ selectedMessageAiResponses.length }} respuesta(s)
+                    {{ getPricingBillableLabel(selectedMessagePricing) }}
                   </span>
-                </div>
-
-                @if (isLoadingSelectedMessageAiResponses) {
-                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                    <p class="text-sm text-slate-500 dark:text-zink-200">Cargando metadata IA...</p>
-                  </div>
-                } @else if (selectedMessageAiResponses.length === 0) {
-                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                    <p class="text-sm text-slate-500 dark:text-zink-200">
-                      Este mensaje no tiene respuestas IA asociadas.
-                    </p>
-                  </div>
-                } @else {
-                  <div class="flex flex-col gap-4">
-                    @for (response of selectedMessageAiResponses; track response.id) {
-                      <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                        <div class="flex flex-wrap gap-2 mb-4">
-                          <span class="px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-700 dark:bg-custom-500/20 dark:text-custom-300">
-                            {{ response.model || 'Modelo N/A' }}
-                          </span>
-                          <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
-                            Tokens: {{ response.totalTokens }}
-                          </span>
-                          <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
-                            In: {{ response.inputTokens }} | Out: {{ response.outputTokens }}
-                          </span>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-3">
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">Fecha</p>
-                            <p class="mt-1 text-sm">{{ formatMessageDateTime(response.createdAt) }}</p>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">Response ID</p>
-                            <p class="mt-1 text-xs font-mono break-all">{{ response.responseId || 'N/A' }}</p>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">Previous Response ID</p>
-                            <p class="mt-1 text-xs font-mono break-all">{{ response.previousResponseId || 'N/A' }}</p>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">Prompt ID / versión</p>
-                            <p class="mt-1 text-xs font-mono break-all">
-                              {{ response.promptId || 'N/A' }} - {{ response.promptVersion || 'N/A' }}
-                            </p>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">Prompt Variables</p>
-                            <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.promptVariables) }}</pre>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">Metadata</p>
-                            <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.metadata) }}</pre>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">Reasoning</p>
-                            <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.reasoning) }}</pre>
-                          </div>
-                          <div>
-                            <div class="flex items-center gap-2">
-                              <p class="text-xs text-slate-500 dark:text-zink-300 grow">Tool Calls</p>
-                              <span class="text-[11px] text-slate-400 dark:text-zink-300">{{ response.toolCalls?.length ?? 0 }}</span>
-                            </div>
-                            @if ((response.toolCalls?.length ?? 0) === 0) {
-                              <p class="mt-1 text-sm text-slate-500 dark:text-zink-200">Sin tool calls.</p>
-                            } @else {
-                              <div class="mt-2 flex flex-col gap-3">
-                                @for (toolCall of response.toolCalls ?? []; track $index) {
-                                  <div class="p-3 rounded-md bg-slate-50 dark:bg-zink-700/40">
-                                    <p class="text-sm font-medium break-words">{{ toolCall.toolName || 'Tool call' }}</p>
-                                    <p class="mt-1 text-xs text-slate-500 dark:text-zink-300">Call ID: {{ toolCall.callId || 'N/A' }}</p>
-                                    @if (toolCall.status) {
-                                      <p class="mt-1 text-xs text-slate-500 dark:text-zink-300">Status: {{ toolCall.status }}</p>
-                                    }
-                                    <div class="mt-2">
-                                      <p class="text-xs text-slate-500 dark:text-zink-300">Arguments</p>
-                                      <pre class="mt-1 text-xs whitespace-pre-wrap break-words">{{ formatStructuredText(toolCall.arguments) }}</pre>
-                                    </div>
-                                    <div class="mt-2">
-                                      <p class="text-xs text-slate-500 dark:text-zink-300">Output</p>
-                                      <pre class="mt-1 text-xs whitespace-pre-wrap break-words">{{ formatStructuredText(toolCall.output) }}</pre>
-                                    </div>
-                                  </div>
-                                }
-                              </div>
-                            }
-                          </div>
-                        </div>
-                      </div>
-                    }
-                  </div>
                 }
               </div>
-            } @else {
-              <div class="flex flex-col items-center justify-center py-16 text-center">
-                <div class="size-16 rounded-full bg-slate-100 dark:bg-zink-600 flex items-center justify-center">
-                  <lucide-angular name="message-circle-more" [class]="'size-8 text-slate-400 dark:text-zink-300'"></lucide-angular>
+
+              @if (isLoadingSelectedMessagePricing) {
+                <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                  <p class="text-sm text-slate-500 dark:text-zink-200">Cargando pricing...</p>
                 </div>
-                <p class="mt-4 text-sm text-slate-500 dark:text-zink-200">
-                  Selecciona un mensaje de CATIA para ver sus metadatos.
-                </p>
+              } @else if (!selectedMessagePricing) {
+                <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                  <p class="text-sm text-slate-500 dark:text-zink-200">
+                    Este mensaje no tiene pricing asociado.
+                  </p>
+                </div>
+              } @else {
+                <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                  <div class="grid grid-cols-1 gap-3">
+                    <div>
+                      <p class="text-xs text-slate-500 dark:text-zink-300">Estado</p>
+                      <p class="mt-1 text-sm">{{ getPricingBillableLabel(selectedMessagePricing) }}</p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-slate-500 dark:text-zink-300">Modelo</p>
+                      <p class="mt-1 text-sm">{{ selectedMessagePricing.pricingModel || 'N/A' }}</p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-slate-500 dark:text-zink-300">Categoría</p>
+                      <p class="mt-1 text-sm">{{ selectedMessagePricing.pricingCategory || 'N/A' }}</p>
+                    </div>
+                    <div>
+                      <p class="text-xs text-slate-500 dark:text-zink-300">Tipo</p>
+                      <p class="mt-1 text-sm break-words">{{ selectedMessagePricing.pricingType || 'N/A' }}</p>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="mt-5">
+              <div class="flex items-center gap-2 mb-4">
+                <p class="text-slate-500 dark:text-zink-200 grow">Metadata IA</p>
+                <span class="px-2 py-1 text-[11px] rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                  {{ selectedMessageAiResponses.length }} respuesta(s)
+                </span>
               </div>
-            }
-        </div>
-    </div>
+
+              @if (isLoadingSelectedMessageAiResponses) {
+                <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                  <p class="text-sm text-slate-500 dark:text-zink-200">Cargando metadata IA...</p>
+                </div>
+              } @else if (selectedMessageAiResponses.length === 0) {
+                <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                  <p class="text-sm text-slate-500 dark:text-zink-200">
+                    Este mensaje no tiene respuestas IA asociadas.
+                  </p>
+                </div>
+              } @else {
+                <div class="flex flex-col gap-4">
+                  @for (response of selectedMessageAiResponses; track response.id) {
+                    <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                      <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-700 dark:bg-custom-500/20 dark:text-custom-300">
+                          {{ response.model || 'Modelo N/A' }}
+                        </span>
+                        <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                          Tokens: {{ response.totalTokens }}
+                        </span>
+                        <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                          In: {{ response.inputTokens }} | Out: {{ response.outputTokens }}
+                        </span>
+                      </div>
+
+                      <div class="grid grid-cols-1 gap-3">
+                        <div>
+                          <p class="text-xs text-slate-500 dark:text-zink-300">Fecha</p>
+                          <p class="mt-1 text-sm">{{ formatMessageDateTime(response.createdAt) }}</p>
+                        </div>
+                        <div>
+                          <p class="text-xs text-slate-500 dark:text-zink-300">Response ID</p>
+                          <p class="mt-1 text-xs font-mono break-all">{{ response.responseId || 'N/A' }}</p>
+                        </div>
+                        <div>
+                          <p class="text-xs text-slate-500 dark:text-zink-300">Previous Response ID</p>
+                          <p class="mt-1 text-xs font-mono break-all">{{ response.previousResponseId || 'N/A' }}</p>
+                        </div>
+                        <div>
+                          <p class="text-xs text-slate-500 dark:text-zink-300">Prompt ID / versión</p>
+                          <p class="mt-1 text-xs font-mono break-all">
+                            {{ response.promptId || 'N/A' }} - {{ response.promptVersion || 'N/A' }}
+                          </p>
+                        </div>
+                        <div>
+                          <p class="text-xs text-slate-500 dark:text-zink-300">Prompt Variables</p>
+                          <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.promptVariables) }}</pre>
+                        </div>
+                        <div>
+                          <p class="text-xs text-slate-500 dark:text-zink-300">Metadata</p>
+                          <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.metadata) }}</pre>
+                        </div>
+                        <div>
+                          <p class="text-xs text-slate-500 dark:text-zink-300">Reasoning</p>
+                          <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.reasoning) }}</pre>
+                        </div>
+                        <div>
+                          <div class="flex items-center gap-2">
+                            <p class="text-xs text-slate-500 dark:text-zink-300 grow">Tool Calls</p>
+                            <span class="text-[11px] text-slate-400 dark:text-zink-300">{{ response.toolCalls?.length ?? 0 }}</span>
+                          </div>
+                          @if ((response.toolCalls?.length ?? 0) === 0) {
+                            <p class="mt-1 text-sm text-slate-500 dark:text-zink-200">Sin tool calls.</p>
+                          } @else {
+                            <div class="mt-2 flex flex-col gap-3">
+                              @for (toolCall of response.toolCalls ?? []; track $index) {
+                                <div class="p-3 rounded-md bg-slate-50 dark:bg-zink-700/40">
+                                  <p class="text-sm font-medium break-words">{{ toolCall.toolName || 'Tool call' }}</p>
+                                  <p class="mt-1 text-xs text-slate-500 dark:text-zink-300">Call ID: {{ toolCall.callId || 'N/A' }}</p>
+                                  @if (toolCall.status) {
+                                    <p class="mt-1 text-xs text-slate-500 dark:text-zink-300">Status: {{ toolCall.status }}</p>
+                                  }
+                                  <div class="mt-2">
+                                    <p class="text-xs text-slate-500 dark:text-zink-300">Arguments</p>
+                                    <pre class="mt-1 text-xs whitespace-pre-wrap break-words">{{ formatStructuredText(toolCall.arguments) }}</pre>
+                                  </div>
+                                  <div class="mt-2">
+                                    <p class="text-xs text-slate-500 dark:text-zink-300">Output</p>
+                                    <pre class="mt-1 text-xs whitespace-pre-wrap break-words">{{ formatStructuredText(toolCall.output) }}</pre>
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="flex flex-col items-center justify-center py-16 text-center">
+              <div class="size-16 rounded-full bg-slate-100 dark:bg-zink-600 flex items-center justify-center">
+                <lucide-angular name="message-circle-more" [class]="'size-8 text-slate-400 dark:text-zink-300'"></lucide-angular>
+              </div>
+              <p class="mt-4 text-sm text-slate-500 dark:text-zink-200">
+                Selecciona un mensaje de CATIA para ver sus metadatos.
+              </p>
+            </div>
+          }
+      </div>
+  </div>
 </drawer>
 
 <drawer id="drawerMessageRaw" [position]="'drawer-end'">
-    <div class="h-screen max-h-screen">
-        <div class="h-full p-4 overflow-y-auto">
-            <div class="flex items-center gap-3">
-              <h6 class="text-15 grow">Auditoría JSON</h6>
-              @if (selectedMessageRawDetail) {
-                <button
-                  type="button"
-                  (click)="copyText(formatJsonValue(selectedMessageRawDetail))"
-                  class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
-                  Copiar
-                </button>
-              }
-              <button
-                type="button"
-                (click)="closeMessageRawAudit()"
-                class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500">
-                <lucide-angular name="x" [class]="'size-4 mx-auto'"></lucide-angular>
-              </button>
-            </div>
+  <div class="h-screen max-h-screen">
+    <div class="h-full p-4 overflow-y-auto">
+      <div class="flex items-center gap-3">
+        <h6 class="text-15 grow">Auditoría JSON</h6>
+        @if (selectedMessageRawDetail) {
+          <button
+            type="button"
+            (click)="copyText(formatJsonValue(selectedMessageRawDetail))"
+            class="inline-flex items-center justify-center px-3 h-8 text-sm transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+            Copiar
+          </button>
+        }
+        <button
+          type="button"
+          (click)="closeMessageRawAudit()"
+          class="inline-flex items-center justify-center size-8 transition-all duration-200 ease-linear rounded-md shrink-0 bg-slate-100 text-slate-500 hover:text-red-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:text-red-500">
+          <lucide-angular name="x" [class]="'size-4 mx-auto'"></lucide-angular>
+        </button>
+      </div>
 
-            @if (isLoadingSelectedMessageRawDetail) {
-              <div class="mt-6 p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                <p class="text-sm text-slate-500 dark:text-zink-200">Cargando JSON completo del mensaje...</p>
-              </div>
-            } @else if (selectedMessageRawDetail) {
-              <div class="mt-6">
-                @if (selectedMessageRawDetail.mediaId) {
-                  <div class="mb-5">
-                    <div class="flex items-center gap-2 mb-4">
-                      <p class="text-slate-500 dark:text-zink-200 grow">Media Metadata</p>
-                      <span class="px-2 py-1 text-[11px] rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
-                        WhatsApp
-                      </span>
+        @if (isLoadingSelectedMessageRawDetail) {
+          <div class="mt-6 p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+            <p class="text-sm text-slate-500 dark:text-zink-200">Cargando JSON completo del mensaje...</p>
+          </div>
+        } @else if (selectedMessageRawDetail) {
+          <div class="mt-6">
+            @if (selectedMessageRawDetail.mediaId) {
+              <div class="mb-5">
+                <div class="flex items-center gap-2 mb-4">
+                  <p class="text-slate-500 dark:text-zink-200 grow">Media Metadata</p>
+                  <span class="px-2 py-1 text-[11px] rounded-md bg-slate-100 text-slate-500 dark:bg-zink-600 dark:text-zink-200">
+                    WhatsApp
+                  </span>
+                </div>
+
+                @if (isLoadingSelectedMessageMediaMetadata) {
+                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                    <p class="text-sm text-slate-500 dark:text-zink-200">Cargando metadata del media...</p>
+                  </div>
+                } @else if (!selectedMessageMediaMetadata) {
+                  <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
+                    <p class="text-sm text-slate-500 dark:text-zink-200">
+                      No hay metadata de media disponible para este archivo.
+                    </p>
+                  </div>
+                } @else {
+                  <div class="mb-4 p-4 rounded-lg border border-slate-200 bg-slate-50 dark:border-zink-700 dark:bg-zink-700/40">
+                    <div class="grid grid-cols-1 gap-3">
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-zink-300">Media ID</p>
+                        <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageMediaMetadata.id || 'N/A' }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-zink-300">MIME Type</p>
+                        <p class="mt-1 text-sm break-words">{{ selectedMessageMediaMetadata.mimeType || 'N/A' }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-zink-300">File Size</p>
+                        <p class="mt-1 text-sm">{{ formatFileSize(selectedMessageMediaMetadata.fileSize) }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-zink-300">SHA256</p>
+                        <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageMediaMetadata.sha256 || 'N/A' }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-zink-300">Messaging Product</p>
+                        <p class="mt-1 text-sm">{{ selectedMessageMediaMetadata.messagingProduct || 'N/A' }}</p>
+                      </div>
+                      <div>
+                        <p class="text-xs text-slate-500 dark:text-zink-300">Media URL</p>
+                        <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageMediaMetadata.url || 'N/A' }}</p>
+                      </div>
                     </div>
-
-                    @if (isLoadingSelectedMessageMediaMetadata) {
-                      <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                        <p class="text-sm text-slate-500 dark:text-zink-200">Cargando metadata del media...</p>
-                      </div>
-                    } @else if (!selectedMessageMediaMetadata) {
-                      <div class="p-4 rounded-lg border border-slate-200 dark:border-zink-700">
-                        <p class="text-sm text-slate-500 dark:text-zink-200">
-                          No hay metadata de media disponible para este archivo.
-                        </p>
-                      </div>
-                    } @else {
-                      <div class="mb-4 p-4 rounded-lg border border-slate-200 bg-slate-50 dark:border-zink-700 dark:bg-zink-700/40">
-                        <div class="grid grid-cols-1 gap-3">
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">Media ID</p>
-                            <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageMediaMetadata.id || 'N/A' }}</p>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">MIME Type</p>
-                            <p class="mt-1 text-sm break-words">{{ selectedMessageMediaMetadata.mimeType || 'N/A' }}</p>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">File Size</p>
-                            <p class="mt-1 text-sm">{{ formatFileSize(selectedMessageMediaMetadata.fileSize) }}</p>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">SHA256</p>
-                            <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageMediaMetadata.sha256 || 'N/A' }}</p>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">Messaging Product</p>
-                            <p class="mt-1 text-sm">{{ selectedMessageMediaMetadata.messagingProduct || 'N/A' }}</p>
-                          </div>
-                          <div>
-                            <p class="text-xs text-slate-500 dark:text-zink-300">Media URL</p>
-                            <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageMediaMetadata.url || 'N/A' }}</p>
-                          </div>
-                        </div>
-                      </div>
-                    }
                   </div>
                 }
-                <pre class="p-4 text-xs whitespace-pre-wrap break-words rounded-lg border border-slate-200 bg-slate-50 dark:border-zink-700 dark:bg-zink-700/40">{{ formatJsonValue(selectedMessageRawDetail) }}</pre>
-              </div>
-            } @else {
-              <div class="flex flex-col items-center justify-center py-16 text-center">
-                <div class="size-16 rounded-full bg-slate-100 dark:bg-zink-600 flex items-center justify-center">
-                  <lucide-angular name="file-json" [class]="'size-8 text-slate-400 dark:text-zink-300'"></lucide-angular>
-                </div>
-                <p class="mt-4 text-sm text-slate-500 dark:text-zink-200">
-                  No hay detalle JSON disponible para este mensaje.
-                </p>
               </div>
             }
-        </div>
+            <pre class="p-4 text-xs whitespace-pre-wrap break-words rounded-lg border border-slate-200 bg-slate-50 dark:border-zink-700 dark:bg-zink-700/40">{{ formatJsonValue(selectedMessageRawDetail) }}</pre>
+          </div>
+        } @else {
+          <div class="flex flex-col items-center justify-center py-16 text-center">
+            <div class="size-16 rounded-full bg-slate-100 dark:bg-zink-600 flex items-center justify-center">
+              <lucide-angular name="file-json" [class]="'size-8 text-slate-400 dark:text-zink-300'"></lucide-angular>
+            </div>
+            <p class="mt-4 text-sm text-slate-500 dark:text-zink-200">
+              No hay detalle JSON disponible para este mensaje.
+            </p>
+          </div>
+        }
     </div>
+  </div>
 </drawer>
 
 <ng-template #userProfileContent>
@@ -1386,20 +1383,20 @@
 </ng-template>
 
 <ng-modals id="callModal" [placement]="'modal-center'" className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4 ">
-    <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600 flex flex-col h-full">
-        <div class="max-h-[calc(theme('height.screen')_-_180px)] p-8">
-            <div class="text-center">
-                <div class=" size-20 mx-auto rounded-full bg-slate-100 dark:bg-zink-500">
-                    <img src="assets/images/users/avatar-7.png" alt="" class="h-20 rounded-full">
-                </div>
-                <h5 class="mt-4 mb-1 text-16">William Heineman</h5>
-                <p class="text-green-500">Calling...</p>
-            </div>
-            <div class="flex items-center justify-center gap-3 mt-6">
-                <a href="javascript:void(0);" class="flex items-center justify-center size-12 p-0 text-white bg-green-500 border-green-500 rounded-full btn hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/10"><lucide-angular name="phone-call"></lucide-angular></a>
-                <a href="javascript:void(0);" dismissModal [ModalDismiss]="'callModal'" data-modal-close="callModal" class="flex items-center justify-center size-12 text-white bg-red-500 border-red-500 rounded-full btn hover:text-white hover:bg-red-600 hover:border-red-600 focus:text-white focus:bg-red-600 focus:border-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:border-red-600 active:ring active:ring-red-100 dark:ring-red-400/20"><lucide-angular name="phone"></lucide-angular></a>
-            </div>
+  <div class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600 flex flex-col h-full">
+    <div class="max-h-[calc(theme('height.screen')_-_180px)] p-8">
+      <div class="text-center">
+        <div class=" size-20 mx-auto rounded-full bg-slate-100 dark:bg-zink-500">
+            <img src="assets/images/users/avatar-7.png" alt="" class="h-20 rounded-full">
         </div>
+        <h5 class="mt-4 mb-1 text-16">{{username}}</h5>
+        <p class="text-green-500">Calling...</p>
+      </div>
+      <div class="flex items-center justify-center gap-3 mt-6">
+        <a href="javascript:void(0);" class="flex items-center justify-center size-12 p-0 text-white bg-green-500 border-green-500 rounded-full btn hover:text-white hover:bg-green-600 hover:border-green-600 focus:text-white focus:bg-green-600 focus:border-green-600 focus:ring focus:ring-green-100 active:text-white active:bg-green-600 active:border-green-600 active:ring active:ring-green-100 dark:ring-green-400/10"><lucide-angular name="phone-call"></lucide-angular></a>
+        <a href="javascript:void(0);" dismissModal [ModalDismiss]="'callModal'" data-modal-close="callModal" class="flex items-center justify-center size-12 text-white bg-red-500 border-red-500 rounded-full btn hover:text-white hover:bg-red-600 hover:border-red-600 focus:text-white focus:bg-red-600 focus:border-red-600 focus:ring focus:ring-red-100 active:text-white active:bg-red-600 active:border-red-600 active:ring active:ring-red-100 dark:ring-red-400/20"><lucide-angular name="phone"></lucide-angular></a>
+      </div>
     </div>
+  </div>
 </ng-modals>
 
