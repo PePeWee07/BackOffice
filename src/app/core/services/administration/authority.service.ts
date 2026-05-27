@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PermissionListRequest, PermissionListResponse } from '../../../store/User/user-model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -9,13 +10,15 @@ import { PermissionListRequest, PermissionListResponse } from '../../../store/Us
 export class AuthorityService {
   private http = inject(HttpClient);
 
+  private apiUrl = environment.backEnd.baseUrl + environment.backEnd.api.root;
+
   getPermissions(): Observable<PermissionListResponse[]> {
-    return this.http.get<PermissionListResponse[]>(`/back-end/v2/permissions`);
+    return this.http.get<PermissionListResponse[]>(`${this.apiUrl}/permissions`);
   }
 
   getPermissionById(permissionId: number): Observable<PermissionListResponse> {
     return this.http.get<PermissionListResponse>(
-      `/back-end/v2/permission/${permissionId}`
+      `${this.apiUrl}/permission/${permissionId}`
     );
   }
 
@@ -23,7 +26,7 @@ export class AuthorityService {
     permissionBody: PermissionListRequest
   ): Observable<PermissionListResponse> {
     return this.http.post<PermissionListResponse>(
-      `/back-end/v2/permission`,
+      `${this.apiUrl}/permission`,
       permissionBody
     );
   }
@@ -33,12 +36,12 @@ export class AuthorityService {
     body: PermissionListRequest
   ): Observable<PermissionListResponse> {
     return this.http.put<PermissionListResponse>(
-      `/back-end/v2/permission/${permissionId}`,
+      `${this.apiUrl}/permission/${permissionId}`,
       body
     );
   }
 
   deletePermission(permissionId: number): Observable<void> {
-    return this.http.delete<void>(`/back-end/v2/permission/${permissionId}`);
+    return this.http.delete<void>(`${this.apiUrl}/permission/${permissionId}`);
   }
 }
