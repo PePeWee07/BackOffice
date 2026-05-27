@@ -4,7 +4,10 @@ import { environment } from '../../../../../environments/environment';
 import { AuthenticationService } from '../../auth/auth.service';
 import { TokenStorageService } from '../../auth/token-storage.service';
 import { CatiaMessageModel } from './models/catia-message';
-import { CatiaMessageStreamEvent } from './models/catia-message-stream';
+import {
+  CatiaMessageStreamEvent,
+  CatiaMessageStreamPayload,
+} from './models/catia-message-stream';
 
 @Injectable({
   providedIn: 'root',
@@ -158,7 +161,8 @@ export class CatiaMessageStreamService {
 
     const rawData = dataLines.join('\n');
     const data = this.parseEventData(rawData);
-    const message = this.toCatiaMessage(data);
+    const payload = this.toStreamPayload(data);
+    const message = payload?.message ?? this.toCatiaMessage(data);
 
     return {
       event,
@@ -166,6 +170,7 @@ export class CatiaMessageStreamService {
       rawData,
       id,
       retry: Number.isFinite(retry) ? retry : undefined,
+      payload: payload ?? undefined,
       message: message ?? undefined,
     };
   }
@@ -194,6 +199,38 @@ export class CatiaMessageStreamService {
     }
 
     return candidate as CatiaMessageModel;
+  }
+
+  private toStreamPayload(data: unknown): CatiaMessageStreamPayload | null {
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      return null;
+    }
+
+    const candidate = data as Record<string, unknown>;
+    const message = this.toCatiaMessage(candidate['message']);
+
+    if (
+      typeof candidate['phone'] !== 'string' &&
+      typeof candidate['eventType'] !== 'string' &&
+      typeof candidate['status'] !== 'string' &&
+      !message
+    ) {
+      return null;
+    }
+
+    return {
+      eventType:
+        typeof candidate['eventType'] === 'string'
+          ? candidate['eventType']
+          : undefined,
+      phone:
+        typeof candidate['phone'] === 'string' ? candidate['phone'] : undefined,
+      status:
+        typeof candidate['status'] === 'string'
+          ? candidate['status']
+          : undefined,
+      message,
+    };
   }
 
   private async ensureAccessToken(): Promise<string> {

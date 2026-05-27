@@ -358,33 +358,32 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
             return;
           }
 
-          if (streamEvent.event !== 'message_update') {
+          const payload = streamEvent.payload;
+          const eventType = payload?.eventType ?? streamEvent.event;
+          const streamMessage = streamEvent.message ?? payload?.message ?? null;
+
+          if (!payload?.phone || payload.phone !== sanitizedPhone || !streamMessage) {
             return;
           }
 
-          const payload =
-            streamEvent.data && typeof streamEvent.data === 'object'
-              ? (streamEvent.data as {
-                  eventType?: string;
-                  phone?: string;
-                  messageType?: string;
-                  preview?: string;
-                })
-              : null;
+          const shouldAutoScroll = this.isMessageScrollNearBottom();
+          const isReadEvent =
+            eventType === 'message_read' || payload?.status === 'read';
 
-          if (!payload?.phone || payload.phone !== sanitizedPhone) {
+          this.upsertStreamMessage(streamMessage, shouldAutoScroll);
+
+          if (isReadEvent) {
             return;
           }
 
-          if (this.isMessageScrollNearBottom()) {
-            this.scheduleSelectedChatRefresh(7000);
+          if (shouldAutoScroll) {
             return;
           }
 
           this.hasNewMessageAlert = true;
           this.newMessageAlertCount += 1;
-          this.latestMessagePreview = payload.preview?.trim() ?? '';
-          this.latestMessageType = payload.messageType?.trim() ?? '';
+          this.latestMessagePreview = this.getStreamMessagePreview(streamMessage);
+          this.latestMessageType = streamMessage.type?.trim() ?? '';
         },
         error: (err: unknown) => {
           this.isStreamingSelectedChat = false;
@@ -431,6 +430,70 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
 
     this.loadInitialMessageHistory();
+  }
+
+  private getStreamMessagePreview(message: CatiaMessageModel): string {
+    const preview = message.textBody?.trim() || message.mediaCaption?.trim();
+    return preview || this.getMessageBubbleText(message);
+  }
+
+  private findMessageIndex(message: CatiaMessageModel): number {
+    return this.messages.findIndex(
+      (currentMessage) =>
+        currentMessage.id === message.id ||
+        (!!message.wamid && currentMessage.wamid === message.wamid)
+    );
+  }
+
+  private upsertStreamMessage(
+    message: CatiaMessageModel,
+    scrollToBottom = false
+  ) {
+    const existingIndex = this.findMessageIndex(message);
+
+    if (existingIndex >= 0) {
+      this.messages = this.messages.map((currentMessage, index) =>
+        index === existingIndex ? message : currentMessage
+      );
+    } else {
+      this.messages = [...this.messages, message];
+      this.totalMessages += 1;
+    }
+
+    this.messages = [...this.messages].sort((left, right) => {
+      const leftTimestamp = this.getMessageTimestampMs(left) ?? 0;
+      const rightTimestamp = this.getMessageTimestampMs(right) ?? 0;
+      return leftTimestamp - rightTimestamp;
+    });
+
+    if (message.messageAddres) {
+      this.messageAddressMap[message.id] = message.messageAddres;
+    }
+
+    if (message.messagePricing) {
+      this.messagePricingMap[message.id] = message.messagePricing;
+    }
+
+    if (message.messageError) {
+      this.messageErrorMap[message.id] = message.messageError;
+    }
+
+    if (message.aiResponses) {
+      this.messageAiResponseMap[message.id] = message.aiResponses;
+    }
+
+    this.ensureLocationMessagesLoaded([message]);
+
+    if (scrollToBottom) {
+      setTimeout(() => {
+        const scrollElement =
+          this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+
+        if (scrollElement) {
+          scrollElement.scrollTop = scrollElement.scrollHeight;
+        }
+      });
+    }
   }
 
   loadNextMessageHistoryPage() {
