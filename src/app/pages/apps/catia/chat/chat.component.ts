@@ -437,6 +437,42 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     return preview || this.getMessageBubbleText(message);
   }
 
+  private mergeMessageState(
+    incomingMessage: CatiaMessageModel,
+    existingMessage?: CatiaMessageModel
+  ): CatiaMessageModel {
+    if (!existingMessage) {
+      return incomingMessage;
+    }
+
+    return {
+      ...existingMessage,
+      ...incomingMessage,
+      sentAt: incomingMessage.sentAt ?? existingMessage.sentAt,
+      deliveredAt: incomingMessage.deliveredAt ?? existingMessage.deliveredAt,
+      readAt: incomingMessage.readAt ?? existingMessage.readAt,
+      failedAt: incomingMessage.failedAt ?? existingMessage.failedAt,
+      mediaId: incomingMessage.mediaId ?? existingMessage.mediaId,
+      mediaUrl: incomingMessage.mediaUrl ?? existingMessage.mediaUrl,
+      mediaMimeType:
+        incomingMessage.mediaMimeType ?? existingMessage.mediaMimeType,
+      mediaFilename:
+        incomingMessage.mediaFilename ?? existingMessage.mediaFilename,
+      mediaCaption: incomingMessage.mediaCaption ?? existingMessage.mediaCaption,
+      textBody: incomingMessage.textBody ?? existingMessage.textBody,
+      aiResponses: incomingMessage.aiResponses?.length
+        ? incomingMessage.aiResponses
+        : existingMessage.aiResponses,
+      messageTemplate:
+        incomingMessage.messageTemplate ?? existingMessage.messageTemplate,
+      messagePricing:
+        incomingMessage.messagePricing ?? existingMessage.messagePricing,
+      messageAddres:
+        incomingMessage.messageAddres ?? existingMessage.messageAddres,
+      messageError: incomingMessage.messageError ?? existingMessage.messageError,
+    };
+  }
+
   private findMessageIndex(message: CatiaMessageModel): number {
     return this.messages.findIndex(
       (currentMessage) =>
@@ -452,9 +488,13 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     const existingIndex = this.findMessageIndex(message);
 
     if (existingIndex >= 0) {
+      const existingMessage = this.messages[existingIndex];
+      const mergedMessage = this.mergeMessageState(message, existingMessage);
+
       this.messages = this.messages.map((currentMessage, index) =>
-        index === existingIndex ? message : currentMessage
+        index === existingIndex ? mergedMessage : currentMessage
       );
+      message = mergedMessage;
     } else {
       this.messages = [...this.messages, message];
       this.totalMessages += 1;
@@ -480,6 +520,20 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
     if (message.aiResponses) {
       this.messageAiResponseMap[message.id] = message.aiResponses;
+    }
+
+    if (this.selectedMessageDetail?.id === message.id) {
+      this.selectedMessageDetail = {
+        ...this.selectedMessageDetail,
+        ...message,
+      };
+    }
+
+    if (this.selectedMessageRawDetail?.id === message.id) {
+      this.selectedMessageRawDetail = {
+        ...this.selectedMessageRawDetail,
+        ...message,
+      };
     }
 
     this.ensureLocationMessagesLoaded([message]);
@@ -808,6 +862,44 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(this.normalizeEpoch(value) ?? value));
+  }
+
+  shouldShowOutgoingReceipt(message: CatiaMessageModel): boolean {
+    return message.direction === 'OUTBOUND' && !message.failedAt;
+  }
+
+  getOutgoingReceiptIconName(
+    message: CatiaMessageModel
+  ): 'check' | 'check-check' {
+    if (message.deliveredAt || message.readAt) {
+      return 'check-check';
+    }
+
+    return 'check';
+  }
+
+  getOutgoingReceiptClass(message: CatiaMessageModel): string {
+    if (message.readAt) {
+      return 'text-sky-500 dark:text-sky-300';
+    }
+
+    return 'text-slate-400 dark:text-zink-300';
+  }
+
+  getOutgoingReceiptLabel(message: CatiaMessageModel): string {
+    if (message.readAt) {
+      return `Leído ${this.formatMessageDateTime(message.readAt)}`;
+    }
+
+    if (message.deliveredAt) {
+      return `Entregado ${this.formatMessageDateTime(message.deliveredAt)}`;
+    }
+
+    if (message.sentAt) {
+      return `Enviado ${this.formatMessageDateTime(message.sentAt)}`;
+    }
+
+    return 'Enviado a WhatsApp';
   }
 
   ensureLocationMessagesLoaded(messages: CatiaMessageModel[]) {
@@ -1287,7 +1379,14 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       })
       .subscribe({
         next: (pageMessages) => {
-          const incomingMessages = [...(pageMessages.content ?? [])].reverse();
+          const incomingMessages = [...(pageMessages.content ?? [])]
+            .reverse()
+            .map((message) => {
+              const existingIndex = this.findMessageIndex(message);
+              const existingMessage =
+                existingIndex >= 0 ? this.messages[existingIndex] : undefined;
+              return this.mergeMessageState(message, existingMessage);
+            });
 
           if (reset || pageMessages.page.number === 0) {
             this.messages = incomingMessages;
@@ -1870,8 +1969,11 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
           this.formMessage.reset({ chatMsg: '' });
           this.clearPendingImageState();
           this.updateMessageInputState();
-          this.scheduleSelectedChatRefresh(800);
-          setTimeout(() => this.refreshSelectedChatMessages(), 2200);
+
+          if (!this.isStreamingSelectedChat) {
+            this.scheduleSelectedChatRefresh(1500);
+          }
+
           this.toastr.success(
             sentCount > 1
               ? `Se enviaron ${sentCount} imágenes correctamente`

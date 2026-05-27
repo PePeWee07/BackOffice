@@ -596,9 +596,20 @@
                                       {{ getMessageBubbleText(message) }}
                                     </p>
                                   }
-                                  <p class="mt-2 text-[11px] text-slate-400 dark:text-zink-300">
-                                    {{ getMessageTime(message.sentAt || message.timestamp) }}
-                                  </p>
+                                  <div class="mt-2 flex items-center gap-1 text-[11px] text-slate-400 dark:text-zink-300">
+                                    <p>
+                                      {{ getMessageTime(message.sentAt || message.timestamp) }}
+                                    </p>
+                                    @if (shouldShowOutgoingReceipt(message)) {
+                                      <span
+                                        class="inline-flex items-center"
+                                        [title]="getOutgoingReceiptLabel(message)">
+                                        <lucide-angular
+                                          [name]="getOutgoingReceiptIconName(message)"
+                                          [class]="'size-3.5 ' + getOutgoingReceiptClass(message)"></lucide-angular>
+                                      </span>
+                                    }
+                                  </div>
                                   @if (hasMessageFailure(message)) {
                                     <div class="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-300">
                                       <lucide-angular name="alert-triangle" [class]="'size-3.5'"></lucide-angular>
@@ -863,6 +874,18 @@
                     <p class="text-xs text-slate-500 dark:text-zink-300">Fecha</p>
                     <p class="mt-1 text-sm">{{ formatMessageDateTime(selectedMessageDetail.sentAt || selectedMessageDetail.timestamp) }}</p>
                   </div>
+                  @if (selectedMessageDetail.direction === 'OUTBOUND') {
+                    <div>
+                      <p class="text-xs text-slate-500 dark:text-zink-300">Fecha de leído</p>
+                      <p class="mt-1 text-sm">
+                        {{
+                          selectedMessageDetail.readAt
+                            ? formatMessageDateTime(selectedMessageDetail.readAt)
+                            : 'Sin confirmación de lectura'
+                        }}
+                      </p>
+                    </div>
+                  }
                   <div>
                     <p class="text-xs text-slate-500 dark:text-zink-300">WAMID</p>
                     <p class="mt-1 text-xs font-mono break-all">{{ selectedMessageDetail.wamid || 'N/A' }}</p>
