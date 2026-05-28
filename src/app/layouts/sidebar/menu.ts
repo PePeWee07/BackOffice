@@ -16,7 +16,7 @@ export const MENU: MenuItem[] = [
         label: 'CatIA',
         link: '/',
         parentId: 1,
-      }
+      },
     ],
   },
   {
@@ -36,6 +36,13 @@ export const MENU: MenuItem[] = [
     label: 'Roles',
     icon: 'key',
     link: '/apps-users-role',
+    parentId: 1.5,
+  },
+  {
+    id: 2.49,
+    label: 'Permisos de rutas',
+    icon: 'key',
+    link: '/apps-route-permissions',
     parentId: 1.5,
   },
   {
@@ -356,7 +363,7 @@ export const MENU: MenuItem[] = [
         parentId: 4,
       },
     ],
-  }
+  },
   // {
   //   id: 5,
   //   label: 'components',

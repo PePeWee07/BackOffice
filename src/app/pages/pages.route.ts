@@ -31,6 +31,7 @@ import { AddNewComponent } from './invoice/add-new/add-new.component';
 import { InvoiceOverviewComponent } from './invoice/invoice-overview/invoice-overview.component';
 import { UsersGridComponent } from './user/users-grid.component';
 import { RolesPermissionsComponent } from './user/roles-permissions.component';
+import { RoutePermissionsComponent } from './user/route-permissions.component';
 import { CalendarComponent } from './calendar/calendar/calendar.component';
 import { AccountComponent } from './extrapages/account/account.component';
 
@@ -42,49 +43,13 @@ import { MultiMonthStackComponent } from './calendar/multi-month-stack/multi-mon
 import { Error404Component } from './extrapages/errorpages/error404/error404.component';
 import { OfflineComponent } from './extrapages/errorpages/offline/offline.component';
 import { MaintenanceComponent } from './extrapages/maintenance/maintenance.component';
-import { AuthGuard } from '../core/guards/auth.guard';
 
 export const PAGE_ROUTES: Route[] = [
-  {
-    path: '',
-    component: IndexComponent,
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['ROLE_ADMIN', 'ROLE_USER'],
-    },
-  },
-  {
-    path: 'apps-chat',
-    component: ChatComponent,
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['ROLE_ADMIN'],
-    },
-  },
-  {
-    path: 'apps-calendar',
-    component: CalendarComponent,
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['ROLE_ADMIN', 'ROLE_USER'],
-    },
-  },
-  {
-    path: 'apps-calendar-month-grid',
-    component: MonthGridComponent,
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['ROLE_ADMIN', 'ROLE_USER'],
-    },
-  },
-  {
-    path: 'apps-calendar-multi-month-stack',
-    component: MultiMonthStackComponent,
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['ROLE_ADMIN', 'ROLE_USER'],
-    },
-  },
+  { path: '', component: IndexComponent },
+  { path: 'apps-chat', component: ChatComponent },
+  { path: 'apps-calendar', component: CalendarComponent },
+  { path: 'apps-calendar-month-grid', component: MonthGridComponent },
+  { path: 'apps-calendar-multi-month-stack', component: MultiMonthStackComponent },
   { path: 'product-list', component: ListComponent },
   { path: 'product-grid', component: GridComponent },
   { path: 'product-overview', component: OverviewComponent },
@@ -112,22 +77,9 @@ export const PAGE_ROUTES: Route[] = [
   { path: 'apps-invoice-list', component: ListViewComponent },
   { path: 'apps-invoice-add-new', component: AddNewComponent },
   { path: 'apps-invoice-overview', component: InvoiceOverviewComponent },
-  {
-    path: 'apps-users-grid',
-    component: UsersGridComponent,
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['ROLE_ADMIN'],
-    },
-  },
-  {
-    path: 'apps-users-role',
-    component: RolesPermissionsComponent,
-    canActivate: [AuthGuard],
-    data: {
-      roles: ['ROLE_ADMIN'],
-    },
-  },
+  { path: 'apps-users-grid', component: UsersGridComponent },
+  { path: 'apps-users-role', component: RolesPermissionsComponent },
+  { path: 'apps-route-permissions', component: RoutePermissionsComponent },
 
   // extrapages
   { path: 'pages-account', component: AccountComponent },

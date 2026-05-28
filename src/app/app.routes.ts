@@ -1,4 +1,4 @@
-import { Route, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { LayoutComponent } from './layouts/layout/layout.component';
 
 import { AuthGuard } from './core/guards/auth.guard';
@@ -15,9 +15,7 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./pages/pages.route').then((mod) => mod.PAGE_ROUTES),
     canActivate: [AuthGuard],
-    data: {
-      roles: ['ROLE_USER'],
-    },
+    canActivateChild: [AuthGuard],
   },
 
   // Offical auth

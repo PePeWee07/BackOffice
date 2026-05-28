@@ -110,6 +110,27 @@ export interface PermissionListResponse {
   name: string;
 }
 
+// Route Permissions
+export interface RouteRoleSummary {
+  id: number;
+  name: string;
+}
+
+export interface RoutePermissionResponse {
+  id: number;
+  path: string;
+  description?: string | null;
+  roleList: RouteRoleSummary[];
+}
+
+export interface RoutePermissionAssignRequest {
+  roleIds: number[];
+}
+
+export interface RoutePermissionSyncRequest {
+  paths: string[];
+}
+
 // Parmas at Paginate
 export interface UserQueryParams {
   page?: number;
