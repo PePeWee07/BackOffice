@@ -1,10 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { forkJoin, of, switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -15,14 +11,14 @@ import {
   icons,
 } from 'lucide-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PageTitleComponent } from '../../shared/page-title/page-title.component';
-import { AuthorityService } from '../../core/services/administration/authority.service';
-import { RoleService } from '../../core/services/administration/role.service';
+import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
+import { AuthorityService } from '../../../core/services/administration/authority.service';
+import { RoleService } from '../../../core/services/administration/role.service';
 import {
   PermissionListResponse,
   RoleResponse,
-} from '../../store/User/user-model';
-import { ApiErrorModel } from '../../store/Authentication/apiError.model';
+} from '../../../store/User/user-model';
+import { ApiErrorModel } from '../../../store/Authentication/apiError.model';
 
 @Component({
   selector: 'app-roles-permissions',
@@ -76,7 +72,10 @@ export class RolesPermissionsComponent {
   ) {}
 
   private t(key: string, params?: Record<string, unknown>): string {
-    return this.translate.instant(`pagesComponent.rolesPermissions.${key}`, params);
+    return this.translate.instant(
+      `pagesComponent.rolesPermissions.${key}`,
+      params
+    );
   }
 
   ngOnInit(): void {
@@ -98,7 +97,9 @@ export class RolesPermissionsComponent {
 
   get selectedPermissionNames(): string[] {
     const existing = this.permissionsCatalog
-      .filter((permission) => this.selectedPermissionIds.includes(permission.id))
+      .filter((permission) =>
+        this.selectedPermissionIds.includes(permission.id)
+      )
       .map((permission) => permission.name);
 
     return [...existing, ...this.draftPermissions];
@@ -117,7 +118,9 @@ export class RolesPermissionsComponent {
         this.loading = false;
 
         if (selectRoleId) {
-          const roleExists = this.roles.some((role) => role.id === selectRoleId);
+          const roleExists = this.roles.some(
+            (role) => role.id === selectRoleId
+          );
           if (roleExists) {
             this.selectRole(selectRoleId);
             return;
@@ -164,7 +167,8 @@ export class RolesPermissionsComponent {
     this.draftPermissions = [];
     this.roleForm.reset({
       name: role.name,
-      permissionIds: role.permissionList?.map((permission) => permission.id) ?? [],
+      permissionIds:
+        role.permissionList?.map((permission) => permission.id) ?? [],
       newPermissionName: '',
     });
   }
@@ -195,7 +199,8 @@ export class RolesPermissionsComponent {
     }
 
     const existsInCatalog = this.permissionsCatalog.some(
-      (permission) => permission.name.toLowerCase() === permissionName.toLowerCase()
+      (permission) =>
+        permission.name.toLowerCase() === permissionName.toLowerCase()
     );
     const existsInDrafts = this.draftPermissions.some(
       (permission) => permission.toLowerCase() === permissionName.toLowerCase()
@@ -216,12 +221,17 @@ export class RolesPermissionsComponent {
     );
   }
 
-  async deletePermission(permissionId: number, permissionName: string): Promise<void> {
+  async deletePermission(
+    permissionId: number,
+    permissionName: string
+  ): Promise<void> {
     const result = await Swal.fire({
       title: this.t('delete.permission-title'),
       html: `
         <div class="text-left">
-          <p class="mb-2">${this.t('delete.permission-message', { name: permissionName })}</p>
+          <p class="mb-2">${this.t('delete.permission-message', {
+            name: permissionName,
+          })}</p>
           <p class="mb-3">${this.t('delete.confirmation-prompt')}</p>
         </div>
       `,
@@ -275,7 +285,9 @@ export class RolesPermissionsComponent {
       return;
     }
 
-    const roleName = this.normalizeIdentifier(this.roleForm.controls.name.value);
+    const roleName = this.normalizeIdentifier(
+      this.roleForm.controls.name.value
+    );
     const selectedPermissionIds = this.selectedPermissionIds;
 
     if (!this.validNamePattern.test(roleName)) {
@@ -346,7 +358,9 @@ export class RolesPermissionsComponent {
       title: this.t('delete.role-title'),
       html: `
         <div class="text-left">
-          <p class="mb-2">${this.t('delete.role-message', { name: role.name })}</p>
+          <p class="mb-2">${this.t('delete.role-message', {
+            name: role.name,
+          })}</p>
           <p class="mb-3">${this.t('delete.confirmation-prompt')}</p>
         </div>
       `,

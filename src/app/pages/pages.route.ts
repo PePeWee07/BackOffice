@@ -29,9 +29,9 @@ import { CreatePayslipComponent } from './hr/payroll/create-payslip/create-paysl
 import { ListViewComponent } from './invoice/list-view/list-view.component';
 import { AddNewComponent } from './invoice/add-new/add-new.component';
 import { InvoiceOverviewComponent } from './invoice/invoice-overview/invoice-overview.component';
-import { UsersGridComponent } from './user/users-grid.component';
-import { RolesPermissionsComponent } from './user/roles-permissions.component';
-import { RoutePermissionsComponent } from './user/route-permissions.component';
+import { UsersGridComponent } from './user/user-table/users-grid.component';
+import { RolesPermissionsComponent } from './user/role-permissions/roles-permissions.component';
+import { RoutePermissionsComponent } from './user/route-permissions/route-permissions.component';
 import { AuditLogsComponent } from './admin/audit-logs.component';
 import { CalendarComponent } from './calendar/calendar/calendar.component';
 
@@ -43,7 +43,10 @@ export const PAGE_ROUTES: Route[] = [
   { path: 'apps-chat', component: ChatComponent },
   { path: 'apps-calendar', component: CalendarComponent },
   { path: 'apps-calendar-month-grid', component: MonthGridComponent },
-  { path: 'apps-calendar-multi-month-stack', component: MultiMonthStackComponent },
+  {
+    path: 'apps-calendar-multi-month-stack',
+    component: MultiMonthStackComponent,
+  },
   { path: 'product-list', component: ListComponent },
   { path: 'product-grid', component: GridComponent },
   { path: 'product-overview', component: OverviewComponent },
@@ -74,5 +77,5 @@ export const PAGE_ROUTES: Route[] = [
   { path: 'apps-users-grid', component: UsersGridComponent },
   { path: 'apps-users-role', component: RolesPermissionsComponent },
   { path: 'apps-route-permissions', component: RoutePermissionsComponent },
-  { path: 'apps-audit-logs', component: AuditLogsComponent }
+  { path: 'apps-audit-logs', component: AuditLogsComponent },
 ];

@@ -11,15 +11,15 @@ import {
 } from 'lucide-angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { PageTitleComponent } from '../../shared/page-title/page-title.component';
-import { RoleService } from '../../core/services/administration/role.service';
-import { RoutePermissionService } from '../../core/services/administration/route-permission.service';
-import { ROUTE_CATALOG } from '../../core/services/administration/route-catalog';
+import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
+import { RoleService } from '../../../core/services/administration/role.service';
+import { RoutePermissionService } from '../../../core/services/administration/route-permission.service';
+import { ROUTE_CATALOG } from '../../../core/services/administration/route-catalog';
 import {
   RoutePermissionResponse,
   RoleResponse,
-} from '../../store/User/user-model';
-import { ApiErrorModel } from '../../store/Authentication/apiError.model';
+} from '../../../store/User/user-model';
+import { ApiErrorModel } from '../../../store/Authentication/apiError.model';
 
 interface RoutePermissionRow {
   id: number;
@@ -85,7 +85,10 @@ export class RoutePermissionsComponent implements OnInit {
 
   get allFilteredSelected(): boolean {
     const filtered = this.filteredRows;
-    return filtered.length > 0 && filtered.every((row) => this.selectedRowIds.has(row.id));
+    return (
+      filtered.length > 0 &&
+      filtered.every((row) => this.selectedRowIds.has(row.id))
+    );
   }
 
   get someFilteredSelected(): boolean {
@@ -113,7 +116,9 @@ export class RoutePermissionsComponent implements OnInit {
         this.loading = false;
         this.handleError(
           error,
-          this.translate.instant('pagesComponent.routePermissions.messages.load-error')
+          this.translate.instant(
+            'pagesComponent.routePermissions.messages.load-error'
+          )
         );
       },
     });
@@ -127,14 +132,18 @@ export class RoutePermissionsComponent implements OnInit {
         this.selectedRowIds.clear();
         this.syncing = false;
         this.toastr.success(
-          this.translate.instant('pagesComponent.routePermissions.messages.sync-success')
+          this.translate.instant(
+            'pagesComponent.routePermissions.messages.sync-success'
+          )
         );
       },
       error: (error) => {
         this.syncing = false;
         this.handleError(
           error,
-          this.translate.instant('pagesComponent.routePermissions.messages.sync-error')
+          this.translate.instant(
+            'pagesComponent.routePermissions.messages.sync-error'
+          )
         );
       },
     });
@@ -208,16 +217,21 @@ export class RoutePermissionsComponent implements OnInit {
           this.applyServerUpdate(row, updated);
           row.saving = false;
           this.toastr.success(
-            this.translate.instant('pagesComponent.routePermissions.messages.save-row-success', {
-              path: row.path || '/',
-            })
+            this.translate.instant(
+              'pagesComponent.routePermissions.messages.save-row-success',
+              {
+                path: row.path || '/',
+              }
+            )
           );
         },
         error: (error) => {
           row.saving = false;
           this.handleError(
             error,
-            this.translate.instant('pagesComponent.routePermissions.messages.save-row-error')
+            this.translate.instant(
+              'pagesComponent.routePermissions.messages.save-row-error'
+            )
           );
         },
       });
@@ -246,9 +260,12 @@ export class RoutePermissionsComponent implements OnInit {
         });
         this.savingAll = false;
         this.toastr.success(
-          this.translate.instant('pagesComponent.routePermissions.messages.save-all-success', {
-            count: updates.length,
-          })
+          this.translate.instant(
+            'pagesComponent.routePermissions.messages.save-all-success',
+            {
+              count: updates.length,
+            }
+          )
         );
       },
       error: (error) => {
@@ -256,7 +273,9 @@ export class RoutePermissionsComponent implements OnInit {
         this.savingAll = false;
         this.handleError(
           error,
-          this.translate.instant('pagesComponent.routePermissions.messages.save-all-error')
+          this.translate.instant(
+            'pagesComponent.routePermissions.messages.save-all-error'
+          )
         );
       },
     });

@@ -1,13 +1,13 @@
-import { UserService } from '../../core/services/administration/user.service';
+import { UserService } from '../../../core/services/administration/user.service';
 import { Component, ElementRef, ViewChild, NgModule } from '@angular/core';
-import { PageTitleComponent } from '../../shared/page-title/page-title.component';
+import { PageTitleComponent } from '../../../shared/page-title/page-title.component';
 import { LUCIDE_ICONS, LucideAngularModule, LucideIconProvider, icons } from 'lucide-angular';
-import { FlatpickrModule } from '../../Component/flatpickr/flatpickr.module';
+import { FlatpickrModule } from '../../../Component/flatpickr/flatpickr.module';
 import { RouterLink, RouterModule } from '@angular/router';
-import { MDModalModule } from '../../Component/modals';
-import { ModalService } from '../../Component/modals/modal.service';
-import { MnDropdownComponent } from '../../Component/dropdown';
-import { UserModel, UserRequest } from '../../store/User/user-model';
+import { MDModalModule } from '../../../Component/modals';
+import { ModalService } from '../../../Component/modals/modal.service';
+import { MnDropdownComponent } from '../../../Component/dropdown';
+import { UserModel, UserRequest } from '../../../store/User/user-model';
 import {
   FormBuilder,
   FormGroup,
@@ -16,10 +16,10 @@ import {
 } from '@angular/forms';
 import { NgClass } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { ApiErrorModel } from '../../store/Authentication/apiError.model';
+import { ApiErrorModel } from '../../../store/Authentication/apiError.model';
 import { TooltipModule, TooltipOptions } from 'ng2-tooltip-directive';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { RoleService } from '../../core/services/administration/role.service';
+import { RoleService } from '../../../core/services/administration/role.service';
 import { Options } from 'flatpickr/dist/types/options';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
