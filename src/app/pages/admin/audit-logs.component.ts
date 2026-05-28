@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import {
@@ -24,6 +24,129 @@ interface DetailEntry {
   label: string;
   value: string;
 }
+
+interface ColumnHelp {
+  column: string;
+  title: string;
+  description: string;
+  example?: string;
+}
+
+const COLUMN_HELP: ColumnHelp[] = [
+  {
+    column: 'event_id',
+    title: 'ID unico del evento',
+    description:
+      'Identificador autoincremental del registro de auditoria. Es la PK de la tabla audit.logged_actions y sirve para referenciar un evento puntual.',
+    example: '#1234',
+  },
+  {
+    column: 'schema_name',
+    title: 'Esquema',
+    description:
+      'Esquema de la base donde vive la tabla auditada (ej: auth, audit, public).',
+    example: 'auth',
+  },
+  {
+    column: 'table_name',
+    title: 'Tabla',
+    description:
+      'Nombre de la tabla donde ocurrio el cambio, sin prefijo de esquema.',
+    example: 'roles',
+  },
+  {
+    column: 'relid',
+    title: 'OID de la tabla',
+    description:
+      'Identificador interno de Postgres para la tabla (table OID). Cambia si la tabla se hace DROP + CREATE, por eso normalmente filtras por table_name y no por relid.',
+    example: '16453',
+  },
+  {
+    column: 'session_user_name',
+    title: 'Usuario de sesion de Postgres',
+    description:
+      'Usuario que abrio la conexion JDBC contra la base (el del JDBC_URL). NO es el usuario logueado de tu app. Para saber quien hizo el cambio a nivel de aplicacion mira created_by / last_modified_by en la tabla auditada.',
+    example: 'ucaapp_user',
+  },
+  {
+    column: 'action_tstamp_tx',
+    title: 'Inicio de la transaccion',
+    description:
+      'Timestamp en el que comenzo la transaccion que provoco el evento. Todos los eventos de una misma transaccion comparten este valor — util para agrupar cambios relacionados.',
+    example: '28/05/2026 14:32:10',
+  },
+  {
+    column: 'action_tstamp_stm',
+    title: 'Inicio del statement',
+    description:
+      'Timestamp del inicio del statement SQL especifico dentro de la transaccion. Si una transaccion ejecuta varios statements, cada uno tiene el suyo.',
+  },
+  {
+    column: 'action_tstamp_clk',
+    title: 'Reloj del trigger',
+    description:
+      'Wall-clock del momento exacto en que el trigger se disparo. Es el mas preciso de los tres timestamps; util para correlacionar con logs de Spring.',
+  },
+  {
+    column: 'transaction_id',
+    title: 'ID de transaccion',
+    description:
+      'Identificador de la transaccion en Postgres (txid_current). Combinado con action_tstamp_tx te permite agrupar todos los cambios que entraron juntos.',
+    example: '892341',
+  },
+  {
+    column: 'application_name',
+    title: 'Aplicacion cliente',
+    description:
+      'Nombre que el cliente se asigno al conectarse a Postgres. Ayuda a distinguir cambios hechos por la app (PostgreSQL JDBC Driver) vs herramientas como pgAdmin, DBeaver o psql.',
+    example: 'PostgreSQL JDBC Driver',
+  },
+  {
+    column: 'client_addr',
+    title: 'IP del cliente',
+    description:
+      'Direccion IP que abrio la conexion contra Postgres. En setups Docker sin propagacion de IP real, vas a ver siempre la IP del contenedor Spring (ej: 172.x.x.x) o el gateway de Docker (ej: 192.168.65.1).',
+    example: '192.168.65.1',
+  },
+  {
+    column: 'client_port',
+    title: 'Puerto del cliente',
+    description:
+      'Puerto efimero usado por el cliente al conectarse. Tiene poca utilidad practica; sirve solo en forensia de redes.',
+  },
+  {
+    column: 'client_query',
+    title: 'Query SQL completo',
+    description:
+      'El SQL exacto que disparo el cambio (el top-level query del cliente). Util cuando necesitas reproducir o entender que se ejecuto.',
+    example: 'UPDATE auth.roles SET name = ? WHERE id = ?',
+  },
+  {
+    column: 'action',
+    title: 'Tipo de operacion',
+    description:
+      'Letra que indica el tipo de cambio: I = INSERT (creacion), U = UPDATE (modificacion), D = DELETE (eliminacion), T = TRUNCATE (vaciado masivo).',
+    example: 'U',
+  },
+  {
+    column: 'row_data',
+    title: 'Datos de la fila',
+    description:
+      'Snapshot hstore (clave/valor) de la fila afectada. En INSERT contiene la fila NUEVA; en UPDATE y DELETE contiene la fila OLD (antes del cambio). Es lo que te permite reconstruir el estado previo.',
+  },
+  {
+    column: 'changed_fields',
+    title: 'Campos modificados',
+    description:
+      'Solo para UPDATE: hstore con los NUEVOS valores de las columnas que efectivamente cambiaron. Si comparas row_data vs changed_fields tienes el delta exacto del UPDATE.',
+  },
+  {
+    column: 'statement_only',
+    title: 'Solo statement',
+    description:
+      'Si es true significa que el evento provino de un trigger a nivel de statement (no por fila). Tipicamente solo aparece en TRUNCATE. Para INSERT/UPDATE/DELETE normales es false.',
+  },
+];
 
 @Component({
   selector: 'app-audit-logs',
@@ -68,6 +191,15 @@ export class AuditLogsComponent implements OnInit {
 
   loading = false;
   expanded = new Set<number>();
+
+  showHelp = false;
+  scrolled = false;
+  readonly columnHelp: ColumnHelp[] = COLUMN_HELP;
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.scrolled = window.scrollY > 120;
+  }
 
   constructor(
     private auditService: AuditService,
@@ -149,6 +281,21 @@ export class AuditLogsComponent implements OnInit {
     }
     this.filters.page = target;
     this.loadPage();
+  }
+
+  openHelp(): void {
+    this.showHelp = true;
+  }
+
+  closeHelp(): void {
+    this.showHelp = false;
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.showHelp) {
+      this.closeHelp();
+    }
   }
 
   toggleExpand(eventId: number): void {

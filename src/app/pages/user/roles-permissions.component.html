@@ -47,7 +47,7 @@
     </div>
   </div>
 
-  <div class="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)_320px]">
+  <div class="grid gap-6 2xl:grid-cols-[320px_minmax(0,1fr)_320px]">
     <aside class="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-zink-500 dark:bg-zink-700">
       <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4 dark:border-zink-500">
         <div>
@@ -222,7 +222,7 @@
             </p>
           </div>
 
-          <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          <div class="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3">
             @for (permission of permissionsCatalog; track permission.id) {
             <button
               type="button"
@@ -234,7 +234,7 @@
                   : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-200 dark:hover:border-zink-400 dark:hover:bg-zink-600'
               "
             >
-              <span class="min-w-0 flex-1 font-medium">{{ permission.name }}</span>
+              <span class="min-w-0 flex-1 truncate font-medium">{{ permission.name }}</span>
               <span class="flex items-center gap-2">
                 <button
                   type="button"
