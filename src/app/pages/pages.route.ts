@@ -34,16 +34,9 @@ import { RolesPermissionsComponent } from './user/roles-permissions.component';
 import { RoutePermissionsComponent } from './user/route-permissions.component';
 import { AuditLogsComponent } from './admin/audit-logs.component';
 import { CalendarComponent } from './calendar/calendar/calendar.component';
-import { AccountComponent } from './extrapages/account/account.component';
-
-import { AccountSettingsComponent } from './extrapages/account-settings/account-settings.component';
-import { ContactUsComponent } from './extrapages/contact-us/contact-us.component';
 
 import { MonthGridComponent } from './calendar/month-grid/month-grid.component';
 import { MultiMonthStackComponent } from './calendar/multi-month-stack/multi-month-stack.component';
-import { Error404Component } from './extrapages/errorpages/error404/error404.component';
-import { OfflineComponent } from './extrapages/errorpages/offline/offline.component';
-import { MaintenanceComponent } from './extrapages/maintenance/maintenance.component';
 
 export const PAGE_ROUTES: Route[] = [
   { path: '', component: IndexComponent },
@@ -81,13 +74,5 @@ export const PAGE_ROUTES: Route[] = [
   { path: 'apps-users-grid', component: UsersGridComponent },
   { path: 'apps-users-role', component: RolesPermissionsComponent },
   { path: 'apps-route-permissions', component: RoutePermissionsComponent },
-  { path: 'apps-audit-logs', component: AuditLogsComponent },
-
-  // extrapages
-  { path: 'pages-account', component: AccountComponent },
-  { path: 'pages-account-settings', component: AccountSettingsComponent },
-  { path: 'pages-contact-us', component: ContactUsComponent },
-  { path: 'pages-maintenance', component: MaintenanceComponent },
-  { path: 'pages-404', component: Error404Component },
-  { path: 'pages-offline', component: OfflineComponent },
+  { path: 'apps-audit-logs', component: AuditLogsComponent }
 ];

@@ -316,61 +316,6 @@ export const MENU: MenuItem[] = [
       },
     ],
   },
-  {
-    id: 2.1,
-    label: 'pages',
-    isTitle: true,
-  },
-  {
-    id: 4,
-    label: 'pages',
-    icon: 'codesandbox',
-    subItems: [
-      {
-        id: 4.1,
-        label: 'account',
-        link: '/pages-account',
-        parentId: 4,
-      },
-      {
-        id: 4.2,
-        label: 'settings',
-        link: '/pages-account-settings',
-        parentId: 4,
-      },
-      {
-        id: 4.5,
-        label: 'contact-us',
-        link: '/pages-contact-us',
-        parentId: 4,
-      },
-      {
-        id: 4.5,
-        label: 'error-pages',
-        parentId: 4,
-        subItems: [
-          {
-            id: 4.6,
-            label: '404-error',
-            link: '/pages-404',
-            parentId: 4.5,
-          },
-          {
-            id: 4.7,
-            label: 'offline',
-            link: 'pages-offline',
-            parentId: 4.5,
-          },
-        ],
-      },
-      {
-        id: 4.8,
-        label: 'maintenance',
-        link: 'pages-maintenance',
-        parentId: 4,
-      },
-    ],
-  },
   // {
   //   id: 5,
   //   label: 'components',

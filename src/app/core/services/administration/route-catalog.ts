@@ -35,10 +35,4 @@ export const ROUTE_CATALOG: string[] = [
   'apps-users-role',
   'apps-route-permissions',
   'apps-audit-logs',
-  'pages-account',
-  'pages-account-settings',
-  'pages-contact-us',
-  'pages-maintenance',
-  'pages-404',
-  'pages-offline',
 ];

@@ -12,8 +12,6 @@ import { FriendsData, EventData } from "./socialMedia";
 import { UserListViewData, GridViewData as UserGridViewData } from "./users";
 import { calenderDefaultCategories, events, defaultevent } from "./calendar";
 
-import { DocumentsData, ProjectsData, FollowersData } from "./account";
-
 import { notification,cart } from "./topbar";
 
 export {
@@ -28,7 +26,6 @@ export {
     FriendsData, EventData,
     UserListViewData, UserGridViewData,
     calenderDefaultCategories, events, defaultevent,
-    DocumentsData,ProjectsData,FollowersData,
     notification, cart,
 };
 
