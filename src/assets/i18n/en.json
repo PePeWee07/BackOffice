@@ -53,6 +53,9 @@
   "marketplace": "Marketplace",
   "invoices": "Invoices",
   "users": "Users",
+  "roles-permissions": "Roles and permissions",
+  "route-permissions": "Route permissions",
+  "audit-logs": "Audit logs",
   "authentication": "Authentication",
   "login": "Login",
   "basic": "Basic",
@@ -245,6 +248,307 @@
       "edit-user": {
         "modal-title": "Edit User",
         "btn-edit-user": "Edit"
+      }
+    },
+    "rolesPermissions": {
+      "title": "Roles and permissions",
+      "pagetitle": "Administration",
+      "hero": {
+        "badge": "Administration",
+        "heading": "Manage roles with a friendly flow",
+        "description": "First the role is created. Then, if you added new permissions, they are created and finally assigned to the role automatically to respect the backend logic.",
+        "stats": {
+          "roles": "Roles",
+          "catalog": "Catalog",
+          "selection": "Selection"
+        }
+      },
+      "list": {
+        "title": "All roles",
+        "subtitle": "Select one to edit it.",
+        "new": "New",
+        "loading": "Loading roles...",
+        "empty": "No roles registered yet.",
+        "permissions-assigned": "{{count}} permissions assigned"
+      },
+      "form": {
+        "edit-title": "Edit role",
+        "create-title": "Create new role",
+        "description": "Define the name, select existing permissions and add new ones if needed.",
+        "delete-role": "Delete role",
+        "role-name-label": "Role name",
+        "role-name-placeholder": "Ex: ROLE_SUPPORT",
+        "role-name-error": "Only uppercase, numbers or \"_\" and max 50 characters.",
+        "mode-label": "Mode",
+        "mode-edit": "Edit",
+        "mode-create": "Create",
+        "mode-edit-desc": "Update an existing role.",
+        "mode-create-desc": "Create the role, then assign permissions.",
+        "new-permission-label": "Create new permission",
+        "new-permission-placeholder": "Ex: EXPORT_REPORTS",
+        "add-permission": "Add permission",
+        "draft-prefix": "New",
+        "available-title": "Available permissions",
+        "available-description": "Check the permissions you want to assign to this role.",
+        "empty-catalog": "No permissions in catalog yet. You can start by creating one.",
+        "delete-permission-title": "Delete permission",
+        "reload": "Reload",
+        "saving": "Saving...",
+        "update-role": "Update role",
+        "create-role": "Create role"
+      },
+      "summary": {
+        "title": "Summary",
+        "subtitle": "Quick preview of what will be saved.",
+        "role": "Role",
+        "no-name-yet": "No name yet",
+        "permissions": "Permissions",
+        "empty": "You have not selected permissions for this role yet.",
+        "active-role": "Active role",
+        "id": "ID",
+        "current-permissions": "Current permissions"
+      },
+      "delete": {
+        "role-title": "Delete role",
+        "permission-title": "Delete permission",
+        "role-message": "This action will delete the role <strong>{{name}}</strong>.",
+        "permission-message": "This action will delete the permission <strong>{{name}}</strong>.",
+        "confirmation-prompt": "To confirm, type the exact name.",
+        "role-input-label": "Role name",
+        "permission-input-label": "Permission name",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "must-match": "You must type the exact name to delete it"
+      },
+      "messages": {
+        "load-error": "Could not load roles and permissions",
+        "permission-pattern": "Permission only allows letters, numbers and underscore, max 50 characters",
+        "permission-duplicate": "That permission already exists or was already added to the list",
+        "name-invalid": "Use a valid name: uppercase, numbers or underscore, max 50 characters",
+        "name-pattern": "Role name only allows letters, numbers and underscore, max 50 characters",
+        "must-have-permission": "You must assign at least one permission to the role",
+        "create-success": "Role created successfully",
+        "update-success": "Role updated successfully",
+        "save-error": "Could not save the role",
+        "delete-success": "Role deleted successfully",
+        "delete-error": "Could not delete the role",
+        "permission-delete-success": "Permission deleted successfully",
+        "permission-delete-error": "Could not delete permission {{name}}"
+      }
+    },
+    "auditLogs": {
+      "title": "Audit logs",
+      "pagetitle": "Administration",
+      "hero": {
+        "badge": "Administration",
+        "heading": "Database change history",
+        "description": "Filter by date range, table, action type or global search. Each row can be expanded to review technical detail (transaction id, query and values before/after the change)."
+      },
+      "stats": {
+        "total": "Total",
+        "current-page": "Current page"
+      },
+      "filters": {
+        "search-label": "Global search",
+        "search-placeholder": "ID, user, query, value...",
+        "from": "From",
+        "to": "To",
+        "table": "Table",
+        "table-all": "All",
+        "action": "Action",
+        "action-all": "All actions",
+        "action-insert": "Insert (I)",
+        "action-update": "Update (U)",
+        "action-delete": "Delete (D)",
+        "action-truncate": "Truncate (T)",
+        "clear": "Clear",
+        "apply": "Apply filters",
+        "open-help": "What does each column mean?"
+      },
+      "table": {
+        "header-event": "Event",
+        "header-date": "Date",
+        "header-user-table": "User / Table",
+        "header-ip-client": "IP / Client",
+        "header-action": "Action",
+        "header-query": "Query",
+        "header-detail": "Detail",
+        "system-user": "system",
+        "expand": "View",
+        "collapse": "Hide"
+      },
+      "state": {
+        "loading": "Loading audit logs...",
+        "empty": "No audit logs found with the applied filters."
+      },
+      "detail": {
+        "metadata": "Metadata",
+        "row-data": "Row data (original / new value)",
+        "changed-fields": "Changed fields (UPDATE delta)",
+        "no-data": "No data.",
+        "no-changes": "No changes (INSERT/DELETE).",
+        "query": "Full SQL query",
+        "schema": "Schema",
+        "relid": "Relid",
+        "transaction-id": "Transaction ID",
+        "application": "Application",
+        "client-port": "Client port",
+        "statement-only": "Statement only",
+        "statement-ts": "Statement ts",
+        "clock-ts": "Clock ts",
+        "yes": "Yes",
+        "no": "No"
+      },
+      "pagination": {
+        "showing": "Showing {{shown}} of {{total}} records",
+        "size": "Size"
+      },
+      "help": {
+        "badge": "Manual",
+        "title": "What does each column mean?",
+        "description": "Quick reference for the 17 columns of audit.logged_actions.",
+        "example": "Example",
+        "tip-title": "Tip:",
+        "tip-text": "To know <strong>who</strong> made a change, look at <code>created_by</code> and <code>last_modified_by</code> inside <code>row_data</code> / <code>changed_fields</code>: that's where the email of the user logged in via Spring Security is stored, which is more useful than <code>session_user_name</code>.",
+        "close": "Close",
+        "got-it": "Got it",
+        "floating-label": "Open columns manual",
+        "floating-tooltip": "Columns manual",
+        "columns": {
+          "event_id": {
+            "title": "Unique event ID",
+            "description": "Auto-incremental identifier of the audit record. It's the PK of audit.logged_actions and is used to reference a specific event.",
+            "example": "#1234"
+          },
+          "schema_name": {
+            "title": "Schema",
+            "description": "Schema of the database where the audited table lives (e.g.: auth, audit, public).",
+            "example": "auth"
+          },
+          "table_name": {
+            "title": "Table",
+            "description": "Name of the table where the change occurred, without schema prefix.",
+            "example": "roles"
+          },
+          "relid": {
+            "title": "Table OID",
+            "description": "Postgres internal table identifier (table OID). It changes if the table is DROP + CREATE, that's why you normally filter by table_name rather than relid.",
+            "example": "16453"
+          },
+          "session_user_name": {
+            "title": "Postgres session user",
+            "description": "User that opened the JDBC connection (the one in the JDBC_URL). NOT your application's logged-in user. To know who made the change at the app level, look at created_by / last_modified_by in the audited table.",
+            "example": "ucaapp_user"
+          },
+          "action_tstamp_tx": {
+            "title": "Transaction start",
+            "description": "Timestamp when the transaction that triggered the event started. All events of the same transaction share this value — useful for grouping related changes.",
+            "example": "05/28/2026 14:32:10"
+          },
+          "action_tstamp_stm": {
+            "title": "Statement start",
+            "description": "Timestamp of the start of the specific SQL statement within the transaction. If a transaction runs multiple statements, each has its own."
+          },
+          "action_tstamp_clk": {
+            "title": "Trigger clock",
+            "description": "Wall-clock of the exact moment the trigger fired. It's the most precise of the three timestamps; useful for correlating with Spring logs."
+          },
+          "transaction_id": {
+            "title": "Transaction ID",
+            "description": "Postgres transaction identifier (txid_current). Combined with action_tstamp_tx, it lets you group all changes that came in together.",
+            "example": "892341"
+          },
+          "application_name": {
+            "title": "Client application",
+            "description": "Name the client assigned to itself when connecting to Postgres. Helps distinguish changes made by the app (PostgreSQL JDBC Driver) vs tools like pgAdmin, DBeaver or psql.",
+            "example": "PostgreSQL JDBC Driver"
+          },
+          "client_addr": {
+            "title": "Client IP",
+            "description": "IP address that opened the connection to Postgres. In Docker setups without real IP propagation, you'll always see the Spring container IP (e.g.: 172.x.x.x) or the Docker gateway (e.g.: 192.168.65.1).",
+            "example": "192.168.65.1"
+          },
+          "client_port": {
+            "title": "Client port",
+            "description": "Ephemeral port used by the client when connecting. Of little practical use; only relevant for network forensics."
+          },
+          "client_query": {
+            "title": "Full SQL query",
+            "description": "The exact SQL that triggered the change (the client's top-level query). Useful when you need to reproduce or understand what was executed.",
+            "example": "UPDATE auth.roles SET name = ? WHERE id = ?"
+          },
+          "action": {
+            "title": "Operation type",
+            "description": "Letter indicating the type of change: I = INSERT (creation), U = UPDATE (modification), D = DELETE (deletion), T = TRUNCATE (mass empty).",
+            "example": "U"
+          },
+          "row_data": {
+            "title": "Row data",
+            "description": "hstore snapshot (key/value) of the affected row. On INSERT contains the NEW row; on UPDATE and DELETE contains the OLD row (before the change). This is what lets you reconstruct the previous state."
+          },
+          "changed_fields": {
+            "title": "Changed fields",
+            "description": "Only for UPDATE: hstore with the NEW values of the columns that actually changed. If you compare row_data vs changed_fields you get the exact delta of the UPDATE."
+          },
+          "statement_only": {
+            "title": "Statement only",
+            "description": "If true, it means the event came from a statement-level trigger (not row-level). Typically only appears in TRUNCATE. For normal INSERT/UPDATE/DELETE it's false."
+          }
+        }
+      },
+      "messages": {
+        "load-error": "Could not load audit logs"
+      }
+    },
+    "routePermissions": {
+      "title": "Route permissions",
+      "pagetitle": "Administration",
+      "hero": {
+        "badge": "Administration",
+        "heading": "Control who can access each back-office route",
+        "description": "Assign roles to each route. If a route has no roles assigned, it stays accessible to any authenticated user. Use \"Sync catalog\" when you add new routes in the front-end code.",
+        "stats": {
+          "routes": "Routes",
+          "roles": "Roles"
+        }
+      },
+      "toolbar": {
+        "search-placeholder": "Search by path...",
+        "discard": "Discard",
+        "save-pending": "Save pending",
+        "saving-pending": "Saving...",
+        "sync-catalog": "Sync catalog",
+        "syncing": "Syncing..."
+      },
+      "bulk": {
+        "selected-one": "1 route selected",
+        "selected-many": "{{count}} routes selected",
+        "add": "Add to selected",
+        "remove": "Remove from selected",
+        "clear": "Clear"
+      },
+      "table": {
+        "header-route": "Route",
+        "header-roles": "Allowed roles",
+        "header-actions": "Actions",
+        "no-restriction": "No role restriction",
+        "revert": "Revert",
+        "save": "Save",
+        "saving": "Saving...",
+        "no-changes": "No changes"
+      },
+      "state": {
+        "loading": "Loading routes...",
+        "empty": "No routes registered in DB. Press \"Sync catalog\" to register them from the front."
+      },
+      "messages": {
+        "sync-success": "Routes synced with front catalog",
+        "sync-error": "Could not sync routes",
+        "save-row-success": "Roles updated for {{path}}",
+        "save-all-success": "{{count}} routes updated",
+        "save-row-error": "Could not save changes",
+        "save-all-error": "Some rows could not be saved",
+        "load-error": "Could not load route permissions"
       }
     },
     "layouts": {

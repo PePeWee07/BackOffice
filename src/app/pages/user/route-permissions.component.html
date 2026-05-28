@@ -1,6 +1,6 @@
 <app-page-title
-  title="Permisos de rutas"
-  pagetitle="Administración"
+  [title]="'pagesComponent.routePermissions.title' | translate"
+  [pagetitle]="'pagesComponent.routePermissions.pagetitle' | translate"
 ></app-page-title>
 
 <section class="space-y-6">
@@ -12,27 +12,29 @@
         <span
           class="mb-3 inline-flex items-center rounded-full border border-cyan-200 bg-cyan-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700 dark:border-cyan-500/40 dark:bg-cyan-500/20 dark:text-cyan-300"
         >
-          Administracion
+          {{ 'pagesComponent.routePermissions.hero.badge' | translate }}
         </span>
         <h2 class="text-2xl font-semibold text-slate-800 dark:text-zink-100">
-          Controla quien accede a cada ruta del back-office
+          {{ 'pagesComponent.routePermissions.hero.heading' | translate }}
         </h2>
         <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-zink-300">
-          Asigna roles a cada ruta. Si una ruta no tiene roles asignados, queda
-          accesible para cualquier usuario autenticado. Usa "Sincronizar
-          catalogo" cuando agregues rutas nuevas en el codigo del front.
+          {{ 'pagesComponent.routePermissions.hero.description' | translate }}
         </p>
       </div>
 
       <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200 dark:bg-zink-600/80 dark:ring-zink-500">
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-zink-300">Rutas</p>
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-zink-300">
+            {{ 'pagesComponent.routePermissions.hero.stats.routes' | translate }}
+          </p>
           <p class="mt-2 text-3xl font-semibold text-slate-800 dark:text-zink-100">
             {{ rows.length }}
           </p>
         </article>
         <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200 dark:bg-zink-600/80 dark:ring-zink-500">
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-zink-300">Roles</p>
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-zink-300">
+            {{ 'pagesComponent.routePermissions.hero.stats.roles' | translate }}
+          </p>
           <p class="mt-2 text-3xl font-semibold text-slate-800 dark:text-zink-100">
             {{ roles.length }}
           </p>
@@ -50,7 +52,7 @@
         <input
           type="text"
           [(ngModel)]="filter"
-          placeholder="Buscar por path..."
+          [placeholder]="'pagesComponent.routePermissions.toolbar.search-placeholder' | translate"
           class="w-full max-w-xs rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:focus:border-cyan-500 dark:focus:ring-cyan-500/20"
         />
       </div>
@@ -64,7 +66,7 @@
           class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-60 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500"
         >
           <lucide-angular name="rotate-ccw" class="size-4"></lucide-angular>
-          Descartar ({{ dirtyRows.length }})
+          {{ 'pagesComponent.routePermissions.toolbar.discard' | translate }} ({{ dirtyRows.length }})
         </button>
         <button
           type="button"
@@ -73,7 +75,11 @@
           class="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-cyan-700 disabled:opacity-60 dark:bg-cyan-500 dark:hover:bg-cyan-400"
         >
           <lucide-angular name="save" class="size-4"></lucide-angular>
-          {{ savingAll ? 'Guardando...' : 'Guardar pendientes (' + dirtyRows.length + ')' }}
+          @if (savingAll) {
+            {{ 'pagesComponent.routePermissions.toolbar.saving-pending' | translate }}
+          } @else {
+            {{ 'pagesComponent.routePermissions.toolbar.save-pending' | translate }} ({{ dirtyRows.length }})
+          }
         </button>
         }
         <button
@@ -83,7 +89,11 @@
           class="inline-flex items-center gap-2 rounded-xl border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-700 transition hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-cyan-500/40 dark:bg-cyan-500/20 dark:text-cyan-300 dark:hover:bg-cyan-500/30"
         >
           <lucide-angular name="refresh-cw" class="size-4"></lucide-angular>
-          {{ syncing ? 'Sincronizando...' : 'Sincronizar catalogo' }}
+          @if (syncing) {
+            {{ 'pagesComponent.routePermissions.toolbar.syncing' | translate }}
+          } @else {
+            {{ 'pagesComponent.routePermissions.toolbar.sync-catalog' | translate }}
+          }
         </button>
       </div>
     </div>
@@ -94,7 +104,11 @@
     >
       <div class="flex items-center gap-2 text-sm font-medium text-cyan-800 dark:text-cyan-300">
         <lucide-angular name="check-square" class="size-4"></lucide-angular>
-        {{ selectedRowIds.size }} ruta(s) seleccionada(s)
+        @if (selectedRowIds.size === 1) {
+          {{ 'pagesComponent.routePermissions.bulk.selected-one' | translate }}
+        } @else {
+          {{ 'pagesComponent.routePermissions.bulk.selected-many' | translate: { count: selectedRowIds.size } }}
+        }
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
@@ -112,7 +126,7 @@
           class="inline-flex items-center gap-1 rounded-xl bg-cyan-600 px-3 py-2 text-xs font-medium text-white hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-400"
         >
           <lucide-angular name="plus" class="size-3"></lucide-angular>
-          Agregar a seleccionadas
+          {{ 'pagesComponent.routePermissions.bulk.add' | translate }}
         </button>
         <button
           type="button"
@@ -120,25 +134,26 @@
           class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500"
         >
           <lucide-angular name="minus" class="size-3"></lucide-angular>
-          Quitar de seleccionadas
+          {{ 'pagesComponent.routePermissions.bulk.remove' | translate }}
         </button>
         <button
           type="button"
           (click)="clearSelection()"
           class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-300 dark:hover:bg-zink-500"
         >
-          Limpiar
+          {{ 'pagesComponent.routePermissions.bulk.clear' | translate }}
         </button>
       </div>
     </div>
     }
 
     @if (loading) {
-    <div class="p-6 text-sm text-slate-500 dark:text-zink-300">Cargando rutas...</div>
+    <div class="p-6 text-sm text-slate-500 dark:text-zink-300">
+      {{ 'pagesComponent.routePermissions.state.loading' | translate }}
+    </div>
     } @else if (!rows.length) {
     <div class="p-6 text-sm text-slate-500 dark:text-zink-300">
-      No hay rutas registradas en BD. Presiona "Sincronizar catalogo" para
-      registrarlas desde el front.
+      {{ 'pagesComponent.routePermissions.state.empty' | translate }}
     </div>
     } @else {
     <div class="grid grid-cols-[40px_260px_minmax(0,1fr)_220px] gap-4 border-b border-slate-100 bg-slate-50/60 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-zink-500 dark:bg-zink-600/40 dark:text-zink-300">
@@ -151,9 +166,9 @@
           class="size-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 dark:border-zink-500 dark:bg-zink-600 dark:focus:ring-cyan-500/30"
         />
       </div>
-      <div>Ruta</div>
-      <div>Roles permitidos</div>
-      <div class="text-right">Acciones</div>
+      <div>{{ 'pagesComponent.routePermissions.table.header-route' | translate }}</div>
+      <div>{{ 'pagesComponent.routePermissions.table.header-roles' | translate }}</div>
+      <div class="text-right">{{ 'pagesComponent.routePermissions.table.header-actions' | translate }}</div>
     </div>
 
     <div class="divide-y divide-slate-100 dark:divide-zink-500">
@@ -178,7 +193,7 @@
           @if (!row.selectedRoleIds.size) {
           <p class="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:bg-amber-500/20 dark:text-amber-300">
             <lucide-angular name="unlock" class="size-3"></lucide-angular>
-            Sin restriccion de rol
+            {{ 'pagesComponent.routePermissions.table.no-restriction' | translate }}
           </p>
           }
         </div>
@@ -212,7 +227,7 @@
             class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-60 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500"
           >
             <lucide-angular name="rotate-ccw" class="size-3"></lucide-angular>
-            Revertir
+            {{ 'pagesComponent.routePermissions.table.revert' | translate }}
           </button>
           <button
             type="button"
@@ -221,10 +236,16 @@
             class="inline-flex items-center gap-1 rounded-xl bg-cyan-600 px-3 py-2 text-xs font-medium text-white hover:bg-cyan-700 disabled:opacity-60 dark:bg-cyan-500 dark:hover:bg-cyan-400"
           >
             <lucide-angular name="save" class="size-3"></lucide-angular>
-            {{ row.saving ? 'Guardando...' : 'Guardar' }}
+            @if (row.saving) {
+              {{ 'pagesComponent.routePermissions.table.saving' | translate }}
+            } @else {
+              {{ 'pagesComponent.routePermissions.table.save' | translate }}
+            }
           </button>
           } @else {
-          <span class="text-xs text-slate-400 dark:text-zink-400">Sin cambios</span>
+          <span class="text-xs text-slate-400 dark:text-zink-400">
+            {{ 'pagesComponent.routePermissions.table.no-changes' | translate }}
+          </span>
           }
         </div>
       </article>

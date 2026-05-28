@@ -53,6 +53,9 @@
   "marketplace": "Mercado",
   "invoices": "Facturas",
   "users": "Usuarios",
+  "roles-permissions": "Roles y permisos",
+  "route-permissions": "Permisos de rutas",
+  "audit-logs": "Auditorías",
   "authentication": "Autenticación",
   "login": "Iniciar Sesión",
   "basic": "Básico",
@@ -244,6 +247,307 @@
       "edit-user": {
         "modal-title": "Editar Usuario",
         "btn-edit-user": "Guardar Cambios"
+      }
+    },
+    "rolesPermissions": {
+      "title": "Roles y permisos",
+      "pagetitle": "Administración",
+      "hero": {
+        "badge": "Administración",
+        "heading": "Gestiona roles con un flujo amigable",
+        "description": "Primero se crea el rol. Luego, si agregaste permisos nuevos, se crean y finalmente se asignan al rol automáticamente para respetar la lógica del backend.",
+        "stats": {
+          "roles": "Roles",
+          "catalog": "Catálogo",
+          "selection": "Selección"
+        }
+      },
+      "list": {
+        "title": "Todos los roles",
+        "subtitle": "Selecciona uno para editarlo.",
+        "new": "Nuevo",
+        "loading": "Cargando roles...",
+        "empty": "Todavía no existen roles registrados.",
+        "permissions-assigned": "{{count}} permisos asignados"
+      },
+      "form": {
+        "edit-title": "Editar rol",
+        "create-title": "Crear nuevo rol",
+        "description": "Define el nombre, selecciona permisos existentes y agrega permisos nuevos si los necesitas.",
+        "delete-role": "Eliminar rol",
+        "role-name-label": "Nombre del rol",
+        "role-name-placeholder": "Ej: ROLE_SUPPORT",
+        "role-name-error": "Solo mayúsculas, números o \"_\" y máximo 50 caracteres.",
+        "mode-label": "Modo",
+        "mode-edit": "Edición",
+        "mode-create": "Creación",
+        "mode-edit-desc": "Actualiza un rol existente.",
+        "mode-create-desc": "Crea el rol y luego asigna permisos.",
+        "new-permission-label": "Crear permiso nuevo",
+        "new-permission-placeholder": "Ej: EXPORT_REPORTS",
+        "add-permission": "Agregar permiso",
+        "draft-prefix": "Nuevo",
+        "available-title": "Permisos disponibles",
+        "available-description": "Marca los permisos que quieres asignarle a este rol.",
+        "empty-catalog": "No hay permisos en el catálogo todavía. Puedes empezar creando uno nuevo.",
+        "delete-permission-title": "Eliminar permiso",
+        "reload": "Recargar",
+        "saving": "Guardando...",
+        "update-role": "Actualizar rol",
+        "create-role": "Crear rol"
+      },
+      "summary": {
+        "title": "Resumen",
+        "subtitle": "Vista rápida de lo que se guardará.",
+        "role": "Rol",
+        "no-name-yet": "Sin nombre todavía",
+        "permissions": "Permisos",
+        "empty": "Aún no has seleccionado permisos para este rol.",
+        "active-role": "Rol activo",
+        "id": "ID",
+        "current-permissions": "Permisos actuales"
+      },
+      "delete": {
+        "role-title": "Eliminar rol",
+        "permission-title": "Eliminar permiso",
+        "role-message": "Esta acción eliminará el rol <strong>{{name}}</strong>.",
+        "permission-message": "Esta acción eliminará el permiso <strong>{{name}}</strong>.",
+        "confirmation-prompt": "Para confirmar, escribe exactamente el nombre.",
+        "role-input-label": "Nombre del rol",
+        "permission-input-label": "Nombre del permiso",
+        "confirm": "Eliminar",
+        "cancel": "Cancelar",
+        "must-match": "Debes escribir exactamente el nombre para eliminarlo"
+      },
+      "messages": {
+        "load-error": "No fue posible cargar roles y permisos",
+        "permission-pattern": "El permiso solo puede tener letras, números y guion bajo, máximo 50 caracteres",
+        "permission-duplicate": "Ese permiso ya existe o ya fue agregado a la lista",
+        "name-invalid": "Usa un nombre válido: mayúsculas, números o guion bajo, máximo 50 caracteres",
+        "name-pattern": "El nombre del rol solo puede tener letras, números y guion bajo, máximo 50 caracteres",
+        "must-have-permission": "Debes asignar al menos un permiso al rol",
+        "create-success": "Rol creado correctamente",
+        "update-success": "Rol actualizado correctamente",
+        "save-error": "No fue posible guardar el rol",
+        "delete-success": "Rol eliminado correctamente",
+        "delete-error": "No fue posible eliminar el rol",
+        "permission-delete-success": "Permiso eliminado correctamente",
+        "permission-delete-error": "No fue posible eliminar el permiso {{name}}"
+      }
+    },
+    "auditLogs": {
+      "title": "Auditorías",
+      "pagetitle": "Administración",
+      "hero": {
+        "badge": "Administración",
+        "heading": "Historial de cambios en la base de datos",
+        "description": "Filtra por rango de fechas, tabla, tipo de acción o búsqueda global. Cada fila puede expandirse para revisar el detalle técnico (transaction id, query y valores antes/después del cambio)."
+      },
+      "stats": {
+        "total": "Total",
+        "current-page": "Página actual"
+      },
+      "filters": {
+        "search-label": "Búsqueda global",
+        "search-placeholder": "ID, usuario, query, valor...",
+        "from": "Desde",
+        "to": "Hasta",
+        "table": "Tabla",
+        "table-all": "Todas",
+        "action": "Acción",
+        "action-all": "Todas las acciones",
+        "action-insert": "Insert (I)",
+        "action-update": "Update (U)",
+        "action-delete": "Delete (D)",
+        "action-truncate": "Truncate (T)",
+        "clear": "Limpiar",
+        "apply": "Aplicar filtros",
+        "open-help": "¿Qué significa cada columna?"
+      },
+      "table": {
+        "header-event": "Evento",
+        "header-date": "Fecha",
+        "header-user-table": "Usuario / Tabla",
+        "header-ip-client": "IP / Cliente",
+        "header-action": "Acción",
+        "header-query": "Query",
+        "header-detail": "Detalle",
+        "system-user": "sistema",
+        "expand": "Ver",
+        "collapse": "Ocultar"
+      },
+      "state": {
+        "loading": "Cargando auditorías...",
+        "empty": "No se encontraron auditorías con los filtros aplicados."
+      },
+      "detail": {
+        "metadata": "Metadata",
+        "row-data": "Row data (valor original / nuevo)",
+        "changed-fields": "Changed fields (delta del UPDATE)",
+        "no-data": "Sin datos.",
+        "no-changes": "Sin cambios (INSERT/DELETE).",
+        "query": "Query SQL completo",
+        "schema": "Schema",
+        "relid": "Relid",
+        "transaction-id": "Transaction ID",
+        "application": "Aplicación",
+        "client-port": "Puerto cliente",
+        "statement-only": "Solo statement",
+        "statement-ts": "Statement ts",
+        "clock-ts": "Clock ts",
+        "yes": "Sí",
+        "no": "No"
+      },
+      "pagination": {
+        "showing": "Mostrando {{shown}} de {{total}} registros",
+        "size": "Tamaño"
+      },
+      "help": {
+        "badge": "Manual",
+        "title": "¿Qué significa cada columna?",
+        "description": "Referencia rápida de las 17 columnas de audit.logged_actions.",
+        "example": "Ejemplo",
+        "tip-title": "Tip:",
+        "tip-text": "Para saber <strong>quién</strong> hizo un cambio, mira <code>created_by</code> y <code>last_modified_by</code> dentro de <code>row_data</code> / <code>changed_fields</code>: ahí queda el email del usuario logueado en Spring Security, que es más útil que <code>session_user_name</code>.",
+        "close": "Cerrar",
+        "got-it": "Entendido",
+        "floating-label": "Abrir manual de columnas",
+        "floating-tooltip": "Manual de columnas",
+        "columns": {
+          "event_id": {
+            "title": "ID único del evento",
+            "description": "Identificador autoincremental del registro de auditoría. Es la PK de la tabla audit.logged_actions y sirve para referenciar un evento puntual.",
+            "example": "#1234"
+          },
+          "schema_name": {
+            "title": "Esquema",
+            "description": "Esquema de la base donde vive la tabla auditada (ej: auth, audit, public).",
+            "example": "auth"
+          },
+          "table_name": {
+            "title": "Tabla",
+            "description": "Nombre de la tabla donde ocurrió el cambio, sin prefijo de esquema.",
+            "example": "roles"
+          },
+          "relid": {
+            "title": "OID de la tabla",
+            "description": "Identificador interno de Postgres para la tabla (table OID). Cambia si la tabla se hace DROP + CREATE, por eso normalmente filtras por table_name y no por relid.",
+            "example": "16453"
+          },
+          "session_user_name": {
+            "title": "Usuario de sesión de Postgres",
+            "description": "Usuario que abrió la conexión JDBC contra la base (el del JDBC_URL). NO es el usuario logueado de tu app. Para saber quién hizo el cambio a nivel de aplicación mira created_by / last_modified_by en la tabla auditada.",
+            "example": "ucaapp_user"
+          },
+          "action_tstamp_tx": {
+            "title": "Inicio de la transacción",
+            "description": "Timestamp en el que comenzó la transacción que provocó el evento. Todos los eventos de una misma transacción comparten este valor — útil para agrupar cambios relacionados.",
+            "example": "28/05/2026 14:32:10"
+          },
+          "action_tstamp_stm": {
+            "title": "Inicio del statement",
+            "description": "Timestamp del inicio del statement SQL específico dentro de la transacción. Si una transacción ejecuta varios statements, cada uno tiene el suyo."
+          },
+          "action_tstamp_clk": {
+            "title": "Reloj del trigger",
+            "description": "Wall-clock del momento exacto en que el trigger se disparó. Es el más preciso de los tres timestamps; útil para correlacionar con logs de Spring."
+          },
+          "transaction_id": {
+            "title": "ID de transacción",
+            "description": "Identificador de la transacción en Postgres (txid_current). Combinado con action_tstamp_tx te permite agrupar todos los cambios que entraron juntos.",
+            "example": "892341"
+          },
+          "application_name": {
+            "title": "Aplicación cliente",
+            "description": "Nombre que el cliente se asignó al conectarse a Postgres. Ayuda a distinguir cambios hechos por la app (PostgreSQL JDBC Driver) vs herramientas como pgAdmin, DBeaver o psql.",
+            "example": "PostgreSQL JDBC Driver"
+          },
+          "client_addr": {
+            "title": "IP del cliente",
+            "description": "Dirección IP que abrió la conexión contra Postgres. En setups Docker sin propagación de IP real, vas a ver siempre la IP del contenedor Spring (ej: 172.x.x.x) o el gateway de Docker (ej: 192.168.65.1).",
+            "example": "192.168.65.1"
+          },
+          "client_port": {
+            "title": "Puerto del cliente",
+            "description": "Puerto efímero usado por el cliente al conectarse. Tiene poca utilidad práctica; sirve solo en forensia de redes."
+          },
+          "client_query": {
+            "title": "Query SQL completo",
+            "description": "El SQL exacto que disparó el cambio (el top-level query del cliente). Útil cuando necesitas reproducir o entender qué se ejecutó.",
+            "example": "UPDATE auth.roles SET name = ? WHERE id = ?"
+          },
+          "action": {
+            "title": "Tipo de operación",
+            "description": "Letra que indica el tipo de cambio: I = INSERT (creación), U = UPDATE (modificación), D = DELETE (eliminación), T = TRUNCATE (vaciado masivo).",
+            "example": "U"
+          },
+          "row_data": {
+            "title": "Datos de la fila",
+            "description": "Snapshot hstore (clave/valor) de la fila afectada. En INSERT contiene la fila NUEVA; en UPDATE y DELETE contiene la fila OLD (antes del cambio). Es lo que te permite reconstruir el estado previo."
+          },
+          "changed_fields": {
+            "title": "Campos modificados",
+            "description": "Solo para UPDATE: hstore con los NUEVOS valores de las columnas que efectivamente cambiaron. Si comparas row_data vs changed_fields tienes el delta exacto del UPDATE."
+          },
+          "statement_only": {
+            "title": "Solo statement",
+            "description": "Si es true significa que el evento provino de un trigger a nivel de statement (no por fila). Típicamente solo aparece en TRUNCATE. Para INSERT/UPDATE/DELETE normales es false."
+          }
+        }
+      },
+      "messages": {
+        "load-error": "No fue posible cargar las auditorías"
+      }
+    },
+    "routePermissions": {
+      "title": "Permisos de rutas",
+      "pagetitle": "Administración",
+      "hero": {
+        "badge": "Administración",
+        "heading": "Controla quién accede a cada ruta del back-office",
+        "description": "Asigna roles a cada ruta. Si una ruta no tiene roles asignados, queda accesible para cualquier usuario autenticado. Usa \"Sincronizar catálogo\" cuando agregues rutas nuevas en el código del front.",
+        "stats": {
+          "routes": "Rutas",
+          "roles": "Roles"
+        }
+      },
+      "toolbar": {
+        "search-placeholder": "Buscar por path...",
+        "discard": "Descartar",
+        "save-pending": "Guardar pendientes",
+        "saving-pending": "Guardando...",
+        "sync-catalog": "Sincronizar catálogo",
+        "syncing": "Sincronizando..."
+      },
+      "bulk": {
+        "selected-one": "1 ruta seleccionada",
+        "selected-many": "{{count}} rutas seleccionadas",
+        "add": "Agregar a seleccionadas",
+        "remove": "Quitar de seleccionadas",
+        "clear": "Limpiar"
+      },
+      "table": {
+        "header-route": "Ruta",
+        "header-roles": "Roles permitidos",
+        "header-actions": "Acciones",
+        "no-restriction": "Sin restricción de rol",
+        "revert": "Revertir",
+        "save": "Guardar",
+        "saving": "Guardando...",
+        "no-changes": "Sin cambios"
+      },
+      "state": {
+        "loading": "Cargando rutas...",
+        "empty": "No hay rutas registradas en BD. Presiona \"Sincronizar catálogo\" para registrarlas desde el front."
+      },
+      "messages": {
+        "sync-success": "Rutas sincronizadas con el catálogo del front",
+        "sync-error": "No fue posible sincronizar las rutas",
+        "save-row-success": "Roles actualizados para {{path}}",
+        "save-all-success": "{{count}} rutas actualizadas",
+        "save-row-error": "No fue posible guardar los cambios",
+        "save-all-error": "Algunas filas no se pudieron guardar",
+        "load-error": "No fue posible cargar permisos de rutas"
       }
     },
     "layouts": {

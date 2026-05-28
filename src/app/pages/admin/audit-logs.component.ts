@@ -8,6 +8,7 @@ import {
   LucideIconProvider,
   icons,
 } from 'lucide-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { PageTitleComponent } from '../../shared/page-title/page-title.component';
 import { AuditService } from '../../core/services/administration/audit.service';
@@ -21,137 +22,47 @@ import {
 import { ApiErrorModel } from '../../store/Authentication/apiError.model';
 
 interface DetailEntry {
-  label: string;
+  labelKey: string;
   value: string;
 }
 
-interface ColumnHelp {
+interface ColumnHelpKey {
   column: string;
-  title: string;
-  description: string;
-  example?: string;
+  hasExample: boolean;
 }
 
-const COLUMN_HELP: ColumnHelp[] = [
-  {
-    column: 'event_id',
-    title: 'ID unico del evento',
-    description:
-      'Identificador autoincremental del registro de auditoria. Es la PK de la tabla audit.logged_actions y sirve para referenciar un evento puntual.',
-    example: '#1234',
-  },
-  {
-    column: 'schema_name',
-    title: 'Esquema',
-    description:
-      'Esquema de la base donde vive la tabla auditada (ej: auth, audit, public).',
-    example: 'auth',
-  },
-  {
-    column: 'table_name',
-    title: 'Tabla',
-    description:
-      'Nombre de la tabla donde ocurrio el cambio, sin prefijo de esquema.',
-    example: 'roles',
-  },
-  {
-    column: 'relid',
-    title: 'OID de la tabla',
-    description:
-      'Identificador interno de Postgres para la tabla (table OID). Cambia si la tabla se hace DROP + CREATE, por eso normalmente filtras por table_name y no por relid.',
-    example: '16453',
-  },
-  {
-    column: 'session_user_name',
-    title: 'Usuario de sesion de Postgres',
-    description:
-      'Usuario que abrio la conexion JDBC contra la base (el del JDBC_URL). NO es el usuario logueado de tu app. Para saber quien hizo el cambio a nivel de aplicacion mira created_by / last_modified_by en la tabla auditada.',
-    example: 'ucaapp_user',
-  },
-  {
-    column: 'action_tstamp_tx',
-    title: 'Inicio de la transaccion',
-    description:
-      'Timestamp en el que comenzo la transaccion que provoco el evento. Todos los eventos de una misma transaccion comparten este valor — util para agrupar cambios relacionados.',
-    example: '28/05/2026 14:32:10',
-  },
-  {
-    column: 'action_tstamp_stm',
-    title: 'Inicio del statement',
-    description:
-      'Timestamp del inicio del statement SQL especifico dentro de la transaccion. Si una transaccion ejecuta varios statements, cada uno tiene el suyo.',
-  },
-  {
-    column: 'action_tstamp_clk',
-    title: 'Reloj del trigger',
-    description:
-      'Wall-clock del momento exacto en que el trigger se disparo. Es el mas preciso de los tres timestamps; util para correlacionar con logs de Spring.',
-  },
-  {
-    column: 'transaction_id',
-    title: 'ID de transaccion',
-    description:
-      'Identificador de la transaccion en Postgres (txid_current). Combinado con action_tstamp_tx te permite agrupar todos los cambios que entraron juntos.',
-    example: '892341',
-  },
-  {
-    column: 'application_name',
-    title: 'Aplicacion cliente',
-    description:
-      'Nombre que el cliente se asigno al conectarse a Postgres. Ayuda a distinguir cambios hechos por la app (PostgreSQL JDBC Driver) vs herramientas como pgAdmin, DBeaver o psql.',
-    example: 'PostgreSQL JDBC Driver',
-  },
-  {
-    column: 'client_addr',
-    title: 'IP del cliente',
-    description:
-      'Direccion IP que abrio la conexion contra Postgres. En setups Docker sin propagacion de IP real, vas a ver siempre la IP del contenedor Spring (ej: 172.x.x.x) o el gateway de Docker (ej: 192.168.65.1).',
-    example: '192.168.65.1',
-  },
-  {
-    column: 'client_port',
-    title: 'Puerto del cliente',
-    description:
-      'Puerto efimero usado por el cliente al conectarse. Tiene poca utilidad practica; sirve solo en forensia de redes.',
-  },
-  {
-    column: 'client_query',
-    title: 'Query SQL completo',
-    description:
-      'El SQL exacto que disparo el cambio (el top-level query del cliente). Util cuando necesitas reproducir o entender que se ejecuto.',
-    example: 'UPDATE auth.roles SET name = ? WHERE id = ?',
-  },
-  {
-    column: 'action',
-    title: 'Tipo de operacion',
-    description:
-      'Letra que indica el tipo de cambio: I = INSERT (creacion), U = UPDATE (modificacion), D = DELETE (eliminacion), T = TRUNCATE (vaciado masivo).',
-    example: 'U',
-  },
-  {
-    column: 'row_data',
-    title: 'Datos de la fila',
-    description:
-      'Snapshot hstore (clave/valor) de la fila afectada. En INSERT contiene la fila NUEVA; en UPDATE y DELETE contiene la fila OLD (antes del cambio). Es lo que te permite reconstruir el estado previo.',
-  },
-  {
-    column: 'changed_fields',
-    title: 'Campos modificados',
-    description:
-      'Solo para UPDATE: hstore con los NUEVOS valores de las columnas que efectivamente cambiaron. Si comparas row_data vs changed_fields tienes el delta exacto del UPDATE.',
-  },
-  {
-    column: 'statement_only',
-    title: 'Solo statement',
-    description:
-      'Si es true significa que el evento provino de un trigger a nivel de statement (no por fila). Tipicamente solo aparece en TRUNCATE. Para INSERT/UPDATE/DELETE normales es false.',
-  },
+// Cada entrada referencia una sub-clave en
+// pagesComponent.auditLogs.help.columns.<column>.{title,description,example}
+const COLUMN_HELP_KEYS: ColumnHelpKey[] = [
+  { column: 'event_id', hasExample: true },
+  { column: 'schema_name', hasExample: true },
+  { column: 'table_name', hasExample: true },
+  { column: 'relid', hasExample: true },
+  { column: 'session_user_name', hasExample: true },
+  { column: 'action_tstamp_tx', hasExample: true },
+  { column: 'action_tstamp_stm', hasExample: false },
+  { column: 'action_tstamp_clk', hasExample: false },
+  { column: 'transaction_id', hasExample: true },
+  { column: 'application_name', hasExample: true },
+  { column: 'client_addr', hasExample: true },
+  { column: 'client_port', hasExample: false },
+  { column: 'client_query', hasExample: true },
+  { column: 'action', hasExample: true },
+  { column: 'row_data', hasExample: false },
+  { column: 'changed_fields', hasExample: false },
+  { column: 'statement_only', hasExample: false },
 ];
 
 @Component({
   selector: 'app-audit-logs',
   standalone: true,
-  imports: [CommonModule, FormsModule, PageTitleComponent, LucideAngularModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    PageTitleComponent,
+    LucideAngularModule,
+    TranslateModule,
+  ],
   templateUrl: './audit-logs.component.html',
   providers: [
     {
@@ -163,12 +74,12 @@ const COLUMN_HELP: ColumnHelp[] = [
 })
 export class AuditLogsComponent implements OnInit {
   readonly pageSizeOptions = [25, 50, 100, 200];
-  readonly actionOptions: { value: AuditAction | ''; label: string }[] = [
-    { value: '', label: 'Todas las acciones' },
-    { value: 'I', label: 'Insert (I)' },
-    { value: 'U', label: 'Update (U)' },
-    { value: 'D', label: 'Delete (D)' },
-    { value: 'T', label: 'Truncate (T)' },
+  readonly actionOptions: { value: AuditAction | ''; labelKey: string }[] = [
+    { value: '', labelKey: 'pagesComponent.auditLogs.filters.action-all' },
+    { value: 'I', labelKey: 'pagesComponent.auditLogs.filters.action-insert' },
+    { value: 'U', labelKey: 'pagesComponent.auditLogs.filters.action-update' },
+    { value: 'D', labelKey: 'pagesComponent.auditLogs.filters.action-delete' },
+    { value: 'T', labelKey: 'pagesComponent.auditLogs.filters.action-truncate' },
   ];
 
   filters: AuditLogQuery = {
@@ -194,7 +105,7 @@ export class AuditLogsComponent implements OnInit {
 
   showHelp = false;
   scrolled = false;
-  readonly columnHelp: ColumnHelp[] = COLUMN_HELP;
+  readonly columnHelpKeys: ColumnHelpKey[] = COLUMN_HELP_KEYS;
 
   @HostListener('window:scroll')
   onWindowScroll(): void {
@@ -203,7 +114,8 @@ export class AuditLogsComponent implements OnInit {
 
   constructor(
     private auditService: AuditService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -247,7 +159,10 @@ export class AuditLogsComponent implements OnInit {
       },
       error: (error) => {
         this.loading = false;
-        this.handleError(error, 'No fue posible cargar las auditorias');
+        this.handleError(
+          error,
+          this.translate.instant('pagesComponent.auditLogs.messages.load-error')
+        );
       },
     });
   }
@@ -344,7 +259,7 @@ export class AuditLogsComponent implements OnInit {
     if (isNaN(date.getTime())) {
       return value;
     }
-    return date.toLocaleString('es-EC', {
+    return date.toLocaleString(this.translate.currentLang || 'es', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -355,15 +270,19 @@ export class AuditLogsComponent implements OnInit {
   }
 
   detailEntries(row: AuditLog): DetailEntry[] {
+    const yesNo = (b: boolean) =>
+      this.translate.instant(
+        b ? 'pagesComponent.auditLogs.detail.yes' : 'pagesComponent.auditLogs.detail.no'
+      );
     return [
-      { label: 'Schema', value: row.schema_name ?? '-' },
-      { label: 'Relid', value: String(row.relid ?? '-') },
-      { label: 'Transaction ID', value: String(row.transaction_id ?? '-') },
-      { label: 'Application', value: row.application_name ?? '-' },
-      { label: 'Client port', value: String(row.client_port ?? '-') },
-      { label: 'Statement only', value: row.statement_only ? 'Si' : 'No' },
-      { label: 'Statement ts', value: this.formatTimestamp(row.action_tstamp_stm) },
-      { label: 'Clock ts', value: this.formatTimestamp(row.action_tstamp_clk) },
+      { labelKey: 'pagesComponent.auditLogs.detail.schema', value: row.schema_name ?? '-' },
+      { labelKey: 'pagesComponent.auditLogs.detail.relid', value: String(row.relid ?? '-') },
+      { labelKey: 'pagesComponent.auditLogs.detail.transaction-id', value: String(row.transaction_id ?? '-') },
+      { labelKey: 'pagesComponent.auditLogs.detail.application', value: row.application_name ?? '-' },
+      { labelKey: 'pagesComponent.auditLogs.detail.client-port', value: String(row.client_port ?? '-') },
+      { labelKey: 'pagesComponent.auditLogs.detail.statement-only', value: yesNo(row.statement_only) },
+      { labelKey: 'pagesComponent.auditLogs.detail.statement-ts', value: this.formatTimestamp(row.action_tstamp_stm) },
+      { labelKey: 'pagesComponent.auditLogs.detail.clock-ts', value: this.formatTimestamp(row.action_tstamp_clk) },
     ];
   }
 

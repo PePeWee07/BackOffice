@@ -53,6 +53,9 @@
   "marketplace": "マーケットプレイス",
   "invoices": "請求書",
   "users": "ユーザー",
+  "roles-permissions": "ロールと権限",
+  "route-permissions": "ルート権限",
+  "audit-logs": "監査ログ",
   "authentication": "認証",
   "login": "ログイン",
   "basic": "基本",
@@ -244,6 +247,307 @@
       "edit-user": {
         "modal-title": "ユーザーの編集",
         "btn-edit-user": "変更を保存"
+      }
+    },
+    "rolesPermissions": {
+      "title": "ロールと権限",
+      "pagetitle": "管理",
+      "hero": {
+        "badge": "管理",
+        "heading": "わかりやすいフローでロールを管理する",
+        "description": "まずロールが作成されます。次に、新しい権限を追加した場合は、それらが作成されてからロールに自動的に割り当てられ、バックエンドのロジックが維持されます。",
+        "stats": {
+          "roles": "ロール",
+          "catalog": "カタログ",
+          "selection": "選択"
+        }
+      },
+      "list": {
+        "title": "すべてのロール",
+        "subtitle": "編集するものを選択してください。",
+        "new": "新規",
+        "loading": "ロールを読み込んでいます...",
+        "empty": "登録されたロールはまだありません。",
+        "permissions-assigned": "{{count}}個の権限が割り当てられています"
+      },
+      "form": {
+        "edit-title": "ロールを編集",
+        "create-title": "新しいロールを作成",
+        "description": "名前を定義し、既存の権限を選択し、必要に応じて新しい権限を追加します。",
+        "delete-role": "ロールを削除",
+        "role-name-label": "ロール名",
+        "role-name-placeholder": "例: ROLE_SUPPORT",
+        "role-name-error": "大文字、数字、または「_」のみ使用可能、最大50文字。",
+        "mode-label": "モード",
+        "mode-edit": "編集",
+        "mode-create": "作成",
+        "mode-edit-desc": "既存のロールを更新します。",
+        "mode-create-desc": "ロールを作成してから権限を割り当てます。",
+        "new-permission-label": "新しい権限を作成",
+        "new-permission-placeholder": "例: EXPORT_REPORTS",
+        "add-permission": "権限を追加",
+        "draft-prefix": "新規",
+        "available-title": "利用可能な権限",
+        "available-description": "このロールに割り当てたい権限をチェックしてください。",
+        "empty-catalog": "カタログにまだ権限がありません。新しいものを作成して始めることができます。",
+        "delete-permission-title": "権限を削除",
+        "reload": "再読み込み",
+        "saving": "保存中...",
+        "update-role": "ロールを更新",
+        "create-role": "ロールを作成"
+      },
+      "summary": {
+        "title": "概要",
+        "subtitle": "保存される内容のクイックビュー。",
+        "role": "ロール",
+        "no-name-yet": "名前はまだありません",
+        "permissions": "権限",
+        "empty": "このロールにはまだ権限を選択していません。",
+        "active-role": "アクティブなロール",
+        "id": "ID",
+        "current-permissions": "現在の権限"
+      },
+      "delete": {
+        "role-title": "ロールを削除",
+        "permission-title": "権限を削除",
+        "role-message": "この操作はロール <strong>{{name}}</strong> を削除します。",
+        "permission-message": "この操作は権限 <strong>{{name}}</strong> を削除します。",
+        "confirmation-prompt": "確認するには、正確な名前を入力してください。",
+        "role-input-label": "ロール名",
+        "permission-input-label": "権限名",
+        "confirm": "削除",
+        "cancel": "キャンセル",
+        "must-match": "削除するには正確な名前を入力する必要があります"
+      },
+      "messages": {
+        "load-error": "ロールと権限を読み込めませんでした",
+        "permission-pattern": "権限には文字、数字、アンダースコアのみ、最大50文字使用できます",
+        "permission-duplicate": "その権限はすでに存在するか、すでにリストに追加されています",
+        "name-invalid": "有効な名前を使用してください: 大文字、数字、またはアンダースコア、最大50文字",
+        "name-pattern": "ロール名には文字、数字、アンダースコアのみ、最大50文字使用できます",
+        "must-have-permission": "ロールに少なくとも1つの権限を割り当てる必要があります",
+        "create-success": "ロールが正常に作成されました",
+        "update-success": "ロールが正常に更新されました",
+        "save-error": "ロールを保存できませんでした",
+        "delete-success": "ロールが正常に削除されました",
+        "delete-error": "ロールを削除できませんでした",
+        "permission-delete-success": "権限が正常に削除されました",
+        "permission-delete-error": "権限 {{name}} を削除できませんでした"
+      }
+    },
+    "auditLogs": {
+      "title": "監査ログ",
+      "pagetitle": "管理",
+      "hero": {
+        "badge": "管理",
+        "heading": "データベース変更履歴",
+        "description": "日付範囲、テーブル、アクションタイプ、またはグローバル検索でフィルタリングします。各行を展開して技術的な詳細（トランザクションID、クエリ、変更前後の値）を確認できます。"
+      },
+      "stats": {
+        "total": "合計",
+        "current-page": "現在のページ"
+      },
+      "filters": {
+        "search-label": "グローバル検索",
+        "search-placeholder": "ID、ユーザー、クエリ、値...",
+        "from": "開始",
+        "to": "終了",
+        "table": "テーブル",
+        "table-all": "すべて",
+        "action": "アクション",
+        "action-all": "すべてのアクション",
+        "action-insert": "Insert (I)",
+        "action-update": "Update (U)",
+        "action-delete": "Delete (D)",
+        "action-truncate": "Truncate (T)",
+        "clear": "クリア",
+        "apply": "フィルターを適用",
+        "open-help": "各列の意味は？"
+      },
+      "table": {
+        "header-event": "イベント",
+        "header-date": "日付",
+        "header-user-table": "ユーザー / テーブル",
+        "header-ip-client": "IP / クライアント",
+        "header-action": "アクション",
+        "header-query": "クエリ",
+        "header-detail": "詳細",
+        "system-user": "システム",
+        "expand": "表示",
+        "collapse": "非表示"
+      },
+      "state": {
+        "loading": "監査ログを読み込んでいます...",
+        "empty": "適用されたフィルターで監査ログが見つかりませんでした。"
+      },
+      "detail": {
+        "metadata": "メタデータ",
+        "row-data": "行データ（元の値 / 新しい値）",
+        "changed-fields": "変更されたフィールド（UPDATEの差分）",
+        "no-data": "データなし。",
+        "no-changes": "変更なし（INSERT/DELETE）。",
+        "query": "完全なSQLクエリ",
+        "schema": "スキーマ",
+        "relid": "Relid",
+        "transaction-id": "トランザクションID",
+        "application": "アプリケーション",
+        "client-port": "クライアントポート",
+        "statement-only": "ステートメントのみ",
+        "statement-ts": "ステートメントts",
+        "clock-ts": "クロックts",
+        "yes": "はい",
+        "no": "いいえ"
+      },
+      "pagination": {
+        "showing": "{{total}}件中 {{shown}}件を表示",
+        "size": "サイズ"
+      },
+      "help": {
+        "badge": "マニュアル",
+        "title": "各列の意味は？",
+        "description": "audit.logged_actionsの17列のクイックリファレンス。",
+        "example": "例",
+        "tip-title": "ヒント:",
+        "tip-text": "<strong>誰が</strong>変更を行ったかを知るには、<code>row_data</code> / <code>changed_fields</code> 内の <code>created_by</code> と <code>last_modified_by</code> を確認してください: そこにSpring Securityでログインしているユーザーのメールアドレスが保存されており、<code>session_user_name</code> よりも有用です。",
+        "close": "閉じる",
+        "got-it": "了解",
+        "floating-label": "列のマニュアルを開く",
+        "floating-tooltip": "列のマニュアル",
+        "columns": {
+          "event_id": {
+            "title": "一意のイベントID",
+            "description": "監査レコードの自動増分識別子です。audit.logged_actionsのPKであり、特定のイベントを参照するために使用されます。",
+            "example": "#1234"
+          },
+          "schema_name": {
+            "title": "スキーマ",
+            "description": "監査対象テーブルが存在するデータベースのスキーマ（例: auth、audit、public）。",
+            "example": "auth"
+          },
+          "table_name": {
+            "title": "テーブル",
+            "description": "変更が発生したテーブルの名前（スキーマプレフィックスなし）。",
+            "example": "roles"
+          },
+          "relid": {
+            "title": "テーブルOID",
+            "description": "テーブルのPostgres内部識別子（テーブルOID）。テーブルがDROP + CREATEされると変更されるため、通常はrelidではなくtable_nameでフィルタリングします。",
+            "example": "16453"
+          },
+          "session_user_name": {
+            "title": "Postgresセッションユーザー",
+            "description": "JDBC接続を開いたユーザー（JDBC_URLのもの）。アプリにログインしているユーザーではありません。アプリレベルで誰が変更を行ったかを知るには、監査対象テーブルのcreated_by / last_modified_byを確認してください。",
+            "example": "ucaapp_user"
+          },
+          "action_tstamp_tx": {
+            "title": "トランザクション開始",
+            "description": "イベントを引き起こしたトランザクションが開始されたタイムスタンプ。同じトランザクションのすべてのイベントはこの値を共有します — 関連する変更をグループ化するのに便利です。",
+            "example": "2026/05/28 14:32:10"
+          },
+          "action_tstamp_stm": {
+            "title": "ステートメント開始",
+            "description": "トランザクション内の特定のSQLステートメントの開始タイムスタンプ。トランザクションが複数のステートメントを実行する場合、それぞれに独自のものがあります。"
+          },
+          "action_tstamp_clk": {
+            "title": "トリガークロック",
+            "description": "トリガーが発動した正確な瞬間のウォールクロック。3つのタイムスタンプの中で最も正確です。Springログとの相関に便利です。"
+          },
+          "transaction_id": {
+            "title": "トランザクションID",
+            "description": "Postgresのトランザクション識別子（txid_current）。action_tstamp_txと組み合わせると、一緒に入ったすべての変更をグループ化できます。",
+            "example": "892341"
+          },
+          "application_name": {
+            "title": "クライアントアプリケーション",
+            "description": "Postgresに接続するときにクライアントが自分自身に割り当てた名前。アプリによる変更（PostgreSQL JDBC Driver）とpgAdmin、DBeaver、psqlなどのツールによる変更を区別するのに役立ちます。",
+            "example": "PostgreSQL JDBC Driver"
+          },
+          "client_addr": {
+            "title": "クライアントIP",
+            "description": "Postgresへの接続を開いたIPアドレス。実際のIP伝播のないDockerセットアップでは、常にSpringコンテナのIP（例: 172.x.x.x）またはDockerゲートウェイ（例: 192.168.65.1）が表示されます。",
+            "example": "192.168.65.1"
+          },
+          "client_port": {
+            "title": "クライアントポート",
+            "description": "クライアントが接続時に使用するエフェメラルポート。実用性はほとんどなく、ネットワークフォレンジックでのみ役立ちます。"
+          },
+          "client_query": {
+            "title": "完全なSQLクエリ",
+            "description": "変更を引き起こした正確なSQL（クライアントのトップレベルクエリ）。実行された内容を再現または理解する必要があるときに便利です。",
+            "example": "UPDATE auth.roles SET name = ? WHERE id = ?"
+          },
+          "action": {
+            "title": "操作タイプ",
+            "description": "変更のタイプを示す文字: I = INSERT（作成）、U = UPDATE（変更）、D = DELETE（削除）、T = TRUNCATE（一括クリア）。",
+            "example": "U"
+          },
+          "row_data": {
+            "title": "行データ",
+            "description": "影響を受けた行のhstoreスナップショット（キー/値）。INSERTでは新しい行を含み、UPDATEとDELETEでは古い行（変更前）を含みます。これにより以前の状態を再構築できます。"
+          },
+          "changed_fields": {
+            "title": "変更されたフィールド",
+            "description": "UPDATEのみ: 実際に変更された列の新しい値を持つhstore。row_dataとchanged_fieldsを比較すると、UPDATEの正確な差分が得られます。"
+          },
+          "statement_only": {
+            "title": "ステートメントのみ",
+            "description": "trueの場合、イベントはステートメントレベルのトリガー（行単位ではない）から発生したことを意味します。通常はTRUNCATEでのみ表示されます。通常のINSERT/UPDATE/DELETEではfalseです。"
+          }
+        }
+      },
+      "messages": {
+        "load-error": "監査ログを読み込めませんでした"
+      }
+    },
+    "routePermissions": {
+      "title": "ルート権限",
+      "pagetitle": "管理",
+      "hero": {
+        "badge": "管理",
+        "heading": "バックオフィスの各ルートへのアクセスを制御する",
+        "description": "各ルートにロールを割り当てます。ロールが割り当てられていないルートは、認証されたすべてのユーザーがアクセスできます。フロントエンドコードに新しいルートを追加したら「カタログを同期」を使用してください。",
+        "stats": {
+          "routes": "ルート",
+          "roles": "ロール"
+        }
+      },
+      "toolbar": {
+        "search-placeholder": "パスで検索...",
+        "discard": "破棄",
+        "save-pending": "保留中を保存",
+        "saving-pending": "保存中...",
+        "sync-catalog": "カタログを同期",
+        "syncing": "同期中..."
+      },
+      "bulk": {
+        "selected-one": "1個のルートを選択しました",
+        "selected-many": "{{count}}個のルートを選択しました",
+        "add": "選択に追加",
+        "remove": "選択から削除",
+        "clear": "クリア"
+      },
+      "table": {
+        "header-route": "ルート",
+        "header-roles": "許可されたロール",
+        "header-actions": "アクション",
+        "no-restriction": "ロール制限なし",
+        "revert": "元に戻す",
+        "save": "保存",
+        "saving": "保存中...",
+        "no-changes": "変更なし"
+      },
+      "state": {
+        "loading": "ルートを読み込んでいます...",
+        "empty": "DBに登録されたルートはありません。フロントから登録するには「カタログを同期」を押してください。"
+      },
+      "messages": {
+        "sync-success": "ルートがフロントカタログと同期されました",
+        "sync-error": "ルートを同期できませんでした",
+        "save-row-success": "{{path}}のロールが更新されました",
+        "save-all-success": "{{count}}個のルートが更新されました",
+        "save-row-error": "変更を保存できませんでした",
+        "save-all-error": "一部の行を保存できませんでした",
+        "load-error": "ルート権限を読み込めませんでした"
       }
     },
     "layouts": {

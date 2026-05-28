@@ -9,6 +9,7 @@ import {
   LucideIconProvider,
   icons,
 } from 'lucide-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { PageTitleComponent } from '../../shared/page-title/page-title.component';
 import { RoleService } from '../../core/services/administration/role.service';
@@ -32,7 +33,13 @@ interface RoutePermissionRow {
 @Component({
   selector: 'app-route-permissions',
   standalone: true,
-  imports: [CommonModule, FormsModule, PageTitleComponent, LucideAngularModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    PageTitleComponent,
+    LucideAngularModule,
+    TranslateModule,
+  ],
   templateUrl: './route-permissions.component.html',
   providers: [
     {
@@ -56,7 +63,8 @@ export class RoutePermissionsComponent implements OnInit {
   constructor(
     private routePermissionService: RoutePermissionService,
     private roleService: RoleService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -103,7 +111,10 @@ export class RoutePermissionsComponent implements OnInit {
       },
       error: (error) => {
         this.loading = false;
-        this.handleError(error, 'No fue posible cargar permisos de rutas');
+        this.handleError(
+          error,
+          this.translate.instant('pagesComponent.routePermissions.messages.load-error')
+        );
       },
     });
   }
@@ -115,11 +126,16 @@ export class RoutePermissionsComponent implements OnInit {
         this.rows = this.buildRows(routes);
         this.selectedRowIds.clear();
         this.syncing = false;
-        this.toastr.success('Rutas sincronizadas con el catalogo del front');
+        this.toastr.success(
+          this.translate.instant('pagesComponent.routePermissions.messages.sync-success')
+        );
       },
       error: (error) => {
         this.syncing = false;
-        this.handleError(error, 'No fue posible sincronizar las rutas');
+        this.handleError(
+          error,
+          this.translate.instant('pagesComponent.routePermissions.messages.sync-error')
+        );
       },
     });
   }
@@ -191,11 +207,18 @@ export class RoutePermissionsComponent implements OnInit {
         next: (updated) => {
           this.applyServerUpdate(row, updated);
           row.saving = false;
-          this.toastr.success(`Roles actualizados para ${row.path || '/'}`);
+          this.toastr.success(
+            this.translate.instant('pagesComponent.routePermissions.messages.save-row-success', {
+              path: row.path || '/',
+            })
+          );
         },
         error: (error) => {
           row.saving = false;
-          this.handleError(error, 'No fue posible guardar los cambios');
+          this.handleError(
+            error,
+            this.translate.instant('pagesComponent.routePermissions.messages.save-row-error')
+          );
         },
       });
   }
@@ -222,12 +245,19 @@ export class RoutePermissionsComponent implements OnInit {
           pending[index].saving = false;
         });
         this.savingAll = false;
-        this.toastr.success(`${updates.length} rutas actualizadas`);
+        this.toastr.success(
+          this.translate.instant('pagesComponent.routePermissions.messages.save-all-success', {
+            count: updates.length,
+          })
+        );
       },
       error: (error) => {
         pending.forEach((row) => (row.saving = false));
         this.savingAll = false;
-        this.handleError(error, 'Algunas filas no se pudieron guardar');
+        this.handleError(
+          error,
+          this.translate.instant('pagesComponent.routePermissions.messages.save-all-error')
+        );
       },
     });
   }

@@ -14,6 +14,7 @@ import {
   LucideIconProvider,
   icons,
 } from 'lucide-angular';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PageTitleComponent } from '../../shared/page-title/page-title.component';
 import { AuthorityService } from '../../core/services/administration/authority.service';
 import { RoleService } from '../../core/services/administration/role.service';
@@ -31,6 +32,7 @@ import { ApiErrorModel } from '../../store/Authentication/apiError.model';
     ReactiveFormsModule,
     PageTitleComponent,
     LucideAngularModule,
+    TranslateModule,
   ],
   templateUrl: './roles-permissions.component.html',
   providers: [
@@ -69,8 +71,13 @@ export class RolesPermissionsComponent {
     private fb: FormBuilder,
     private roleService: RoleService,
     private authorityService: AuthorityService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private translate: TranslateService
   ) {}
+
+  private t(key: string, params?: Record<string, unknown>): string {
+    return this.translate.instant(`pagesComponent.rolesPermissions.${key}`, params);
+  }
 
   ngOnInit(): void {
     this.setupInputNormalization();
@@ -131,7 +138,7 @@ export class RolesPermissionsComponent {
       },
       error: (error) => {
         this.loading = false;
-        this.handleError(error, 'No fue posible cargar roles y permisos');
+        this.handleError(error, this.t('messages.load-error'));
       },
     });
   }
@@ -183,9 +190,7 @@ export class RolesPermissionsComponent {
     }
 
     if (!this.validNamePattern.test(permissionName)) {
-      this.toastr.info(
-        'El permiso solo puede tener letras, numeros y guion bajo, maximo 50 caracteres'
-      );
+      this.toastr.info(this.t('messages.permission-pattern'));
       return;
     }
 
@@ -197,7 +202,7 @@ export class RolesPermissionsComponent {
     );
 
     if (existsInCatalog || existsInDrafts) {
-      this.toastr.info('Ese permiso ya existe o ya fue agregado a la lista');
+      this.toastr.info(this.t('messages.permission-duplicate'));
       return;
     }
 
@@ -213,20 +218,20 @@ export class RolesPermissionsComponent {
 
   async deletePermission(permissionId: number, permissionName: string): Promise<void> {
     const result = await Swal.fire({
-      title: 'Eliminar permiso',
+      title: this.t('delete.permission-title'),
       html: `
         <div class="text-left">
-          <p class="mb-2">Esta accion eliminara el permiso <strong>${permissionName}</strong>.</p>
-          <p class="mb-3">Para confirmar, escribe exactamente el nombre del permiso.</p>
+          <p class="mb-2">${this.t('delete.permission-message', { name: permissionName })}</p>
+          <p class="mb-3">${this.t('delete.confirmation-prompt')}</p>
         </div>
       `,
       input: 'text',
-      inputLabel: 'Nombre del permiso',
+      inputLabel: this.t('delete.permission-input-label'),
       inputPlaceholder: permissionName,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Eliminar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonText: this.t('delete.confirm'),
+      cancelButtonText: this.t('delete.cancel'),
       confirmButtonColor: '#dc2626',
       reverseButtons: true,
       focusCancel: true,
@@ -234,9 +239,7 @@ export class RolesPermissionsComponent {
         const normalizedValue = this.normalizeIdentifier(value ?? '');
 
         if (normalizedValue !== permissionName) {
-          Swal.showValidationMessage(
-            'Debes escribir exactamente el nombre del permiso para eliminarlo'
-          );
+          Swal.showValidationMessage(this.t('delete.must-match'));
           return false;
         }
 
@@ -253,13 +256,13 @@ export class RolesPermissionsComponent {
         this.roleForm.controls.permissionIds.setValue(
           this.selectedPermissionIds.filter((id) => id !== permissionId)
         );
-        this.toastr.success('Permiso eliminado correctamente');
+        this.toastr.success(this.t('messages.permission-delete-success'));
         this.loadData(this.selectedRoleId);
       },
       error: (error) => {
         this.handleError(
           error,
-          `No fue posible eliminar el permiso ${permissionName}`
+          this.t('messages.permission-delete-error', { name: permissionName })
         );
       },
     });
@@ -268,9 +271,7 @@ export class RolesPermissionsComponent {
   saveRole(): void {
     if (this.roleForm.invalid) {
       this.roleForm.markAllAsTouched();
-      this.toastr.info(
-        'Usa un nombre valido: mayusculas, numeros o guion bajo, maximo 50 caracteres'
-      );
+      this.toastr.info(this.t('messages.name-invalid'));
       return;
     }
 
@@ -278,14 +279,12 @@ export class RolesPermissionsComponent {
     const selectedPermissionIds = this.selectedPermissionIds;
 
     if (!this.validNamePattern.test(roleName)) {
-      this.toastr.info(
-        'El nombre del rol solo puede tener letras, numeros y guion bajo, maximo 50 caracteres'
-      );
+      this.toastr.info(this.t('messages.name-pattern'));
       return;
     }
 
     if (!selectedPermissionIds.length && !this.draftPermissions.length) {
-      this.toastr.info('Debes asignar al menos un permiso al rol');
+      this.toastr.info(this.t('messages.must-have-permission'));
       return;
     }
 
@@ -324,14 +323,14 @@ export class RolesPermissionsComponent {
         this.saving = false;
         this.toastr.success(
           this.isEditMode
-            ? 'Rol actualizado correctamente'
-            : 'Rol creado correctamente'
+            ? this.t('messages.update-success')
+            : this.t('messages.create-success')
         );
         this.loadData(role.id);
       },
       error: (error) => {
         this.saving = false;
-        this.handleError(error, 'No fue posible guardar el rol');
+        this.handleError(error, this.t('messages.save-error'));
       },
     });
   }
@@ -344,20 +343,20 @@ export class RolesPermissionsComponent {
     }
 
     const result = await Swal.fire({
-      title: 'Eliminar rol',
+      title: this.t('delete.role-title'),
       html: `
         <div class="text-left">
-          <p class="mb-2">Esta accion eliminara el rol <strong>${role.name}</strong>.</p>
-          <p class="mb-3">Para confirmar, escribe exactamente el nombre del rol.</p>
+          <p class="mb-2">${this.t('delete.role-message', { name: role.name })}</p>
+          <p class="mb-3">${this.t('delete.confirmation-prompt')}</p>
         </div>
       `,
       input: 'text',
-      inputLabel: 'Nombre del rol',
+      inputLabel: this.t('delete.role-input-label'),
       inputPlaceholder: role.name,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Eliminar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonText: this.t('delete.confirm'),
+      cancelButtonText: this.t('delete.cancel'),
       confirmButtonColor: '#dc2626',
       reverseButtons: true,
       focusCancel: true,
@@ -365,9 +364,7 @@ export class RolesPermissionsComponent {
         const normalizedValue = this.normalizeIdentifier(value ?? '');
 
         if (normalizedValue !== role.name) {
-          Swal.showValidationMessage(
-            'Debes escribir exactamente el nombre del rol para eliminarlo'
-          );
+          Swal.showValidationMessage(this.t('delete.must-match'));
           return false;
         }
 
@@ -381,7 +378,7 @@ export class RolesPermissionsComponent {
 
     this.roleService.deleteRole(roleId).subscribe({
       next: () => {
-        this.toastr.success('Rol eliminado correctamente');
+        this.toastr.success(this.t('messages.delete-success'));
 
         if (this.selectedRoleId === roleId) {
           this.startNewRole();
@@ -390,7 +387,7 @@ export class RolesPermissionsComponent {
         this.loadData();
       },
       error: (error) => {
-        this.handleError(error, 'No fue posible eliminar el rol');
+        this.handleError(error, this.t('messages.delete-error'));
       },
     });
   }
