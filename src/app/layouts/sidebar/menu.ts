@@ -32,7 +32,14 @@ export const MENU: MenuItem[] = [
     parentId: 1.5,
   },
   {
-    id: 1.6,
+    id: 2.48,
+    label: 'Roles',
+    icon: 'key',
+    link: '/apps-users-role',
+    parentId: 1.5,
+  },
+  {
+    id: 1.7,
     label: 'CATIA',
     isTitle: true,
   },
@@ -41,7 +48,7 @@ export const MENU: MenuItem[] = [
     label: 'chat',
     icon: 'messages-square',
     link: '/apps-chat',
-    parentId: 1.6,
+    parentId: 1.7,
   },
   {
     id: 2,

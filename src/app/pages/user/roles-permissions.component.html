@@ -1,0 +1,346 @@
+<app-page-title
+  title="Roles y permisos"
+  pagetitle="Administración"
+></app-page-title>
+
+<section class="space-y-6">
+  <div
+    class="overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50 via-white to-cyan-50"
+  >
+    <div class="grid gap-4 px-6 py-6 lg:grid-cols-[1.4fr_0.9fr]">
+      <div>
+        <span
+          class="mb-3 inline-flex items-center rounded-full border border-cyan-200 bg-cyan-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700"
+        >
+          Administracion
+        </span>
+        <h2 class="text-2xl font-semibold text-slate-800">
+          Gestiona roles con un flujo amigable
+        </h2>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+          Primero se crea el rol. Luego, si agregaste permisos nuevos, se crean y
+          finalmente se asignan al rol automaticamente para respetar la logica del
+          backend.
+        </p>
+      </div>
+
+      <div class="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+        <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Roles</p>
+          <p class="mt-2 text-3xl font-semibold text-slate-800">
+            {{ roles.length }}
+          </p>
+        </article>
+        <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Catalogo</p>
+          <p class="mt-2 text-3xl font-semibold text-slate-800">
+            {{ permissionsCatalog.length }}
+          </p>
+        </article>
+        <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Seleccion</p>
+          <p class="mt-2 text-3xl font-semibold text-slate-800">
+            {{ selectedPermissionNames.length }}
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)_320px]">
+    <aside class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <div>
+          <h3 class="text-base font-semibold text-slate-800">Todos los roles</h3>
+          <p class="text-sm text-slate-500">Selecciona uno para editarlo.</p>
+        </div>
+        <button
+          type="button"
+          (click)="startNewRole()"
+          class="inline-flex items-center gap-2 rounded-xl border border-cyan-200 bg-cyan-50 px-3 py-2 text-sm font-medium text-cyan-700 transition hover:bg-cyan-100"
+        >
+          <lucide-angular name="plus" class="size-4"></lucide-angular>
+          Nuevo
+        </button>
+      </div>
+
+      <div class="max-h-[680px] space-y-3 overflow-auto p-4">
+        @if (loading) {
+        <div class="rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
+          Cargando roles...
+        </div>
+        } @else if (!roles.length) {
+        <div class="rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
+          Todavia no existen roles registrados.
+        </div>
+        } @else {
+        @for (role of roles; track role.id) {
+        <button
+          type="button"
+          (click)="selectRole(role.id)"
+          class="block w-full rounded-2xl border p-4 text-left transition"
+          [ngClass]="
+            selectedRoleId === role.id
+              ? 'border-cyan-400 bg-cyan-50 shadow-sm'
+              : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+          "
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold uppercase tracking-wide text-slate-800">
+                {{ role.name }}
+              </p>
+              <p class="mt-1 text-xs text-slate-500">
+                {{ role.permissionList?.length || 0 }} permisos asignados
+              </p>
+            </div>
+            <span
+              class="rounded-full px-2 py-1 text-[11px] font-medium"
+              [ngClass]="
+                selectedRoleId === role.id
+                  ? 'bg-cyan-200 text-cyan-800'
+                  : 'bg-slate-100 text-slate-500'
+              "
+            >
+              #{{ role.id }}
+            </span>
+          </div>
+        </button>
+        }
+        }
+      </div>
+    </aside>
+
+    <main class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-100 px-6 py-5">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h3 class="text-lg font-semibold text-slate-800">
+              {{ isEditMode ? 'Editar rol' : 'Crear nuevo rol' }}
+            </h3>
+            <p class="text-sm text-slate-500">
+              Define el nombre, selecciona permisos existentes y agrega permisos nuevos si los necesitas.
+            </p>
+          </div>
+
+          @if (isEditMode && selectedRoleId !== null) {
+          <button
+            type="button"
+            (click)="deleteRole(selectedRoleId)"
+            class="inline-flex items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-100"
+          >
+            <lucide-angular name="trash-2" class="size-4"></lucide-angular>
+            Eliminar rol
+          </button>
+          }
+        </div>
+      </div>
+
+      <form [formGroup]="roleForm" class="space-y-6 p-6" (ngSubmit)="saveRole()">
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_220px]">
+          <div class="space-y-2">
+            <label for="roleName" class="text-sm font-medium text-slate-700">
+              Nombre del rol
+            </label>
+            <input
+              id="roleName"
+              type="text"
+              formControlName="name"
+              placeholder="Ej: ROLE_SUPPORT"
+              maxlength="50"
+              class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
+            />
+            @if (roleForm.controls.name.invalid && roleForm.controls.name.touched) {
+            <p class="text-sm text-rose-600">
+              Solo mayusculas, numeros o "_" y maximo 50 caracteres.
+            </p>
+            }
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Modo</p>
+            <p class="mt-2 text-lg font-semibold text-slate-800">
+              {{ isEditMode ? 'Edicion' : 'Creacion' }}
+            </p>
+            <p class="mt-2 text-sm text-slate-500">
+              {{ isEditMode ? 'Actualiza un rol existente.' : 'Crea el rol y luego asigna permisos.' }}
+            </p>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-5">
+          <div class="flex flex-col gap-4 lg:flex-row lg:items-end">
+            <div class="flex-1 space-y-2">
+              <label for="newPermission" class="text-sm font-medium text-slate-700">
+                Crear permiso nuevo
+              </label>
+              <input
+                id="newPermission"
+                type="text"
+                formControlName="newPermissionName"
+                placeholder="Ej: EXPORT_REPORTS"
+                maxlength="50"
+                class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-cyan-500 focus:ring-4 focus:ring-cyan-100"
+                (keyup.enter)="addDraftPermission(); $event.preventDefault()"
+              />
+            </div>
+            <button
+              type="button"
+              (click)="addDraftPermission()"
+              class="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-cyan-700"
+            >
+              <lucide-angular name="badge-plus" class="size-4"></lucide-angular>
+              Agregar permiso
+            </button>
+          </div>
+
+          @if (draftPermissions.length) {
+          <div class="mt-4 flex flex-wrap gap-2">
+            @for (draftPermission of draftPermissions; track draftPermission) {
+            <span
+              class="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-700"
+            >
+              Nuevo: {{ draftPermission }}
+              <button
+                type="button"
+                (click)="removeDraftPermission(draftPermission)"
+                class="text-amber-700/70 transition hover:text-amber-900"
+              >
+                <lucide-angular name="x" class="size-4"></lucide-angular>
+              </button>
+            </span>
+            }
+          </div>
+          }
+        </div>
+
+        <div>
+          <div class="mb-4">
+            <h4 class="text-base font-semibold text-slate-800">Permisos disponibles</h4>
+            <p class="text-sm text-slate-500">
+              Marca los permisos que quieres asignarle a este rol.
+            </p>
+          </div>
+
+          <div class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            @for (permission of permissionsCatalog; track permission.id) {
+            <button
+              type="button"
+              (click)="togglePermission(permission.id)"
+              class="flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition"
+              [ngClass]="
+                selectedPermissionIds.includes(permission.id)
+                  ? 'border-cyan-400 bg-cyan-50 text-cyan-900 shadow-sm'
+                  : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+              "
+            >
+              <span class="min-w-0 flex-1 font-medium">{{ permission.name }}</span>
+              <span class="flex items-center gap-2">
+                <button
+                  type="button"
+                  (click)="deletePermission(permission.id, permission.name); $event.stopPropagation()"
+                  class="inline-flex size-8 items-center justify-center rounded-full bg-rose-100 text-rose-600 transition hover:bg-rose-200"
+                  title="Eliminar permiso"
+                >
+                  <lucide-angular name="trash-2" class="size-4"></lucide-angular>
+                </button>
+                <span
+                  class="inline-flex size-6 items-center justify-center rounded-full"
+                  [ngClass]="
+                    selectedPermissionIds.includes(permission.id)
+                      ? 'bg-cyan-600 text-white'
+                      : 'bg-slate-100 text-slate-400'
+                  "
+                >
+                  <lucide-angular
+                    [name]="selectedPermissionIds.includes(permission.id) ? 'check' : 'plus'"
+                    class="size-4"
+                  ></lucide-angular>
+                </span>
+              </span>
+            </button>
+            }
+          </div>
+
+          @if (!permissionsCatalog.length && !loading) {
+          <div class="rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
+            No hay permisos en el catalogo todavia. Puedes empezar creando uno nuevo.
+          </div>
+          }
+        </div>
+
+        <div class="flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            (click)="loadData(selectedRoleId)"
+            class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 px-5 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+          >
+            <lucide-angular name="refresh-cw" class="size-4"></lucide-angular>
+            Recargar
+          </button>
+          <button
+            type="submit"
+            [disabled]="saving"
+            class="inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            <lucide-angular name="shield-check" class="size-4"></lucide-angular>
+            {{ saving ? 'Guardando...' : isEditMode ? 'Actualizar rol' : 'Crear rol' }}
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <aside class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div class="border-b border-slate-100 px-5 py-4">
+        <h3 class="text-base font-semibold text-slate-800">Resumen</h3>
+        <p class="text-sm text-slate-500">Vista rapida de lo que se guardara.</p>
+      </div>
+
+      <div class="space-y-6 p-5">
+        <div>
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Rol</p>
+          <p class="mt-2 break-words text-xl font-semibold text-slate-800">
+            {{ roleForm.controls.name.value || 'Sin nombre todavia' }}
+          </p>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between">
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Permisos</p>
+            <span class="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600">
+              {{ selectedPermissionNames.length }}
+            </span>
+          </div>
+
+          @if (selectedPermissionNames.length) {
+          <div class="mt-3 flex flex-wrap gap-2">
+            @for (permissionName of selectedPermissionNames; track permissionName) {
+            <span
+              class="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-cyan-700"
+            >
+              {{ permissionName }}
+            </span>
+            }
+          </div>
+          } @else {
+          <div class="mt-3 rounded-2xl border border-dashed border-slate-200 p-4 text-sm text-slate-500">
+            Aun no has seleccionado permisos para este rol.
+          </div>
+          }
+        </div>
+
+        @if (selectedRole) {
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Rol activo</p>
+          <p class="mt-2 text-sm font-medium text-slate-700">
+            ID: {{ selectedRole.id }}
+          </p>
+          <p class="mt-1 text-sm text-slate-500">
+            Permisos actuales: {{ selectedRole.permissionList?.length || 0 }}
+          </p>
+        </div>
+        }
+      </div>
+    </aside>
+  </div>
+</section>

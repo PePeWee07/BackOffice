@@ -30,6 +30,7 @@ import { ListViewComponent } from './invoice/list-view/list-view.component';
 import { AddNewComponent } from './invoice/add-new/add-new.component';
 import { InvoiceOverviewComponent } from './invoice/invoice-overview/invoice-overview.component';
 import { UsersGridComponent } from './user/users-grid.component';
+import { RolesPermissionsComponent } from './user/roles-permissions.component';
 import { CalendarComponent } from './calendar/calendar/calendar.component';
 import { AccountComponent } from './extrapages/account/account.component';
 
@@ -114,6 +115,14 @@ export const PAGE_ROUTES: Route[] = [
   {
     path: 'apps-users-grid',
     component: UsersGridComponent,
+    canActivate: [AuthGuard],
+    data: {
+      roles: ['ROLE_ADMIN'],
+    },
+  },
+  {
+    path: 'apps-users-role',
+    component: RolesPermissionsComponent,
     canActivate: [AuthGuard],
     data: {
       roles: ['ROLE_ADMIN'],
