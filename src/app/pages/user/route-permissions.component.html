@@ -5,19 +5,19 @@
 
 <section class="space-y-6">
   <div
-    class="overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50 via-white to-cyan-50"
+    class="overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50 via-white to-cyan-50 dark:border-zink-500 dark:from-zink-700 dark:via-zink-700 dark:to-cyan-900/30"
   >
     <div class="grid gap-4 px-6 py-6 lg:grid-cols-[1.4fr_0.9fr]">
       <div>
         <span
-          class="mb-3 inline-flex items-center rounded-full border border-cyan-200 bg-cyan-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700"
+          class="mb-3 inline-flex items-center rounded-full border border-cyan-200 bg-cyan-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700 dark:border-cyan-500/40 dark:bg-cyan-500/20 dark:text-cyan-300"
         >
           Administracion
         </span>
-        <h2 class="text-2xl font-semibold text-slate-800">
+        <h2 class="text-2xl font-semibold text-slate-800 dark:text-zink-100">
           Controla quien accede a cada ruta del back-office
         </h2>
-        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-zink-300">
           Asigna roles a cada ruta. Si una ruta no tiene roles asignados, queda
           accesible para cualquier usuario autenticado. Usa "Sincronizar
           catalogo" cuando agregues rutas nuevas en el codigo del front.
@@ -25,15 +25,15 @@
       </div>
 
       <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-        <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200">
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Rutas</p>
-          <p class="mt-2 text-3xl font-semibold text-slate-800">
+        <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200 dark:bg-zink-600/80 dark:ring-zink-500">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-zink-300">Rutas</p>
+          <p class="mt-2 text-3xl font-semibold text-slate-800 dark:text-zink-100">
             {{ rows.length }}
           </p>
         </article>
-        <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200">
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Roles</p>
-          <p class="mt-2 text-3xl font-semibold text-slate-800">
+        <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200 dark:bg-zink-600/80 dark:ring-zink-500">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-zink-300">Roles</p>
+          <p class="mt-2 text-3xl font-semibold text-slate-800 dark:text-zink-100">
             {{ roles.length }}
           </p>
         </article>
@@ -41,17 +41,17 @@
     </div>
   </div>
 
-  <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <div class="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-zink-500 dark:bg-zink-700">
     <div
-      class="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+      class="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 dark:border-zink-500 sm:flex-row sm:items-center sm:justify-between"
     >
       <div class="flex flex-1 items-center gap-3">
-        <lucide-angular name="search" class="size-4 text-slate-400"></lucide-angular>
+        <lucide-angular name="search" class="size-4 text-slate-400 dark:text-zink-300"></lucide-angular>
         <input
           type="text"
           [(ngModel)]="filter"
           placeholder="Buscar por path..."
-          class="w-full max-w-xs rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100"
+          class="w-full max-w-xs rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:focus:border-cyan-500 dark:focus:ring-cyan-500/20"
         />
       </div>
 
@@ -61,7 +61,7 @@
           type="button"
           (click)="resetAllDirty()"
           [disabled]="savingAll"
-          class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-60"
+          class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-60 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500"
         >
           <lucide-angular name="rotate-ccw" class="size-4"></lucide-angular>
           Descartar ({{ dirtyRows.length }})
@@ -70,7 +70,7 @@
           type="button"
           (click)="saveAllDirty()"
           [disabled]="savingAll"
-          class="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-cyan-700 disabled:opacity-60"
+          class="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-cyan-700 disabled:opacity-60 dark:bg-cyan-500 dark:hover:bg-cyan-400"
         >
           <lucide-angular name="save" class="size-4"></lucide-angular>
           {{ savingAll ? 'Guardando...' : 'Guardar pendientes (' + dirtyRows.length + ')' }}
@@ -80,7 +80,7 @@
           type="button"
           (click)="syncFromCatalog()"
           [disabled]="syncing"
-          class="inline-flex items-center gap-2 rounded-xl border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-700 transition hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-60"
+          class="inline-flex items-center gap-2 rounded-xl border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-medium text-cyan-700 transition hover:bg-cyan-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-cyan-500/40 dark:bg-cyan-500/20 dark:text-cyan-300 dark:hover:bg-cyan-500/30"
         >
           <lucide-angular name="refresh-cw" class="size-4"></lucide-angular>
           {{ syncing ? 'Sincronizando...' : 'Sincronizar catalogo' }}
@@ -90,9 +90,9 @@
 
     @if (selectedRowIds.size > 0) {
     <div
-      class="flex flex-col gap-3 border-b border-cyan-100 bg-cyan-50/60 px-5 py-3 sm:flex-row sm:items-center sm:justify-between"
+      class="flex flex-col gap-3 border-b border-cyan-100 bg-cyan-50/60 px-5 py-3 dark:border-cyan-500/30 dark:bg-cyan-500/10 sm:flex-row sm:items-center sm:justify-between"
     >
-      <div class="flex items-center gap-2 text-sm font-medium text-cyan-800">
+      <div class="flex items-center gap-2 text-sm font-medium text-cyan-800 dark:text-cyan-300">
         <lucide-angular name="check-square" class="size-4"></lucide-angular>
         {{ selectedRowIds.size }} ruta(s) seleccionada(s)
       </div>
@@ -100,7 +100,7 @@
       <div class="flex flex-wrap items-center gap-2">
         <select
           [(ngModel)]="bulkRoleId"
-          class="rounded-xl border border-cyan-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100"
+          class="rounded-xl border border-cyan-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100 dark:border-cyan-500/40 dark:bg-zink-600 dark:text-zink-100 dark:focus:border-cyan-500 dark:focus:ring-cyan-500/20"
         >
           @for (role of roles; track role.id) {
           <option [ngValue]="role.id">{{ role.name }}</option>
@@ -109,7 +109,7 @@
         <button
           type="button"
           (click)="addRoleToSelected()"
-          class="inline-flex items-center gap-1 rounded-xl bg-cyan-600 px-3 py-2 text-xs font-medium text-white hover:bg-cyan-700"
+          class="inline-flex items-center gap-1 rounded-xl bg-cyan-600 px-3 py-2 text-xs font-medium text-white hover:bg-cyan-700 dark:bg-cyan-500 dark:hover:bg-cyan-400"
         >
           <lucide-angular name="plus" class="size-3"></lucide-angular>
           Agregar a seleccionadas
@@ -117,7 +117,7 @@
         <button
           type="button"
           (click)="removeRoleFromSelected()"
-          class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50"
+          class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500"
         >
           <lucide-angular name="minus" class="size-3"></lucide-angular>
           Quitar de seleccionadas
@@ -125,7 +125,7 @@
         <button
           type="button"
           (click)="clearSelection()"
-          class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-50"
+          class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-500 hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-300 dark:hover:bg-zink-500"
         >
           Limpiar
         </button>
@@ -134,21 +134,21 @@
     }
 
     @if (loading) {
-    <div class="p-6 text-sm text-slate-500">Cargando rutas...</div>
+    <div class="p-6 text-sm text-slate-500 dark:text-zink-300">Cargando rutas...</div>
     } @else if (!rows.length) {
-    <div class="p-6 text-sm text-slate-500">
+    <div class="p-6 text-sm text-slate-500 dark:text-zink-300">
       No hay rutas registradas en BD. Presiona "Sincronizar catalogo" para
       registrarlas desde el front.
     </div>
     } @else {
-    <div class="grid grid-cols-[40px_260px_minmax(0,1fr)_220px] gap-4 border-b border-slate-100 bg-slate-50/60 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">
+    <div class="grid grid-cols-[40px_260px_minmax(0,1fr)_220px] gap-4 border-b border-slate-100 bg-slate-50/60 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:border-zink-500 dark:bg-zink-600/40 dark:text-zink-300">
       <div class="flex items-center">
         <input
           type="checkbox"
           [checked]="allFilteredSelected"
           [indeterminate]="someFilteredSelected"
           (change)="toggleSelectAllFiltered()"
-          class="size-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500"
+          class="size-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 dark:border-zink-500 dark:bg-zink-600 dark:focus:ring-cyan-500/30"
         />
       </div>
       <div>Ruta</div>
@@ -156,7 +156,7 @@
       <div class="text-right">Acciones</div>
     </div>
 
-    <div class="divide-y divide-slate-100">
+    <div class="divide-y divide-slate-100 dark:divide-zink-500">
       @for (row of filteredRows; track row.id) {
       <article class="grid grid-cols-[40px_260px_minmax(0,1fr)_220px] gap-4 px-5 py-4">
         <div class="flex items-center">
@@ -164,19 +164,19 @@
             type="checkbox"
             [checked]="selectedRowIds.has(row.id)"
             (change)="toggleRowSelection(row.id)"
-            class="size-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500"
+            class="size-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500 dark:border-zink-500 dark:bg-zink-600 dark:focus:ring-cyan-500/30"
           />
         </div>
 
         <div>
-          <p class="font-mono text-sm font-semibold text-slate-800">
+          <p class="font-mono text-sm font-semibold text-slate-800 dark:text-zink-100">
             {{ row.path || '/' }}
           </p>
           @if (row.description) {
-          <p class="mt-1 text-xs text-slate-500">{{ row.description }}</p>
+          <p class="mt-1 text-xs text-slate-500 dark:text-zink-300">{{ row.description }}</p>
           }
           @if (!row.selectedRoleIds.size) {
-          <p class="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700">
+          <p class="mt-2 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:bg-amber-500/20 dark:text-amber-300">
             <lucide-angular name="unlock" class="size-3"></lucide-angular>
             Sin restriccion de rol
           </p>
@@ -191,8 +191,8 @@
             class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition"
             [ngClass]="
               row.selectedRoleIds.has(role.id)
-                ? 'border-cyan-400 bg-cyan-50 text-cyan-700'
-                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'
+                ? 'border-cyan-400 bg-cyan-50 text-cyan-700 dark:border-cyan-500/60 dark:bg-cyan-500/20 dark:text-cyan-300'
+                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-300 dark:hover:border-zink-400 dark:hover:bg-zink-500'
             "
           >
             @if (row.selectedRoleIds.has(role.id)) {
@@ -209,7 +209,7 @@
             type="button"
             (click)="resetRow(row)"
             [disabled]="row.saving"
-            class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-60"
+            class="inline-flex items-center gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-60 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500"
           >
             <lucide-angular name="rotate-ccw" class="size-3"></lucide-angular>
             Revertir
@@ -218,13 +218,13 @@
             type="button"
             (click)="saveRow(row)"
             [disabled]="row.saving"
-            class="inline-flex items-center gap-1 rounded-xl bg-cyan-600 px-3 py-2 text-xs font-medium text-white hover:bg-cyan-700 disabled:opacity-60"
+            class="inline-flex items-center gap-1 rounded-xl bg-cyan-600 px-3 py-2 text-xs font-medium text-white hover:bg-cyan-700 disabled:opacity-60 dark:bg-cyan-500 dark:hover:bg-cyan-400"
           >
             <lucide-angular name="save" class="size-3"></lucide-angular>
             {{ row.saving ? 'Guardando...' : 'Guardar' }}
           </button>
           } @else {
-          <span class="text-xs text-slate-400">Sin cambios</span>
+          <span class="text-xs text-slate-400 dark:text-zink-400">Sin cambios</span>
           }
         </div>
       </article>
