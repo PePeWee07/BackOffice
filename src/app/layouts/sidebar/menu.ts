@@ -46,6 +46,13 @@ export const MENU: MenuItem[] = [
     parentId: 1.5,
   },
   {
+    id: 2.50,
+    label: 'Auditorías',
+    icon: 'history',
+    link: '/apps-audit-logs',
+    parentId: 1.5,
+  },
+  {
     id: 1.7,
     label: 'CATIA',
     isTitle: true,

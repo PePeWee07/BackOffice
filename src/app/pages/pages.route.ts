@@ -32,6 +32,7 @@ import { InvoiceOverviewComponent } from './invoice/invoice-overview/invoice-ove
 import { UsersGridComponent } from './user/users-grid.component';
 import { RolesPermissionsComponent } from './user/roles-permissions.component';
 import { RoutePermissionsComponent } from './user/route-permissions.component';
+import { AuditLogsComponent } from './admin/audit-logs.component';
 import { CalendarComponent } from './calendar/calendar/calendar.component';
 import { AccountComponent } from './extrapages/account/account.component';
 
@@ -80,6 +81,7 @@ export const PAGE_ROUTES: Route[] = [
   { path: 'apps-users-grid', component: UsersGridComponent },
   { path: 'apps-users-role', component: RolesPermissionsComponent },
   { path: 'apps-route-permissions', component: RoutePermissionsComponent },
+  { path: 'apps-audit-logs', component: AuditLogsComponent },
 
   // extrapages
   { path: 'pages-account', component: AccountComponent },
