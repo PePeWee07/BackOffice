@@ -32,7 +32,9 @@ export const AuthGuard: CanActivateFn = (route): Observable<boolean> | boolean =
     );
     const hasRole = normalized.some((role) => userRoles.includes(role));
     if (!hasRole) {
-      router.navigate(['/account-unauthorized']);
+      router.navigate(['/account-unauthorized'], {
+        queryParams: { from: path },
+      });
       return false;
     }
     return true;
