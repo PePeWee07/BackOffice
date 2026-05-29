@@ -12,6 +12,7 @@ import { changeMode, changesidebarcolor, changesidebarsize, changetopbarcolor } 
 import { SimplebarAngularModule } from 'simplebar-angular';
 import { notification, cart } from '../../data';
 import { CommonModule, DOCUMENT } from '@angular/common';
+import { LogoutService } from '../../core/services/auth/logout.service';
 
 
 @Component({
@@ -39,6 +40,8 @@ import { CommonModule, DOCUMENT } from '@angular/common';
   ],
 })
 export class TopbarComponent {
+  readonly logoutService = inject(LogoutService);
+
   cookieValue: any;
   flagvalue: any;
 

@@ -176,6 +176,15 @@
       "message": "Are you sure you want to delete this record? This action cannot be undone.",
       "confirm": "Yes, delete it!",
       "cancel": "No, cancel it!"
+    },
+    "modal-logout": {
+      "title": "Sign out?",
+      "message": "Are you sure you want to sign out?",
+      "confirm": "Yes, sign out",
+      "cancel": "Cancel",
+      "loading": "Signing out...",
+      "success": "Session ended successfully",
+      "error": "Could not sign out"
     }
   },
   "pagesComponent": {
@@ -207,6 +216,7 @@
         "credentialsNonExpired": "Unexpired credentials",
         "accountExpiryDate": "Account expiration date",
         "select-roles": "Select the roles",
+        "roleIds": "Roles",
         "modal": {
           "id": "User ID",
           "name": "Name",
@@ -248,6 +258,57 @@
       "edit-user": {
         "modal-title": "Edit User",
         "btn-edit-user": "Edit"
+      }
+    },
+    "profile": {
+      "title": "My profile",
+      "pagetitle": "Account",
+      "hero": {
+        "badge": "My account",
+        "heading": "Your personal information",
+        "description": "Keep your data up to date. Only you can see and edit this information.",
+        "member-since": "Member since {{date}}"
+      },
+      "form": {
+        "section-personal": "Personal data",
+        "section-contact": "Contact",
+        "section-security": "Security",
+        "name": "First name",
+        "last-name": "Last name",
+        "username": "Username",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address",
+        "dni": "ID / DNI",
+        "password": "Password",
+        "password-placeholder": "Leave blank to keep current",
+        "password-toggle": "Change password",
+        "password-helper": "At least 8 characters, mix letters and numbers.",
+        "save": "Save changes",
+        "saving": "Saving...",
+        "discard": "Discard",
+        "no-changes": "No pending changes"
+      },
+      "account": {
+        "title": "Account status",
+        "roles": "Assigned roles",
+        "no-roles": "You have no roles assigned",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "non-expired": "Not expired",
+        "expired": "Expired",
+        "non-locked": "Not locked",
+        "locked": "Locked",
+        "credentials-non-expired": "Credentials valid",
+        "credentials-expired": "Credentials expired",
+        "expiry-date": "Expires on {{date}}",
+        "no-expiry": "No expiration date"
+      },
+      "messages": {
+        "load-error": "Could not load your profile",
+        "save-success": "Profile updated successfully",
+        "save-error": "Could not save changes",
+        "email-invalid": "Enter a valid email address"
       }
     },
     "rolesPermissions": {

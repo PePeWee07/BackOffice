@@ -161,13 +161,13 @@
                             </a>
                             <ul>
                                 <li>
-                                    <a class="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500" routerLink="/pages-account"><lucide-angular name="user" [class]="'inline-block size-4 ltr:mr-2 rtl:ml-2'"></lucide-angular> {{ 'pagesComponent.layouts.topbar.dropdown.profile' | translate }}</a>
+                                    <a class="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500" routerLink="/profile"><lucide-angular name="user" [class]="'inline-block size-4 ltr:mr-2 rtl:ml-2'"></lucide-angular> {{ 'pagesComponent.layouts.topbar.dropdown.profile' | translate }}</a>
                                 </li>
                                 <li>
                                     <a class="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500" routerLink="/apps-chat"><lucide-angular name="messages-square" [class]="'inline-block size-4 ltr:mr-2 rtl:ml-2'"></lucide-angular> {{ 'pagesComponent.layouts.topbar.dropdown.chat' | translate }}</a>
                                 </li>
                                 <li class="pt-2 mt-2 border-t border-slate-200 dark:border-zink-500">
-                                    <a class="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500" routerLink="/account-logout"><lucide-angular name="log-out" [class]="'inline-block size-4 ltr:mr-2 rtl:ml-2'"></lucide-angular> {{ 'pagesComponent.layouts.topbar.dropdown.logout' | translate }}</a>
+                                    <a class="block ltr:pr-4 rtl:pl-4 py-1.5 text-base font-medium transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:text-custom-500 focus:text-custom-500 dark:text-zink-200 dark:hover:text-custom-500 dark:focus:text-custom-500 cursor-pointer" (click)="logoutService.confirmAndLogout()"><lucide-angular name="log-out" [class]="'inline-block size-4 ltr:mr-2 rtl:ml-2'"></lucide-angular> {{ 'pagesComponent.layouts.topbar.dropdown.logout' | translate }}</a>
                                 </li>
                             </ul>
                         </div>

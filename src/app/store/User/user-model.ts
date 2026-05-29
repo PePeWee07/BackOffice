@@ -151,5 +151,6 @@ export interface UserQueryParams {
   accountNonLocked: Boolean;
   credentialsNonExpired: Boolean;
   accountExpiryDate: string;
+  roleIds?: number[];
 }
 

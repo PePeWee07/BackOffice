@@ -33,6 +33,7 @@ import { UsersGridComponent } from './user/user-table/users-grid.component';
 import { RolesPermissionsComponent } from './user/role-permissions/roles-permissions.component';
 import { RoutePermissionsComponent } from './user/route-permissions/route-permissions.component';
 import { AuditLogsComponent } from './admin/audit-logs.component';
+import { ProfileComponent } from './profile/profile.component';
 import { CalendarComponent } from './calendar/calendar/calendar.component';
 
 import { MonthGridComponent } from './calendar/month-grid/month-grid.component';
@@ -78,4 +79,5 @@ export const PAGE_ROUTES: Route[] = [
   { path: 'apps-users-role', component: RolesPermissionsComponent },
   { path: 'apps-route-permissions', component: RoutePermissionsComponent },
   { path: 'apps-audit-logs', component: AuditLogsComponent },
+  { path: 'profile', component: ProfileComponent },
 ];

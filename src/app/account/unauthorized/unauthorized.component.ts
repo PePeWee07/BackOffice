@@ -10,6 +10,7 @@ import {
 
 import { TokenStorageService } from '../../core/services/auth/token-storage.service';
 import { RoutePermissionService } from '../../core/services/administration/route-permission.service';
+import { LogoutService } from '../../core/services/auth/logout.service';
 import { JwtToken } from '../../store/Authentication/jwt.model';
 
 @Component({
@@ -30,6 +31,7 @@ export class UnauthorizedComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly tokenStorage = inject(TokenStorageService);
   private readonly routePermissionService = inject(RoutePermissionService);
+  private readonly logoutService = inject(LogoutService);
 
   readonly attemptedPath: string = this.route.snapshot.queryParamMap.get('from') ?? '';
 
@@ -44,7 +46,7 @@ export class UnauthorizedComponent {
   }
 
   logout(): void {
-    this.router.navigate(['/account-logout']);
+    this.logoutService.confirmAndLogout();
   }
 
   private extractUserRoles(): string[] {

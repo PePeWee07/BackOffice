@@ -1,0 +1,323 @@
+<app-page-title
+  [title]="'pagesComponent.profile.title' | translate"
+  [pagetitle]="'pagesComponent.profile.pagetitle' | translate"
+></app-page-title>
+
+<section class="space-y-6">
+  <div
+    class="overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50 via-white to-cyan-50 dark:border-zink-500 dark:from-zink-700 dark:via-zink-700 dark:to-cyan-900/30"
+  >
+    <div class="grid gap-4 px-6 py-6 lg:grid-cols-[auto_1fr]">
+      <div class="flex items-center gap-4">
+        <div class="relative">
+          <img
+            src="assets/images/users/user-profile.png"
+            alt="avatar"
+            class="size-20 rounded-full ring-4 ring-white dark:ring-zink-600"
+          />
+          <span
+            class="absolute bottom-1 right-1 inline-block size-3.5 rounded-full ring-2 ring-white dark:ring-zink-600"
+            [ngClass]="profile?.enabled ? 'bg-emerald-500' : 'bg-rose-500'"
+          ></span>
+        </div>
+        <div>
+          <span
+            class="mb-2 inline-flex items-center rounded-full border border-cyan-200 bg-cyan-100 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-700 dark:border-cyan-500/40 dark:bg-cyan-500/20 dark:text-cyan-300"
+          >
+            {{ 'pagesComponent.profile.hero.badge' | translate }}
+          </span>
+          <h2 class="text-2xl font-semibold text-slate-800 dark:text-zink-100">
+            @if (profile) {
+              {{ profile.name }} {{ profile.lastName }}
+            } @else {
+              {{ 'pagesComponent.profile.hero.heading' | translate }}
+            }
+          </h2>
+          <p class="mt-1 text-sm text-slate-500 dark:text-zink-300">
+            {{ profile?.email || ('pagesComponent.profile.hero.description' | translate) }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+    <main class="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-zink-500 dark:bg-zink-700">
+      @if (loading) {
+      <div class="p-8 text-sm text-slate-500 dark:text-zink-300">
+        {{ 'pagesComponent.profile.messages.load-error' | translate }}...
+      </div>
+      } @else {
+      <form [formGroup]="profileForm" (ngSubmit)="save()" class="space-y-8 p-6">
+
+        <section class="space-y-4">
+          <header>
+            <h3 class="text-base font-semibold text-slate-800 dark:text-zink-100">
+              {{ 'pagesComponent.profile.form.section-personal' | translate }}
+            </h3>
+          </header>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-slate-700 dark:text-zink-200">
+                {{ 'pagesComponent.profile.form.name' | translate }}
+              </label>
+              <input
+                type="text"
+                formControlName="name"
+                maxlength="50"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:focus:border-cyan-500 dark:focus:ring-cyan-500/20"
+              />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-slate-700 dark:text-zink-200">
+                {{ 'pagesComponent.profile.form.last-name' | translate }}
+              </label>
+              <input
+                type="text"
+                formControlName="lastName"
+                maxlength="50"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:focus:border-cyan-500 dark:focus:ring-cyan-500/20"
+              />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-slate-700 dark:text-zink-200">
+                {{ 'pagesComponent.profile.form.username' | translate }}
+              </label>
+              <input
+                type="text"
+                [value]="profile?.username || ''"
+                disabled
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 dark:border-zink-500 dark:bg-zink-600/40 dark:text-zink-300"
+              />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-slate-700 dark:text-zink-200">
+                {{ 'pagesComponent.profile.form.dni' | translate }}
+              </label>
+              <input
+                type="text"
+                formControlName="dni"
+                maxlength="20"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:focus:border-cyan-500 dark:focus:ring-cyan-500/20"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4 border-t border-slate-100 pt-6 dark:border-zink-500">
+          <header>
+            <h3 class="text-base font-semibold text-slate-800 dark:text-zink-100">
+              {{ 'pagesComponent.profile.form.section-contact' | translate }}
+            </h3>
+          </header>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="space-y-1.5 sm:col-span-2">
+              <label class="text-sm font-medium text-slate-700 dark:text-zink-200">
+                {{ 'pagesComponent.profile.form.email' | translate }}
+              </label>
+              <input
+                type="email"
+                formControlName="email"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:focus:border-cyan-500 dark:focus:ring-cyan-500/20"
+              />
+              @if (profileForm.controls.email.invalid && profileForm.controls.email.touched) {
+              <p class="text-xs text-rose-600 dark:text-rose-400">
+                {{ 'pagesComponent.profile.messages.email-invalid' | translate }}
+              </p>
+              }
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-slate-700 dark:text-zink-200">
+                {{ 'pagesComponent.profile.form.phone' | translate }}
+              </label>
+              <input
+                type="tel"
+                formControlName="phoneNumber"
+                maxlength="20"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:focus:border-cyan-500 dark:focus:ring-cyan-500/20"
+              />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-sm font-medium text-slate-700 dark:text-zink-200">
+                {{ 'pagesComponent.profile.form.address' | translate }}
+              </label>
+              <input
+                type="text"
+                formControlName="address"
+                maxlength="120"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:focus:border-cyan-500 dark:focus:ring-cyan-500/20"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section class="space-y-4 border-t border-slate-100 pt-6 dark:border-zink-500">
+          <header class="flex items-center justify-between gap-3">
+            <h3 class="text-base font-semibold text-slate-800 dark:text-zink-100">
+              {{ 'pagesComponent.profile.form.section-security' | translate }}
+            </h3>
+            <button
+              type="button"
+              (click)="togglePassword()"
+              class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500"
+            >
+              <lucide-angular [name]="showPassword ? 'lock' : 'key-round'" class="size-3.5"></lucide-angular>
+              {{ 'pagesComponent.profile.form.password-toggle' | translate }}
+            </button>
+          </header>
+
+          @if (showPassword) {
+          <div class="space-y-1.5">
+            <label class="text-sm font-medium text-slate-700 dark:text-zink-200">
+              {{ 'pagesComponent.profile.form.password' | translate }}
+            </label>
+            <input
+              type="password"
+              formControlName="password"
+              [placeholder]="'pagesComponent.profile.form.password-placeholder' | translate"
+              autocomplete="new-password"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:focus:border-cyan-500 dark:focus:ring-cyan-500/20"
+            />
+            <p class="text-xs text-slate-500 dark:text-zink-300">
+              {{ 'pagesComponent.profile.form.password-helper' | translate }}
+            </p>
+          </div>
+          }
+        </section>
+
+        <div class="flex flex-col gap-3 border-t border-slate-100 pt-6 dark:border-zink-500 sm:flex-row sm:items-center sm:justify-end">
+          @if (isDirty) {
+          <button
+            type="button"
+            (click)="discardChanges()"
+            [disabled]="saving"
+            class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-60 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500"
+          >
+            <lucide-angular name="rotate-ccw" class="size-4"></lucide-angular>
+            {{ 'pagesComponent.profile.form.discard' | translate }}
+          </button>
+          } @else {
+          <span class="text-xs italic text-slate-400 dark:text-zink-400">
+            {{ 'pagesComponent.profile.form.no-changes' | translate }}
+          </span>
+          }
+          <button
+            type="submit"
+            [disabled]="saving || !isDirty"
+            class="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-cyan-500 dark:hover:bg-cyan-400"
+          >
+            <lucide-angular name="save" class="size-4"></lucide-angular>
+            @if (saving) {
+              {{ 'pagesComponent.profile.form.saving' | translate }}
+            } @else {
+              {{ 'pagesComponent.profile.form.save' | translate }}
+            }
+          </button>
+        </div>
+      </form>
+      }
+    </main>
+
+    <aside class="space-y-4">
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zink-500 dark:bg-zink-700">
+        <h3 class="text-sm font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+          {{ 'pagesComponent.profile.account.title' | translate }}
+        </h3>
+
+        <ul class="mt-4 space-y-2.5 text-sm">
+          <li class="flex items-center justify-between gap-3">
+            <span class="text-slate-600 dark:text-zink-200">{{ 'pagesComponent.profile.form.username' | translate }}</span>
+            <span class="font-medium text-slate-800 dark:text-zink-100 truncate">{{ profile?.username || '—' }}</span>
+          </li>
+          <li class="flex items-center justify-between gap-3">
+            <span class="text-slate-600 dark:text-zink-200">{{ 'pagesComponent.profile.account.enabled' | translate }}</span>
+            <span
+              class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
+              [ngClass]="profile?.enabled
+                ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300'
+                : 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-300'"
+            >
+              <span class="inline-block size-1.5 rounded-full" [ngClass]="profile?.enabled ? 'bg-emerald-500' : 'bg-rose-500'"></span>
+              {{ (profile?.enabled ? 'pagesComponent.profile.account.enabled' : 'pagesComponent.profile.account.disabled') | translate }}
+            </span>
+          </li>
+          <li class="flex items-center justify-between gap-3">
+            <span class="text-slate-600 dark:text-zink-200">Account</span>
+            <span
+              class="text-[11px] font-medium"
+              [ngClass]="profile?.accountNonExpired ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'"
+            >
+              {{ (profile?.accountNonExpired ? 'pagesComponent.profile.account.non-expired' : 'pagesComponent.profile.account.expired') | translate }}
+            </span>
+          </li>
+          <li class="flex items-center justify-between gap-3">
+            <span class="text-slate-600 dark:text-zink-200">Lock</span>
+            <span
+              class="text-[11px] font-medium"
+              [ngClass]="profile?.accountNonLocked ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'"
+            >
+              {{ (profile?.accountNonLocked ? 'pagesComponent.profile.account.non-locked' : 'pagesComponent.profile.account.locked') | translate }}
+            </span>
+          </li>
+          <li class="flex items-center justify-between gap-3">
+            <span class="text-slate-600 dark:text-zink-200">Credentials</span>
+            <span
+              class="text-[11px] font-medium"
+              [ngClass]="profile?.credentialsNonExpired ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'"
+            >
+              {{ (profile?.credentialsNonExpired ? 'pagesComponent.profile.account.credentials-non-expired' : 'pagesComponent.profile.account.credentials-expired') | translate }}
+            </span>
+          </li>
+          <li class="flex items-center justify-between gap-3 border-t border-slate-100 pt-2.5 dark:border-zink-500">
+            <span class="text-slate-600 dark:text-zink-200">Expiry</span>
+            <span class="text-[11px] text-slate-500 dark:text-zink-300">
+              @if (profile?.accountExpiryDate) {
+                {{ 'pagesComponent.profile.account.expiry-date' | translate: { date: formatDate(profile?.accountExpiryDate) } }}
+              } @else {
+                {{ 'pagesComponent.profile.account.no-expiry' | translate }}
+              }
+            </span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zink-500 dark:bg-zink-700">
+        <h3 class="text-sm font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+          {{ 'pagesComponent.profile.account.roles' | translate }}
+        </h3>
+
+        @if (profile?.roles?.length) {
+        <div class="mt-3 flex flex-wrap gap-2">
+          @for (role of profile?.roles; track role.id) {
+          <span
+            class="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-cyan-700 dark:border-cyan-500/40 dark:bg-cyan-500/20 dark:text-cyan-300"
+          >
+            {{ role.name }}
+          </span>
+          }
+        </div>
+        } @else {
+        <p class="mt-3 text-sm italic text-slate-400 dark:text-zink-400">
+          {{ 'pagesComponent.profile.account.no-roles' | translate }}
+        </p>
+        }
+      </div>
+
+      @if (profile?.createdDate) {
+      <div class="rounded-2xl border border-dashed border-slate-200 px-5 py-4 text-xs text-slate-500 dark:border-zink-500 dark:text-zink-300">
+        <lucide-angular name="calendar-check" class="mb-2 size-4"></lucide-angular>
+        <p>
+          {{ 'pagesComponent.profile.hero.member-since' | translate: { date: formatDate(profile?.createdDate) } }}
+        </p>
+      </div>
+      }
+    </aside>
+  </div>
+</section>

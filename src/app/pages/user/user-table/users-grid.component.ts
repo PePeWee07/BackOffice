@@ -83,6 +83,10 @@ export class UsersGridComponent {
   roles: any[] = [];
   selectedRoles: number[] = [];
 
+  // Modal Ver/Editar usuario (mismo modal, dos modos)
+  isEditMode = false;
+  selectedUser: UserModel | null = null;
+
   currentFilters: any = {};
   activeFilterChips: { key: string; value: any }[] = [];
 
@@ -125,6 +129,7 @@ export class UsersGridComponent {
       accountNonLocked: true,
       credentialsNonExpired: true,
       accountExpiryDate: [null],
+      roleIds: this.fb.nonNullable.control<number[]>([]),
     });
 
     this.editForm = this.fb.group({
@@ -215,9 +220,11 @@ export class UsersGridComponent {
     const filters = this.filterForm.value;
 
     const cleanedFilters = Object.fromEntries(
-      Object.entries(filters).filter(
-        ([_, value]) => value !== null && value !== ''
-      )
+      Object.entries(filters).filter(([_, value]) => {
+        if (value === null || value === '') return false;
+        if (Array.isArray(value) && value.length === 0) return false;
+        return true;
+      })
     );
 
     this.activeFilterChips = Object.entries(cleanedFilters).map(
@@ -240,12 +247,33 @@ export class UsersGridComponent {
   isfilterEmpty(): boolean {
     const values = Object.values(this.filterForm.value);
 
-    return values.some((v) => v !== null && v !== '');
+    return values.some((v) => {
+      if (v === null || v === '') return false;
+      if (Array.isArray(v) && v.length === 0) return false;
+      return true;
+    });
   }
 
   removeSingleFilter(key: string) {
-    this.filterForm.get(key)?.reset();
+    if (key === 'roleIds') {
+      this.filterForm.get(key)?.setValue([]);
+    } else {
+      this.filterForm.get(key)?.reset();
+    }
     this.applyFilters('filterModal');
+  }
+
+  // Convierte un valor de chip a texto legible. Para roleIds resuelve los
+  // nombres de los roles desde el catalogo cargado; para los demas usa el
+  // valor directo.
+  chipDisplay(filter: { key: string; value: any }): string {
+    if (filter.key === 'roleIds' && Array.isArray(filter.value)) {
+      const names = filter.value
+        .map((id) => this.roles.find((r) => r.id === id)?.name)
+        .filter((n): n is string => !!n);
+      return names.length ? names.join(', ') : String(filter.value);
+    }
+    return String(filter.value);
   }
 
   cleanFilters() {
@@ -288,24 +316,24 @@ export class UsersGridComponent {
     accountNonLocked: boolean,
     credentialsNonExpired: boolean
   ): string {
-    const title = this.translate.instant('pages-component.user.tooltips.accountStatus.title');
+    const title = this.translate.instant('pagesComponent.user.tooltips.accountStatus.title');
 
     const accountExpiredLabel = this.translate.instant(
       accountNonExpired
-        ? 'pages-component.user.common.accountNonExpired'
-        : 'pages-component.user.tooltips.accountStatus.accountExpired'
+        ? 'pagesComponent.user.common.accountNonExpired'
+        : 'pagesComponent.user.tooltips.accountStatus.accountExpired'
     );
 
     const accountLockedLabel = this.translate.instant(
       accountNonLocked
-        ? 'pages-component.user.common.accountNonLocked'
-        : 'pages-component.user.tooltips.accountStatus.accountLocked'
+        ? 'pagesComponent.user.common.accountNonLocked'
+        : 'pagesComponent.user.tooltips.accountStatus.accountLocked'
     );
 
     const credentialsLabel = this.translate.instant(
       credentialsNonExpired
-        ? 'pages-component.user.common.credentialsNonExpired'
-        : 'pages-component.user.tooltips.accountStatus.credentialsExpired'
+        ? 'pagesComponent.user.common.credentialsNonExpired'
+        : 'pagesComponent.user.tooltips.accountStatus.credentialsExpired'
     );
 
     const html = `
@@ -352,12 +380,19 @@ export class UsersGridComponent {
     });
   }
 
-  openEditModal(user: UserModel) {
+  // Punto de entrada unico para ver/editar. La opcion "Descripcion general" del
+  // dropdown llama con edit=false; "Editar" llama con edit=true. Carga la
+  // data en el form y habilita/deshabilita el modo edicion.
+  openUserModal(user: UserModel, edit: boolean = false) {
     const expiry = user.accountExpiryDate
       ? new Date(user.accountExpiryDate)
       : null;
 
-    this.editForm.patchValue({
+    this.selectedUser = user;
+    this.isEditMode = edit;
+    this.showPassword = false;
+
+    this.editForm.reset({
       id: user.id,
       name: user.name,
       lastName: user.lastName,
@@ -365,7 +400,7 @@ export class UsersGridComponent {
       phoneNumber: user.phoneNumber,
       address: user.address,
       dni: user.dni,
-      // password: user.,
+      password: null,
       rolesIds: user.roles.map((r: any) => r.id),
       enabled: user.enabled,
       accountNonExpired: user.accountExpiryDate ? false : true,
@@ -374,6 +409,25 @@ export class UsersGridComponent {
       credentialsNonExpired: true,
     });
     this.getRoles();
+  }
+
+  // Backwards compat — apunta al mismo flujo en modo edicion
+  openEditModal(user: UserModel) {
+    this.openUserModal(user, true);
+  }
+
+  toggleEditMode(): void {
+    this.isEditMode = !this.isEditMode;
+    // Al salir del modo edicion, descartamos cambios volviendo a cargar el usuario
+    if (!this.isEditMode && this.selectedUser) {
+      this.openUserModal(this.selectedUser, false);
+    }
+  }
+
+  // Nombres de los roles del usuario seleccionado (para mostrar como chips en modo Ver)
+  get selectedUserRoleNames(): string[] {
+    if (!this.selectedUser?.roles?.length) return [];
+    return this.selectedUser.roles.map((r: any) => r.name);
   }
 
   togglePassword(): void {

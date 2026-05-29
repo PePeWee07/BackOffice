@@ -28,9 +28,22 @@ export class UserService {
     let params = new HttpParams();
 
     Object.entries(query).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        params = params.set(key, value.toString());
+      if (value === undefined || value === null) {
+        return;
       }
+      if (Array.isArray(value)) {
+        // Cada elemento como param separado: ?roleIds=1&roleIds=2&roleIds=3
+        value.forEach((item) => {
+          if (item !== undefined && item !== null && item !== '') {
+            params = params.append(key, item.toString());
+          }
+        });
+        return;
+      }
+      if (value === '') {
+        return;
+      }
+      params = params.set(key, value.toString());
     });
 
     return params;

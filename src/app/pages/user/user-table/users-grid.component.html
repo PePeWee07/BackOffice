@@ -8,6 +8,7 @@
   <div class="mb-2 lg:col-span-9 flex flex-wrap items-center gap-2">
     <button
       [appModalTrigger]="'filterModal'"
+      (click)="getRoles()"
       type="button"
       class="flex text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
     >
@@ -22,7 +23,7 @@
         <span class="opacity-70 mr-1 capitalize"
           >{{ "pagesComponent.user.common." + filter.key | translate }}:</span
         >
-        <strong>{{ filter.value }}</strong>
+        <strong>{{ chipDisplay(filter) }}</strong>
 
         <button
           (click)="removeSingleFilter(filter.key)"
@@ -221,8 +222,9 @@
           >
             <li>
               <a
-                class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                routerLink="/pages-account"
+                [appModalTrigger]="'editUserModal'"
+                (click)="openUserModal(data, false)"
+                class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200 cursor-pointer"
                 ><lucide-angular
                   name="eye"
                   [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"
@@ -233,9 +235,8 @@
             <li>
               <a
                 [appModalTrigger]="'editUserModal'"
-                (click)="this.openEditModal(data)"
-                class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200"
-                href="javascript:void(0);"
+                (click)="openUserModal(data, true)"
+                class="block px-4 py-1.5 text-base transition-all duration-200 ease-linear text-slate-600 dropdown-item hover:bg-slate-100 hover:text-slate-500 focus:bg-slate-100 focus:text-slate-500 dark:text-zink-100 dark:hover:bg-zink-500 dark:hover:text-zink-200 dark:focus:bg-zink-500 dark:focus:text-zink-200 cursor-pointer"
                 ><lucide-angular
                   name="file-edit"
                   [class]="'inline-block size-3 ltr:mr-1 rtl:ml-1'"
@@ -328,206 +329,248 @@
       </button>
     </div>
     <div
-      class="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto"
+      class="max-h-[calc(theme('height.screen')_-_180px)] overflow-y-auto bg-slate-50/40 dark:bg-zink-700/40"
     >
       <form
         action="javascript:void(0);"
         [formGroup]="filterForm"
         (ngSubmit)="applyFilters('filterModal')"
       >
-        <div class="mb-4 max-w-24">
-          <label
-            for="userIdInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.id" | translate }}</label
-          >
-          <input
-            type="number"
-            id="userIdInput"
-            formControlName="id"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            placeholder="0000"
-          />
-        </div>
-        <div class="mb-4 grid grid-cols-1 gap-x-5 xl:grid-cols-3">
-          <div class="mb-3">
-            <label
-              for="userNameInput"
-              class="inline-block mb-2 text-base font-medium"
-              >{{ "pagesComponent.user.common.modal.name" | translate }}</label
-            >
-            <input
-              type="text"
-              id="userNameInput"
-              formControlName="name"
-              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'pagesComponent.user.common.modal.placeholder.name' | translate"
-            />
+        <!-- Datos personales -->
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="user" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.user.common.modal.id" | translate }} / {{ "pagesComponent.user.common.modal.name" | translate }}
+            </h6>
+          </header>
+          <div class="grid gap-x-4 gap-y-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div>
+              <label for="userIdInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.id" | translate }}
+              </label>
+              <input
+                type="number"
+                id="userIdInput"
+                formControlName="id"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                placeholder="0000"
+              />
+            </div>
+            <div>
+              <label for="userNameInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.name" | translate }}
+              </label>
+              <input
+                type="text"
+                id="userNameInput"
+                formControlName="name"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.name' | translate"
+              />
+            </div>
+            <div>
+              <label for="userLastNameInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.last-name" | translate }}
+              </label>
+              <input
+                type="text"
+                id="userLastNameInput"
+                formControlName="lastName"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.last-name' | translate"
+              />
+            </div>
+            <div>
+              <label for="dniInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.dni" | translate }}
+              </label>
+              <input
+                type="text"
+                id="dniInput"
+                formControlName="dni"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.dni' | translate"
+              />
+            </div>
           </div>
-          <div class="mb-3">
-            <label
-              for="userLastNameInput"
-              class="inline-block mb-2 text-base font-medium"
-              >{{ "pagesComponent.user.common.modal.last-name" | translate }}</label
-            >
-            <input
-              type="text"
-              id="userLastNameInput"
-              formControlName="lastName"
-              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'pagesComponent.user.common.modal.placeholder.last-name' | translate"
-            />
+        </section>
+
+        <!-- Roles + Contacto -->
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="key" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.user.common.roleIds" | translate }}
+            </h6>
+          </header>
+          <ng-select
+            id="rolesFilterInput"
+            formControlName="roleIds"
+            [items]="roles"
+            bindLabel="name"
+            bindValue="id"
+            [multiple]="true"
+            [closeOnSelect]="false"
+            appendTo="body"
+            [placeholder]="'pagesComponent.user.common.select-roles' | translate"
+          ></ng-select>
+        </section>
+
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="mail" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.user.common.modal.email" | translate }}
+            </h6>
+          </header>
+          <div class="grid gap-x-4 gap-y-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div>
+              <label for="emailInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.email" | translate }}
+              </label>
+              <input
+                type="email"
+                id="emailInput"
+                formControlName="email"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.email' | translate"
+              />
+            </div>
+            <div>
+              <label for="phoneNumberInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.phone-number" | translate }}
+              </label>
+              <input
+                type="text"
+                id="phoneNumberInput"
+                formControlName="phoneNumber"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.phone-number' | translate"
+              />
+            </div>
+            <div>
+              <label for="locationInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.address" | translate }}
+              </label>
+              <input
+                type="text"
+                id="locationInput"
+                formControlName="address"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.address' | translate"
+              />
+            </div>
           </div>
-          <div class="mb-3">
-            <label
-              for="emailInput"
-              class="inline-block mb-2 text-base font-medium"
-              >{{ "pagesComponent.user.common.modal.email" | translate }}</label
-            >
-            <input
-              type="email"
-              id="emailInput"
-              formControlName="email"
-              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'pagesComponent.user.common.modal.placeholder.email' | translate"
-            />
-          </div>
-          <div class="mb-3">
-            <label
-              for="phoneNumberInput"
-              class="inline-block mb-2 text-base font-medium"
-              >{{ "pagesComponent.user.common.modal.phone-number" | translate }}</label
-            >
-            <input
-              type="text"
-              id="phoneNumberInput"
-              formControlName="phoneNumber"
-              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'pagesComponent.user.common.modal.placeholder.phone-number' | translate"
-            />
-          </div>
-          <div class="mb-3">
-            <label
-              for="locationInput"
-              class="inline-block mb-2 text-base font-medium"
-              >{{ "pagesComponent.user.common.modal.address" | translate }}</label
-            >
-            <input
-              type="text"
-              id="locationInput"
-              formControlName="address"
-              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'pagesComponent.user.common.modal.placeholder.address' | translate"
-            />
-          </div>
-          <div class="mb-3">
-            <label
-              for="dniInput"
-              class="inline-block mb-2 text-base font-medium"
-              >{{ "pagesComponent.user.common.modal.dni" | translate }}</label
-            >
-            <input
-              type="text"
-              id="dniInput"
-              formControlName="dni"
-              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-              [placeholder]="'pagesComponent.user.common.modal.placeholder.dni' | translate"
-            />
-          </div>
-        </div>
-        <div class="mb-3">
-          <div class="flex flex-wrap gap-2 justify-around">
-            <div class="flex items-center gap-2">
+        </section>
+
+        <!-- Estado de la cuenta -->
+        <section class="px-5 py-5">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="shield-check" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.user.tooltips.accountStatus.title" | translate }}
+            </h6>
+          </header>
+
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <label for="enabledInput" class="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:hover:bg-zink-600">
               <input
                 id="enabledInput"
                 formControlName="enabled"
                 type="checkbox"
-                value=""
-                class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
+                class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500"
               />
-              <label for="enabledInput" class="align-middle">
+              <span class="text-slate-700 dark:text-zink-200">
                 {{ "pagesComponent.user.common.enabled" | translate }}
-              </label>
-            </div>
-            <div class="flex items-center gap-2">
+              </span>
+            </label>
+            <label for="accountNonExpiredInput" class="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:hover:bg-zink-600">
               <input
                 id="accountNonExpiredInput"
                 formControlName="accountNonExpired"
                 type="checkbox"
-                value=""
-                class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
+                class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500"
               />
-              <label for="accountNonExpiredInput" class="align-middle">
+              <span class="text-slate-700 dark:text-zink-200">
                 {{ "pagesComponent.user.common.accountNonExpired" | translate }}
-              </label>
-            </div>
-            <div class="flex items-center gap-2">
+              </span>
+            </label>
+            <label for="accountNonLockedInput" class="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:hover:bg-zink-600">
               <input
                 id="accountNonLockedInput"
                 formControlName="accountNonLocked"
                 type="checkbox"
-                value=""
-                class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
+                class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500"
               />
-              <label for="accountNonLockedInput" class="align-middle">
+              <span class="text-slate-700 dark:text-zink-200">
                 {{ "pagesComponent.user.common.accountNonLocked" | translate }}
-              </label>
-            </div>
-            <div class="flex items-center gap-2">
+              </span>
+            </label>
+            <label for="credentialsNonExpiredInput" class="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:hover:bg-zink-600">
               <input
                 id="credentialsNonExpiredInput"
                 formControlName="credentialsNonExpired"
                 type="checkbox"
-                value=""
-                class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500 checked:disabled:bg-sky-400 checked:disabled:border-sky-400"
+                class="size-4 border rounded-sm appearance-none cursor-pointer bg-slate-100 border-slate-200 dark:bg-zink-600 dark:border-zink-500 checked:bg-sky-500 checked:border-sky-500 dark:checked:bg-sky-500 dark:checked:border-sky-500"
               />
-              <label for="credentialsNonExpiredInput" class="align-middle">
+              <span class="text-slate-700 dark:text-zink-200">
                 {{ "pagesComponent.user.common.credentialsNonExpired" | translate }}
-              </label>
-            </div>
+              </span>
+            </label>
           </div>
-        </div>
-        <div class="mb-3 max-w-72">
-          <label
-            for="accountExpiryDateInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.accountExpiryDate" | translate }}</label
-          >
-          <input
-            type="text"
-            id="accountExpiryDateInput"
-            formControlName="accountExpiryDate"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            placeholder="2026-12-31T00:00:00"
-          />
-        </div>
 
-        <div class="flex justify-between gap-2 mt-4">
+          <div class="mt-4 max-w-xs">
+            <label for="accountExpiryDateInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+              {{ "pagesComponent.user.common.accountExpiryDate" | translate }}
+            </label>
+            <input
+              type="text"
+              id="accountExpiryDateInput"
+              formControlName="accountExpiryDate"
+              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+              placeholder="2026-12-31T00:00:00"
+            />
+          </div>
+        </section>
+
+        <!-- Footer sticky -->
+        <div class="sticky bottom-0 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 bg-white px-5 py-3 dark:border-zink-500 dark:bg-zink-600">
           <div>
             @if(isfilterEmpty()) {
             <button
               type="button"
               (click)="cleanFilters()"
-              class="mx-1 bg-white text-red-500 dark:bg-red-500/20 btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
+              class="inline-flex items-center gap-1.5 rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm font-medium text-red-500 transition hover:bg-red-50 dark:border-red-500/40 dark:bg-zink-700 dark:text-red-300 dark:hover:bg-red-500/10"
             >
+              <lucide-angular name="trash-2" class="size-4"></lucide-angular>
               {{ "coomon.clean" | translate }}
             </button>
             }
           </div>
-          <div>
+          <div class="flex items-center gap-2">
             <button
               type="reset"
               dismissModal
               [ModalDismiss]="'filterModal'"
-              class="mx-1 text-red-500 bg-white btn hover:text-red-500 hover:bg-red-200 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
+              class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-200 dark:hover:bg-zink-600"
             >
               {{ "coomon.cancel" | translate }}
             </button>
             <button
               type="submit"
               [disabled]="filterForm.pristine"
-              class="mx-1 text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
+              class="inline-flex items-center gap-1.5 rounded-md bg-custom-500 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-custom-600 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-custom-500 dark:hover:bg-custom-400"
             >
+              <lucide-angular name="filter" class="size-4"></lucide-angular>
               {{ "coomon.filter" | translate }}
             </button>
           </div>
@@ -543,152 +586,105 @@
   className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
 >
   <div
-    class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600"
+    class="w-screen md:w-[44rem] bg-white shadow rounded-md dark:bg-zink-600"
   >
-    <div
-      class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500"
-    >
-      <h5 class="text-16">
-        {{ "pagesComponent.user.add-user.modal-title" | translate }}
-      </h5>
-      <button
-        dismissModal
-        [ModalDismiss]="'addUserModal'"
-        class="transition-all duration-200 ease-linear text-slate-500 hover:text-red-500"
-      >
-        <lucide-angular name="x" [class]="'size-5'"></lucide-angular>
-      </button>
+    <!-- Header con gradient -->
+    <div class="relative overflow-hidden rounded-t-md bg-gradient-to-r from-emerald-50 via-white to-custom-50 px-5 py-4 dark:from-emerald-500/10 dark:via-zink-700 dark:to-custom-500/10">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="flex size-12 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 ring-2 ring-white dark:bg-emerald-500/20 dark:text-emerald-300 dark:ring-zink-600">
+            <lucide-angular name="user-plus" class="size-6"></lucide-angular>
+          </div>
+          <div class="min-w-0">
+            <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/20 dark:text-emerald-300">
+              {{ "pagesComponent.user.add-user.btn-add-user" | translate }}
+            </span>
+            <h5 class="mt-1 text-lg font-semibold text-slate-800 dark:text-zink-100">
+              {{ "pagesComponent.user.add-user.modal-title" | translate }}
+            </h5>
+            <p class="text-xs text-slate-500 dark:text-zink-300">
+              {{ "pagesComponent.user.common.modal.placeholder.name" | translate }} · {{ "pagesComponent.user.common.modal.placeholder.email" | translate }}
+            </p>
+          </div>
+        </div>
+        <button
+          dismissModal
+          [ModalDismiss]="'addUserModal'"
+          class="shrink-0 inline-flex size-8 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-red-500 dark:text-zink-300 dark:hover:bg-zink-500"
+        >
+          <lucide-angular name="x" [class]="'size-5'"></lucide-angular>
+        </button>
+      </div>
     </div>
+
     <div
-      class="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto"
+      class="max-h-[calc(theme('height.screen')_-_220px)] overflow-y-auto bg-slate-50/40 dark:bg-zink-700/40"
     >
       <form
         action="javascript:void(0);"
         [formGroup]="addUserForm"
         (ngSubmit)="addUser(addUserForm.value, 'addUserModal')"
       >
-        <div class="mb-3">
-          <label
-            for="userNameInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.name" | translate }}</label
-          >
-          <input
-            type="text"
-            id="userNameInput"
-            formControlName="name"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'pagesComponent.user.common.modal.placeholder.name' | translate"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="userLastNameInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.last-name" | translate }}</label
-          >
-          <input
-            type="text"
-            id="userLastNameInput"
-            formControlName="lastName"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'pagesComponent.user.common.modal.placeholder.last-name' | translate"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="emailInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.email" | translate }}</label
-          >
-          <input
-            type="email"
-            id="emailInput"
-            formControlName="email"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'pagesComponent.user.common.modal.placeholder.email' | translate"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="phoneNumberInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.phone-number" | translate }}</label
-          >
-          <input
-            type="text"
-            id="phoneNumberInput"
-            formControlName="phoneNumber"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'pagesComponent.user.common.modal.placeholder.phone-number' | translate"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="locationInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.address" | translate }}</label
-          >
-          <input
-            type="text"
-            id="locationInput"
-            formControlName="address"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'pagesComponent.user.common.modal.placeholder.address' | translate"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="dniInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.dni" | translate }}</label
-          >
-          <input
-            type="text"
-            id="dniInput"
-            formControlName="dni"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-            [placeholder]="'pagesComponent.user.common.modal.placeholder.dni' | translate"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="userPassword"
-            class="inline-block mb-2 text-base font-medium"
-          >
-            {{ "pagesComponent.user.common.modal.password" | translate }}
-          </label>
-          <div class="relative">
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              id="userPassword"
-              formControlName="password"
-              [ngClass]="{
-                'border-red-500 focus:border-red-500':
-                  addUserForm.get('password')?.invalid &&
-                  addUserForm.get('password')?.touched
-              }"
-              class="form-input border-slate-200 dark:border-zink-500"
-              [placeholder]="'pagesComponent.user.common.modal.placeholder.password' | translate"
-            />
-            <button
-              type="button"
-              (click)="togglePassword()"
-              tooltip="{{ showPassword ? 'Ocultar' : 'Mostrar' }}"
-              class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-zink-200"
-            >
-              <lucide-icon
-                [name]="showPassword ? 'eye-off' : 'eye'"
-                class="w-5 h-5"
-              >
-              </lucide-icon>
-            </button>
+        <!-- Datos personales -->
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="user" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.profile.form.section-personal" | translate }}
+            </h6>
+          </header>
+          <div class="grid gap-x-4 gap-y-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div>
+              <label for="addUserNameInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.name" | translate }}
+              </label>
+              <input
+                type="text"
+                id="addUserNameInput"
+                formControlName="name"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.name' | translate"
+              />
+            </div>
+            <div>
+              <label for="addUserLastNameInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.last-name" | translate }}
+              </label>
+              <input
+                type="text"
+                id="addUserLastNameInput"
+                formControlName="lastName"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.last-name' | translate"
+              />
+            </div>
+            <div>
+              <label for="addDniInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.dni" | translate }}
+              </label>
+              <input
+                type="text"
+                id="addDniInput"
+                formControlName="dni"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.dni' | translate"
+              />
+            </div>
           </div>
-        </div>
-        <div class="mb-3">
-          <label class="inline-block mb-2 text-base font-medium">{{
-            "pagesComponent.user.common.modal.roles" | translate
-          }}</label>
+        </section>
+
+        <!-- Roles -->
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="key" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.user.common.modal.roles" | translate }}
+            </h6>
+          </header>
           <ng-select
             [items]="roles"
             [multiple]="true"
@@ -696,85 +692,161 @@
             bindValue="id"
             formControlName="rolesIds"
             [clearable]="true"
+            appendTo="body"
             [placeholder]="'pagesComponent.user.common.select-roles' | translate"
-          >
-          </ng-select>
-        </div>
-        <div class="mb-3">
-          <div class="p-1 flex items-center">
-            <div
-              class="relative inline-block w-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2"
-            >
+          ></ng-select>
+        </section>
+
+        <!-- Contacto -->
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="mail" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.profile.form.section-contact" | translate }}
+            </h6>
+          </header>
+          <div class="grid gap-x-4 gap-y-3 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label for="addEmailInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.email" | translate }}
+              </label>
               <input
-                type="checkbox"
-                formControlName="enabled"
-                name="enableSwitch"
-                id="enableSwitch"
-                class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
+                type="email"
+                id="addEmailInput"
+                formControlName="email"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.email' | translate"
               />
-              <label
-                for="enableSwitch"
-                class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer cursor-pointertransition dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:bg-white dark:peer-checked/published:bg-zink-700 peer-checked/published:border-custom-500 dark:peer-checked/published:border-custom-800"
-              ></label>
             </div>
-            <label
-              for="enableSwitch"
-              class="inline-block text-base font-medium cursor-pointer"
-              >{{ "pagesComponent.user.common.enabled" | translate }}</label
-            >
+            <div>
+              <label for="addPhoneInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.phone-number" | translate }}
+              </label>
+              <input
+                type="text"
+                id="addPhoneInput"
+                formControlName="phoneNumber"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.phone-number' | translate"
+              />
+            </div>
+            <div>
+              <label for="addAddressInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.address" | translate }}
+              </label>
+              <input
+                type="text"
+                id="addAddressInput"
+                formControlName="address"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.address' | translate"
+              />
+            </div>
           </div>
-          <div class="p-1 flex items-center">
-            <div
-              class="relative inline-block w-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2"
-            >
-              <input
-                type="checkbox"
-                formControlName="accountNonLocked"
-                name="nonLockedSwitch"
-                id="nonLockedSwitch"
-                class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
-              />
-              <label
-                for="nonLockedSwitch"
-                class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer cursor-pointertransition dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:bg-white dark:peer-checked/published:bg-zink-700 peer-checked/published:border-custom-500 dark:peer-checked/published:border-custom-800"
-              ></label>
-            </div>
-            <label
-              for="nonLockedSwitch"
-              class="inline-block text-base font-medium cursor-pointer"
-              >{{ "pagesComponent.user.common.accountNonLocked" | translate }}</label
-            >
-          </div>
-        </div>
-        <div class="mb-3">
-          <div class="p-1 flex items-center">
-            <div
-              class="relative inline-block w-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2"
-            >
-              <input
-                type="checkbox"
-                formControlName="accountNonExpired"
-                id="nonExpiredSwitch"
-                class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
-              />
-              <label
-                for="nonExpiredSwitch"
-                class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:border-custom-500"
-              ></label>
-            </div>
-            <label
-              for="nonExpiredSwitch"
-              class="inline-block text-base font-medium cursor-pointer"
-            >
-              {{ "pagesComponent.user.common.accountNonExpired" | translate }}
+        </section>
+
+        <!-- Seguridad -->
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="lock" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.profile.form.section-security" | translate }}
+            </h6>
+          </header>
+          <div class="max-w-md">
+            <label for="addUserPassword" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+              {{ "pagesComponent.user.common.modal.password" | translate }}
             </label>
-            <label type="text" class="px-2 text-red-500">{{
-              addUserForm.get("accountExpiryDate")?.value
-            }}</label>
+            <div class="relative">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="addUserPassword"
+                formControlName="password"
+                autocomplete="new-password"
+                [ngClass]="{
+                  'border-red-500 focus:border-red-500':
+                    addUserForm.get('password')?.invalid &&
+                    addUserForm.get('password')?.touched
+                }"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 pr-10"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.password' | translate"
+              />
+              <button
+                type="button"
+                (click)="togglePassword()"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-zink-200"
+              >
+                <lucide-angular [name]="showPassword ? 'eye-off' : 'eye'" class="size-4"></lucide-angular>
+              </button>
+            </div>
           </div>
+        </section>
+
+        <!-- Estado de la cuenta -->
+        <section class="px-5 py-5">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="shield-check" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.user.tooltips.accountStatus.title" | translate }}
+            </h6>
+          </header>
+
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:hover:bg-zink-600">
+              <div class="relative inline-block w-10 shrink-0">
+                <input
+                  type="checkbox"
+                  formControlName="enabled"
+                  id="addEnableSwitch"
+                  class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
+                />
+                <label for="addEnableSwitch" class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:border-custom-500"></label>
+              </div>
+              <span class="text-slate-700 dark:text-zink-200">
+                {{ "pagesComponent.user.common.enabled" | translate }}
+              </span>
+            </label>
+
+            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:hover:bg-zink-600">
+              <div class="relative inline-block w-10 shrink-0">
+                <input
+                  type="checkbox"
+                  formControlName="accountNonLocked"
+                  id="addNonLockedSwitch"
+                  class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
+                />
+                <label for="addNonLockedSwitch" class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:border-custom-500"></label>
+              </div>
+              <span class="text-slate-700 dark:text-zink-200">
+                {{ "pagesComponent.user.common.accountNonLocked" | translate }}
+              </span>
+            </label>
+
+            <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:hover:bg-zink-600">
+              <div class="relative inline-block w-10 shrink-0">
+                <input
+                  type="checkbox"
+                  formControlName="accountNonExpired"
+                  id="addNonExpiredSwitch"
+                  class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
+                />
+                <label for="addNonExpiredSwitch" class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:border-custom-500"></label>
+              </div>
+              <span class="text-slate-700 dark:text-zink-200">
+                {{ "pagesComponent.user.common.accountNonExpired" | translate }}
+              </span>
+            </label>
+          </div>
+
           @if(!addUserForm.get('accountNonExpired')?.value) {
-          <div class="mb-3">
-            <label class="inline-block mb-2 text-base font-medium">
+          <div class="mt-4 max-w-xs">
+            <label class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
               {{ "pagesComponent.user.common.accountExpiryDate" | translate }}
             </label>
             <input
@@ -785,26 +857,28 @@
               data-provider="flatpickr"
               readonly="readonly"
               placeholder="Select Date"
-              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
             />
           </div>
           }
-        </div>
+        </section>
 
-        <div class="flex justify-end gap-2 mt-4">
+        <!-- Footer sticky -->
+        <div class="sticky bottom-0 flex flex-wrap items-center justify-end gap-2 border-t border-slate-200 bg-white px-5 py-3 dark:border-zink-500 dark:bg-zink-600">
           <button
             type="reset"
             dismissModal
             [ModalDismiss]="'addUserModal'"
-            class="text-red-500 bg-white btn hover:text-red-500 hover:bg-red-100 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
+            class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-200 dark:hover:bg-zink-600"
           >
-            Cancel
+            {{ "coomon.cancel" | translate }}
           </button>
           <button
             type="submit"
-            class="text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
+            class="inline-flex items-center gap-1.5 rounded-md bg-emerald-500 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-emerald-600 dark:bg-emerald-500 dark:hover:bg-emerald-400"
           >
-            Add User
+            <lucide-angular name="user-plus" class="size-4"></lucide-angular>
+            {{ "pagesComponent.user.add-user.btn-add-user" | translate }}
           </button>
         </div>
       </form>
@@ -818,228 +892,320 @@
   className="fixed flex flex-col transition-all duration-300 ease-in-out left-2/4 z-drawer -translate-x-2/4 -translate-y-2/4"
 >
   <div
-    class="w-screen md:w-[30rem] bg-white shadow rounded-md dark:bg-zink-600"
+    class="w-screen md:w-[44rem] bg-white shadow rounded-md dark:bg-zink-600"
   >
-    <div
-      class="flex items-center justify-between p-4 border-b border-slate-200 dark:border-zink-500"
-    >
-      <h5 class="text-16">{{ "pagesComponent.user.edit-user.modal-title" | translate }}</h5>
-      <button
-        dismissModal
-        [ModalDismiss]="'editUserModal'"
-        class="transition-all duration-200 ease-linear text-slate-500 hover:text-red-500"
-      >
-        <lucide-angular name="x" [class]="'size-5'"></lucide-angular>
-      </button>
+    <!-- Header con avatar + nombre + badges -->
+    <div class="relative overflow-hidden rounded-t-md bg-gradient-to-r from-slate-50 via-white to-custom-50 px-5 py-4 dark:from-zink-700 dark:via-zink-700 dark:to-custom-500/10">
+      <div class="flex items-start justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="relative shrink-0">
+            <img
+              src="assets/images/users/user-profile.png"
+              alt="avatar"
+              class="size-14 rounded-full ring-2 ring-white dark:ring-zink-600"
+            />
+            <span
+              class="absolute bottom-0 right-0 inline-block size-3 rounded-full ring-2 ring-white dark:ring-zink-600"
+              [ngClass]="selectedUser?.enabled ? 'bg-emerald-500' : 'bg-rose-500'"
+            ></span>
+          </div>
+          <div class="min-w-0">
+            <span
+              class="inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider"
+              [ngClass]="isEditMode
+                ? 'border-custom-200 bg-custom-100 text-custom-700 dark:border-custom-500/40 dark:bg-custom-500/20 dark:text-custom-300'
+                : 'border-slate-200 bg-slate-100 text-slate-600 dark:border-zink-500 dark:bg-zink-500/30 dark:text-zink-200'"
+            >
+              @if (isEditMode) {
+                {{ "pagesComponent.user.edit-user.modal-title" | translate }}
+              } @else {
+                {{ "pagesComponent.user.card-users.overview" | translate }}
+              }
+            </span>
+            <h5 class="mt-1 truncate text-lg font-semibold text-slate-800 dark:text-zink-100">
+              {{ selectedUser?.name }} {{ selectedUser?.lastName }}
+            </h5>
+            <p class="truncate text-xs text-slate-500 dark:text-zink-300">
+              {{ selectedUser?.email || '—' }}
+            </p>
+          </div>
+        </div>
+        <button
+          dismissModal
+          [ModalDismiss]="'editUserModal'"
+          class="shrink-0 inline-flex size-8 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-red-500 dark:text-zink-300 dark:hover:bg-zink-500"
+        >
+          <lucide-angular name="x" [class]="'size-5'"></lucide-angular>
+        </button>
+      </div>
     </div>
+
     <div
-      class="max-h-[calc(theme('height.screen')_-_180px)] p-4 overflow-y-auto"
+      class="max-h-[calc(theme('height.screen')_-_220px)] overflow-y-auto bg-slate-50/40 dark:bg-zink-700/40"
     >
       <form
         [formGroup]="editForm"
         (ngSubmit)="updateUser(editForm.value, 'editUserModal')"
       >
-        <div class="mb-3">
-          <label
-            for="userNameInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.name" | translate }}</label
-          >
-          <input
-            type="text"
-            id="userNameInput"
-            formControlName="name"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="userLastNameInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.last-name" | translate }}</label
-          >
-          <input
-            type="text"
-            id="userLastNameInput"
-            formControlName="lastName"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="emailInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.email" | translate }}</label
-          >
-          <input
-            type="email"
-            id="emailInput"
-            formControlName="email"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="phoneNumberInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.phone-number" | translate }}</label
-          >
-          <input
-            type="text"
-            id="phoneNumberInput"
-            formControlName="phoneNumber"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="locationInput"
-            class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.address" | translate }}</label
-          >
-          <input
-            type="text"
-            id="locationInput"
-            formControlName="address"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-          />
-        </div>
-        <div class="mb-3">
-          <label for="dniInput" class="inline-block mb-2 text-base font-medium"
-            >{{ "pagesComponent.user.common.modal.dni" | translate }}</label
-          >
-          <input
-            type="text"
-            id="dniInput"
-            formControlName="dni"
-            class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
-          />
-        </div>
-        <div class="mb-3">
-          <label
-            for="userPassword"
-            class="inline-block mb-2 text-base font-medium"
-          >
-          {{ "pagesComponent.user.common.modal.password" | translate }}
-          </label>
-          <div class="relative">
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              id="userPassword"
-              formControlName="password"
-              [ngClass]="{
-                'border-red-500 focus:border-red-500':
-                  editForm.get('password')?.invalid &&
-                  editForm.get('password')?.touched
-              }"
-              class="form-input border-slate-200 dark:border-zink-500"
-              [placeholder]="'pagesComponent.user.common.modal.placeholder.changePassword' | translate"
-            />
-            <button
-              type="button"
-              (click)="togglePassword()"
-              tooltip="{{ showPassword ? 'Ocultar' : 'Mostrar' }}"
-              class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-zink-200"
-            >
-              <lucide-icon
-                [name]="showPassword ? 'eye-off' : 'eye'"
-                class="w-5 h-5"
-              >
-              </lucide-icon>
-            </button>
-          </div>
-        </div>
-        <div class="mb-3">
-          <label class="inline-block mb-2 text-base font-medium">{{ "pagesComponent.user.common.modal.roles" | translate }}</label>
-          <ng-select
-            [items]="roles"
-            [multiple]="true"
-            bindLabel="name"
-            bindValue="id"
-            formControlName="rolesIds"
-            [clearable]="true"
-            placeholder="Select roles"
-          >
-          </ng-select>
-        </div>
-        <div class="mb-3">
-          <div class="p-1 flex items-center">
-            <div
-              class="relative inline-block w-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2"
-            >
+        <!-- Datos personales -->
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="user" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.profile.form.section-personal" | translate }}
+            </h6>
+          </header>
+          <div class="grid gap-x-4 gap-y-3 sm:grid-cols-2">
+            <div>
+              <label for="editUserNameInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.name" | translate }}
+              </label>
               <input
-                type="checkbox"
-                formControlName="enabled"
-                name="enableSwitch"
-                id="enableSwitch"
-                class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
+                type="text"
+                id="editUserNameInput"
+                formControlName="name"
+                [readonly]="!isEditMode"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 read-only:bg-slate-100 read-only:cursor-default dark:read-only:bg-zink-600 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
               />
-              <label
-                for="enableSwitch"
-                class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer cursor-pointertransition dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:bg-white dark:peer-checked/published:bg-zink-700 peer-checked/published:border-custom-500 dark:peer-checked/published:border-custom-800"
-              ></label>
             </div>
-            <label
-              for="enableSwitch"
-              class="inline-block text-base font-medium cursor-pointer"
-              >{{ "pagesComponent.user.common.enabled" | translate }}</label
-            >
-          </div>
-          <div class="p-1 flex items-center">
-            <div
-              class="relative inline-block w-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2"
-            >
+            <div>
+              <label for="editUserLastNameInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.last-name" | translate }}
+              </label>
               <input
-                type="checkbox"
-                formControlName="accountNonLocked"
-                name="nonLockedSwitch"
-                id="nonLockedSwitch"
-                class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
+                type="text"
+                id="editUserLastNameInput"
+                formControlName="lastName"
+                [readonly]="!isEditMode"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 read-only:bg-slate-100 read-only:cursor-default dark:read-only:bg-zink-600 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
               />
-              <label
-                for="nonLockedSwitch"
-                class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer cursor-pointertransition dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:bg-white dark:peer-checked/published:bg-zink-700 peer-checked/published:border-custom-500 dark:peer-checked/published:border-custom-800"
-              ></label>
             </div>
-            <label
-              for="nonLockedSwitch"
-              class="inline-block text-base font-medium cursor-pointer"
-              >{{ "pagesComponent.user.common.accountNonLocked" | translate }}</label
-            >
-          </div>
-        </div>
-        <div class="mb-3">
-          <div class="p-1 flex items-center">
-            <div
-              class="relative inline-block w-10 align-middle transition duration-200 ease-in ltr:mr-2 rtl:ml-2"
-            >
+            <div>
+              <label for="editDniInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.dni" | translate }}
+              </label>
               <input
-                type="checkbox"
-                formControlName="accountNonExpired"
-                id="nonExpiredSwitch"
-                class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
+                type="text"
+                id="editDniInput"
+                formControlName="dni"
+                [readonly]="!isEditMode"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 read-only:bg-slate-100 read-only:cursor-default dark:read-only:bg-zink-600 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
               />
-              <label
-                for="nonExpiredSwitch"
-                class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:border-custom-500"
-              ></label>
             </div>
-            <label
-              for="nonExpiredSwitch"
-              class="inline-block text-base font-medium cursor-pointer"
-            >
-            {{ "pagesComponent.user.common.accountNonExpired" | translate }}
+            <div>
+              <label class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.id" | translate }}
+              </label>
+              <input
+                type="number"
+                formControlName="id"
+                readonly
+                class="form-input border-slate-200 dark:border-zink-500 bg-slate-100 cursor-default dark:bg-zink-600 dark:text-zink-200"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- Roles -->
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="key" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.user.common.modal.roles" | translate }}
+            </h6>
+          </header>
+          @if (isEditMode) {
+            <ng-select
+              [items]="roles"
+              [multiple]="true"
+              bindLabel="name"
+              bindValue="id"
+              formControlName="rolesIds"
+              [clearable]="true"
+              appendTo="body"
+              [placeholder]="'pagesComponent.user.common.select-roles' | translate"
+            ></ng-select>
+          } @else {
+            @if (selectedUserRoleNames.length) {
+              <div class="flex flex-wrap gap-2">
+                @for (roleName of selectedUserRoleNames; track roleName) {
+                  <span class="inline-flex items-center rounded-full border border-custom-200 bg-custom-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-custom-700 dark:border-custom-500/40 dark:bg-custom-500/20 dark:text-custom-300">
+                    {{ roleName }}
+                  </span>
+                }
+              </div>
+            } @else {
+              <p class="text-xs italic text-slate-500 dark:text-zink-300">
+                {{ "pagesComponent.profile.account.no-roles" | translate }}
+              </p>
+            }
+          }
+        </section>
+
+        <!-- Contacto -->
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="mail" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.profile.form.section-contact" | translate }}
+            </h6>
+          </header>
+          <div class="grid gap-x-4 gap-y-3 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label for="editEmailInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.email" | translate }}
+              </label>
+              <input
+                type="email"
+                id="editEmailInput"
+                formControlName="email"
+                [readonly]="!isEditMode"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 read-only:bg-slate-100 read-only:cursor-default dark:read-only:bg-zink-600 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
+              />
+            </div>
+            <div>
+              <label for="editPhoneInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.phone-number" | translate }}
+              </label>
+              <input
+                type="text"
+                id="editPhoneInput"
+                formControlName="phoneNumber"
+                [readonly]="!isEditMode"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 read-only:bg-slate-100 read-only:cursor-default dark:read-only:bg-zink-600 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
+              />
+            </div>
+            <div>
+              <label for="editAddressInput" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+                {{ "pagesComponent.user.common.modal.address" | translate }}
+              </label>
+              <input
+                type="text"
+                id="editAddressInput"
+                formControlName="address"
+                [readonly]="!isEditMode"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 read-only:bg-slate-100 read-only:cursor-default dark:read-only:bg-zink-600 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- Seguridad (solo en modo Edicion) -->
+        @if (isEditMode) {
+        <section class="border-b border-slate-200 px-5 py-5 dark:border-zink-500">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="lock" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.profile.form.section-security" | translate }}
+            </h6>
+          </header>
+          <div class="max-w-md">
+            <label for="editUserPassword" class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+              {{ "pagesComponent.user.common.modal.password" | translate }}
             </label>
-            <label type="text" class="px-2 text-red-500">{{
-              editForm.get("accountExpiryDate")?.value
-            }}</label>
+            <div class="relative">
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                id="editUserPassword"
+                formControlName="password"
+                autocomplete="new-password"
+                [ngClass]="{
+                  'border-red-500 focus:border-red-500':
+                    editForm.get('password')?.invalid &&
+                    editForm.get('password')?.touched
+                }"
+                class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200 pr-10"
+                [placeholder]="'pagesComponent.user.common.modal.placeholder.changePassword' | translate"
+              />
+              <button
+                type="button"
+                (click)="togglePassword()"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-zink-200"
+              >
+                <lucide-angular [name]="showPassword ? 'eye-off' : 'eye'" class="size-4"></lucide-angular>
+              </button>
+            </div>
           </div>
-          @if(!editForm.get('accountNonExpired')?.value) {
-          <div class="mb-3">
-            <label class="inline-block mb-2 text-base font-medium">
-              {{ "pagesComponent.user.common.accountExpiryDate" | translate }}
+        </section>
+        }
+
+        <!-- Estado de la cuenta -->
+        <section class="px-5 py-5">
+          <header class="mb-4 flex items-center gap-2">
+            <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+              <lucide-angular name="shield-check" class="size-4"></lucide-angular>
+            </span>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ "pagesComponent.user.tooltips.accountStatus.title" | translate }}
+            </h6>
+          </header>
+
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-zink-500 dark:bg-zink-700"
+              [ngClass]="isEditMode ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-zink-600' : 'cursor-default opacity-90'">
+              <div class="relative inline-block w-10 shrink-0">
+                <input
+                  type="checkbox"
+                  formControlName="enabled"
+                  id="editEnableSwitch"
+                  [attr.disabled]="!isEditMode ? '' : null"
+                  class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
+                />
+                <label for="editEnableSwitch" class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:border-custom-500"></label>
+              </div>
+              <span class="text-slate-700 dark:text-zink-200">
+                {{ "pagesComponent.user.common.enabled" | translate }}
+              </span>
             </label>
 
+            <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-zink-500 dark:bg-zink-700"
+              [ngClass]="isEditMode ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-zink-600' : 'cursor-default opacity-90'">
+              <div class="relative inline-block w-10 shrink-0">
+                <input
+                  type="checkbox"
+                  formControlName="accountNonLocked"
+                  id="editNonLockedSwitch"
+                  [attr.disabled]="!isEditMode ? '' : null"
+                  class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
+                />
+                <label for="editNonLockedSwitch" class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:border-custom-500"></label>
+              </div>
+              <span class="text-slate-700 dark:text-zink-200">
+                {{ "pagesComponent.user.common.accountNonLocked" | translate }}
+              </span>
+            </label>
+
+            <label class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm dark:border-zink-500 dark:bg-zink-700"
+              [ngClass]="isEditMode ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-zink-600' : 'cursor-default opacity-90'">
+              <div class="relative inline-block w-10 shrink-0">
+                <input
+                  type="checkbox"
+                  formControlName="accountNonExpired"
+                  id="editNonExpiredSwitch"
+                  [attr.disabled]="!isEditMode ? '' : null"
+                  class="absolute block size-4 top-0.5 transition duration-300 ease-linear border-2 border-white rounded-full dark:border-zink-700 appearance-none cursor-pointer bg-slate-200 peer/published dark:bg-zink-500 checked:bg-custom-500 dark:checked:bg-custom-500 ltr:checked:right-0.5 rtl:checked:left-0.5 checked:left-auto checked:border-white dark:checked:border-zink-700 arrow-none"
+                />
+                <label for="editNonExpiredSwitch" class="block h-5 overflow-hidden duration-300 ease-linear bg-white border rounded-full cursor-pointer dark:bg-zink-700 border-slate-200 dark:border-zink-500 peer-checked/published:border-custom-500"></label>
+              </div>
+              <span class="text-slate-700 dark:text-zink-200">
+                {{ "pagesComponent.user.common.accountNonExpired" | translate }}
+              </span>
+            </label>
+          </div>
+
+          @if (!editForm.get('accountNonExpired')?.value) {
+          <div class="mt-4 max-w-xs">
+            <label class="mb-1.5 block text-xs font-medium text-slate-600 dark:text-zink-200">
+              {{ "pagesComponent.user.common.accountExpiryDate" | translate }}
+            </label>
             <input
               type="text"
               formControlName="accountExpiryDate"
@@ -1048,29 +1214,59 @@
               data-provider="flatpickr"
               readonly="readonly"
               placeholder="Select Date"
-              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
+              class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200"
             />
           </div>
           }
-        </div>
-        <div class="flex justify-end gap-2 mt-4">
-          <div>
+        </section>
+
+        <!-- Footer sticky -->
+        <div class="sticky bottom-0 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200 bg-white px-5 py-3 dark:border-zink-500 dark:bg-zink-600">
+          @if (!isEditMode) {
             <button
-              type="reset"
+              type="button"
               dismissModal
               [ModalDismiss]="'editUserModal'"
-              class="mx-1 text-red-500 bg-white btn hover:text-red-500 hover:bg-red-200 focus:text-red-500 focus:bg-red-100 active:text-red-500 active:bg-red-100 dark:bg-zink-600 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:active:bg-red-500/10"
+              class="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-200 dark:hover:bg-zink-600"
             >
-            {{ "coomon.cancel" | translate }}
+              {{ "coomon.cancel" | translate }}
             </button>
             <button
-              type="submit"
-              [disabled]="editForm.pristine"
-              class="mx-1 text-white btn bg-custom-500 border-custom-500 hover:text-white hover:bg-custom-600 hover:border-custom-600 focus:text-white focus:bg-custom-600 focus:border-custom-600 focus:ring focus:ring-custom-100 active:text-white active:bg-custom-600 active:border-custom-600 active:ring active:ring-custom-100 dark:ring-custom-400/20"
+              type="button"
+              (click)="toggleEditMode()"
+              class="inline-flex items-center gap-1.5 rounded-md bg-custom-500 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-custom-600 dark:bg-custom-500 dark:hover:bg-custom-400"
             >
-            {{ "coomon.update" | translate }}
+              <lucide-angular name="file-edit" class="size-4"></lucide-angular>
+              {{ "pagesComponent.user.card-users.edit" | translate }}
             </button>
-          </div>
+          } @else {
+            <button
+              type="button"
+              (click)="toggleEditMode()"
+              class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-700 dark:text-zink-200 dark:hover:bg-zink-600"
+            >
+              <lucide-angular name="eye" class="size-4"></lucide-angular>
+              {{ "pagesComponent.user.card-users.overview" | translate }}
+            </button>
+            <div class="flex items-center gap-2">
+              <button
+                type="reset"
+                dismissModal
+                [ModalDismiss]="'editUserModal'"
+                class="rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm font-medium text-red-500 transition hover:bg-red-50 dark:border-red-500/40 dark:bg-zink-700 dark:text-red-300 dark:hover:bg-red-500/10"
+              >
+                {{ "coomon.cancel" | translate }}
+              </button>
+              <button
+                type="submit"
+                [disabled]="editForm.pristine"
+                class="inline-flex items-center gap-1.5 rounded-md bg-custom-500 px-4 py-1.5 text-sm font-medium text-white transition hover:bg-custom-600 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-custom-500 dark:hover:bg-custom-400"
+              >
+                <lucide-angular name="save" class="size-4"></lucide-angular>
+                {{ "coomon.update" | translate }}
+              </button>
+            </div>
+          }
         </div>
       </form>
     </div>

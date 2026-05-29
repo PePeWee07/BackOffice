@@ -175,6 +175,15 @@
       "message": "このレコードを削除してもよろしいですか?この操作は元に戻すことができません。",
       "confirm": "はい、削除してください!",
       "cancel": "いや、キャンセルしてください！"
+    },
+    "modal-logout": {
+      "title": "ログアウトしますか？",
+      "message": "本当にログアウトしますか？",
+      "confirm": "はい、ログアウト",
+      "cancel": "キャンセル",
+      "loading": "ログアウト中...",
+      "success": "セッションが正常に終了しました",
+      "error": "ログアウトできませんでした"
     }
   },
   "pagesComponent": {
@@ -206,6 +215,7 @@
         "credentialsNonExpired": "有効期限が切れていない認証情報",
         "accountExpiryDate": "アカウントの有効期限",
         "select-roles": "役割を選択してください",
+        "roleIds": "ロール",
         "modal": {
           "id": "ユーザーID",
           "name": "名前",
@@ -247,6 +257,57 @@
       "edit-user": {
         "modal-title": "ユーザーの編集",
         "btn-edit-user": "変更を保存"
+      }
+    },
+    "profile": {
+      "title": "プロフィール",
+      "pagetitle": "アカウント",
+      "hero": {
+        "badge": "マイアカウント",
+        "heading": "個人情報",
+        "description": "データを最新の状態に保ちましょう。この情報を表示および編集できるのはあなただけです。",
+        "member-since": "{{date}}からのメンバー"
+      },
+      "form": {
+        "section-personal": "個人データ",
+        "section-contact": "連絡先",
+        "section-security": "セキュリティ",
+        "name": "名前",
+        "last-name": "姓",
+        "username": "ユーザー名",
+        "email": "メールアドレス",
+        "phone": "電話番号",
+        "address": "住所",
+        "dni": "ID / DNI",
+        "password": "パスワード",
+        "password-placeholder": "現在のものを保持するには空欄のままにしてください",
+        "password-toggle": "パスワードを変更",
+        "password-helper": "最低8文字、文字と数字を混在させてください。",
+        "save": "変更を保存",
+        "saving": "保存中...",
+        "discard": "破棄",
+        "no-changes": "保留中の変更はありません"
+      },
+      "account": {
+        "title": "アカウントの状態",
+        "roles": "割り当てられたロール",
+        "no-roles": "ロールが割り当てられていません",
+        "enabled": "有効",
+        "disabled": "無効",
+        "non-expired": "有効期限内",
+        "expired": "期限切れ",
+        "non-locked": "ロックされていません",
+        "locked": "ロック中",
+        "credentials-non-expired": "認証情報は有効",
+        "credentials-expired": "認証情報の有効期限切れ",
+        "expiry-date": "{{date}}に有効期限切れ",
+        "no-expiry": "有効期限なし"
+      },
+      "messages": {
+        "load-error": "プロフィールを読み込めませんでした",
+        "save-success": "プロフィールが正常に更新されました",
+        "save-error": "変更を保存できませんでした",
+        "email-invalid": "有効なメールアドレスを入力してください"
       }
     },
     "rolesPermissions": {

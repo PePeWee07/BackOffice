@@ -175,6 +175,15 @@
       "message": "¿Estás seguro de que quieres eliminar este registro?, esta acción no se puede deshacer.",
       "confirm": "Sí, ¡eliminalo!",
       "cancel": "No, ¡cancelalo!"
+    },
+    "modal-logout": {
+      "title": "¿Cerrar sesión?",
+      "message": "¿Seguro que deseas cerrar sesión?",
+      "confirm": "Sí, cerrar sesión",
+      "cancel": "Cancelar",
+      "loading": "Cerrando sesión...",
+      "success": "Sesión cerrada correctamente",
+      "error": "No fue posible cerrar la sesión"
     }
   },
   "pagesComponent": {
@@ -206,6 +215,7 @@
         "credentialsNonExpired": "Credenciales no expirada",
         "accountExpiryDate": "Fecha de vencimiento de la cuenta",
         "select-roles": "Selecioná los roles",
+        "roleIds": "Roles",
         "modal": {
           "id": "ID Usuario",
           "name": "Nombre",
@@ -247,6 +257,57 @@
       "edit-user": {
         "modal-title": "Editar Usuario",
         "btn-edit-user": "Guardar Cambios"
+      }
+    },
+    "profile": {
+      "title": "Mi perfil",
+      "pagetitle": "Cuenta",
+      "hero": {
+        "badge": "Mi cuenta",
+        "heading": "Tu información personal",
+        "description": "Mantén tus datos actualizados. Solo tú puedes ver y editar esta información.",
+        "member-since": "Miembro desde {{date}}"
+      },
+      "form": {
+        "section-personal": "Datos personales",
+        "section-contact": "Contacto",
+        "section-security": "Seguridad",
+        "name": "Nombre",
+        "last-name": "Apellido",
+        "username": "Usuario",
+        "email": "Correo electrónico",
+        "phone": "Teléfono",
+        "address": "Dirección",
+        "dni": "DNI / Cédula",
+        "password": "Contraseña",
+        "password-placeholder": "Déjalo en blanco para no cambiarla",
+        "password-toggle": "Cambiar contraseña",
+        "password-helper": "Mínimo 8 caracteres, mezcla letras y números.",
+        "save": "Guardar cambios",
+        "saving": "Guardando...",
+        "discard": "Descartar",
+        "no-changes": "Sin cambios pendientes"
+      },
+      "account": {
+        "title": "Estado de la cuenta",
+        "roles": "Roles asignados",
+        "no-roles": "No tienes roles asignados",
+        "enabled": "Habilitada",
+        "disabled": "Deshabilitada",
+        "non-expired": "No expirada",
+        "expired": "Expirada",
+        "non-locked": "No bloqueada",
+        "locked": "Bloqueada",
+        "credentials-non-expired": "Credenciales vigentes",
+        "credentials-expired": "Credenciales expiradas",
+        "expiry-date": "Vence el {{date}}",
+        "no-expiry": "Sin fecha de vencimiento"
+      },
+      "messages": {
+        "load-error": "No fue posible cargar tu perfil",
+        "save-success": "Perfil actualizado correctamente",
+        "save-error": "No fue posible guardar los cambios",
+        "email-invalid": "Ingresa un correo electrónico válido"
       }
     },
     "rolesPermissions": {

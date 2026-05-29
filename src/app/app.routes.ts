@@ -3,7 +3,6 @@ import { LayoutComponent } from './layouts/layout/layout.component';
 
 import { AuthGuard } from './core/guards/auth.guard';
 
-import { LogoutComponent } from './account/logout/logout.component';
 import { LoginComponent } from './account/login/login.component';
 import { RegisterComponent } from './account/register/register.component';
 import { UnauthorizedComponent } from './account/unauthorized/unauthorized.component';
@@ -21,6 +20,5 @@ export const routes: Routes = [
   // Offical auth
   { path: 'account-login', component: LoginComponent },
   { path: 'account-register', component: RegisterComponent },
-  { path: 'account-logout', component: LogoutComponent },
   { path: 'account-unauthorized', component: UnauthorizedComponent },
 ];
