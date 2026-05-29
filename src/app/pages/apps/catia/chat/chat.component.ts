@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, NgZone, OnDestroy, ViewChild } from '@angular/core';
 import { PageTitleComponent } from '../../../../shared/page-title/page-title.component';
 import { CommonModule } from '@angular/common';
 import { SimplebarAngularModule } from 'simplebar-angular';
@@ -124,6 +124,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   latestMessageType = '';
   selectedMessageDetail: CatiaMessageModel | null = null;
   selectedMessageRawDetail: CatiaMessageModel | null = null;
+  selectedMessageRawReactions: CatiaMessageModel[] = [];
   selectedMessageMediaMetadata: ResponseMediaMetadata | null = null;
   selectedMessageAiResponses: AiResponse[] = [];
   selectedMessageError: MessageError | null = null;
@@ -193,7 +194,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     private authenticationService: AuthenticationService,
     private tabContextService: TabContextService,
     private toastr: ToastrService,
-    private drawerService: DrawerService
+    private drawerService: DrawerService,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -356,43 +358,52 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       .streamMessages(sanitizedPhone)
       .subscribe({
         next: (streamEvent) => {
-          if (streamEvent.event === 'connected') {
-            return;
-          }
+          // El stream SSE corre con fetch().getReader(), que zone.js NO patchea,
+          // asi que las emisiones llegan fuera del NgZone y CD no se dispara
+          // automaticamente. Re-entramos al zone para que la vista reaccione.
+          this.ngZone.run(() => {
+            if (streamEvent.event === 'connected') {
+              return;
+            }
 
-          const payload = streamEvent.payload;
-          const eventType = payload?.eventType ?? streamEvent.event;
-          const streamMessage = streamEvent.message ?? payload?.message ?? null;
+            const payload = streamEvent.payload;
+            const eventType = payload?.eventType ?? streamEvent.event;
+            const streamMessage = streamEvent.message ?? payload?.message ?? null;
 
-          if (!payload?.phone || payload.phone !== sanitizedPhone || !streamMessage) {
-            return;
-          }
+            if (!payload?.phone || payload.phone !== sanitizedPhone || !streamMessage) {
+              return;
+            }
 
-          const shouldAutoScroll = this.isMessageScrollNearBottom();
-          const isReadEvent =
-            eventType === 'message_read' || payload?.status === 'read';
+            const shouldAutoScroll = this.isMessageScrollNearBottom();
+            const isReadEvent =
+              eventType === 'message_read' || payload?.status === 'read';
 
-          this.upsertStreamMessage(streamMessage, shouldAutoScroll);
+            this.upsertStreamMessage(streamMessage, shouldAutoScroll);
 
-          if (isReadEvent) {
-            return;
-          }
+            if (isReadEvent) {
+              return;
+            }
 
-          if (shouldAutoScroll) {
-            return;
-          }
+            if (shouldAutoScroll) {
+              return;
+            }
 
-          this.hasNewMessageAlert = true;
-          this.newMessageAlertCount += 1;
-          this.latestMessagePreview = this.getStreamMessagePreview(streamMessage);
-          this.latestMessageType = streamMessage.type?.trim() ?? '';
+            this.hasNewMessageAlert = true;
+            this.newMessageAlertCount += 1;
+            this.latestMessagePreview = this.getStreamMessagePreview(streamMessage);
+            this.latestMessageType = streamMessage.type?.trim() ?? '';
+          });
         },
         error: (err: unknown) => {
-          this.isStreamingSelectedChat = false;
-          console.error('Error en stream SSE:', err);
+          this.ngZone.run(() => {
+            this.isStreamingSelectedChat = false;
+            console.error('Error en stream SSE:', err);
+          });
         },
         complete: () => {
-          this.isStreamingSelectedChat = false;
+          this.ngZone.run(() => {
+            this.isStreamingSelectedChat = false;
+          });
         },
       });
   }
@@ -615,6 +626,54 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   isOutgoingMessage(message: CatiaMessageModel): boolean {
     return message.direction === 'OUTBOUND';
+  }
+
+  /**
+   * Lista de mensajes que se renderizan como burbuja independiente. Las
+   * reacciones cuyo mensaje objetivo (relatedWamid) esta presente en la lista
+   * se ocultan aqui porque se dibujan como badge sobre la burbuja del mensaje
+   * reaccionado. Si el mensaje objetivo no esta cargado, la reaccion queda
+   * como bubble (fallback para no perderla).
+   */
+  get displayMessages(): CatiaMessageModel[] {
+    return this.messages.filter((m) => !this.isAttachedReaction(m));
+  }
+
+  private isAttachedReaction(message: CatiaMessageModel): boolean {
+    if (message.type !== 'REACTION') return false;
+    if (!message.relatedWamid) return false;
+    // Ocultamos TODA reaccion (con o sin emoji) cuyo target esta cargado.
+    // Las que vienen con emoji=null son eventos "quito la reaccion" y deben
+    // actualizar el badge flotante, no aparecer como bubble suelto.
+    return this.messages.some((m) => m.wamid === message.relatedWamid);
+  }
+
+  /**
+   * Calcula las reacciones efectivas sobre un mensaje. Para cada usuario que
+   * envio reacciones nos quedamos con la ULTIMA (por timestamp); si esa ultima
+   * trae emoji=null significa que el usuario quito su reaccion y no se cuenta.
+   * Despues agrupamos por emoji y sumamos para el badge tipo WhatsApp.
+   */
+  getMessageReactions(message: CatiaMessageModel): { emoji: string; count: number }[] {
+    if (!message.wamid) return [];
+
+    const latestByUser = new Map<string, CatiaMessageModel>();
+    for (const m of this.messages) {
+      if (m.type !== 'REACTION') continue;
+      if (m.relatedWamid !== message.wamid) continue;
+      const userKey = m.fromPhone ?? '';
+      const prev = latestByUser.get(userKey);
+      if (!prev || (m.timestamp ?? 0) >= (prev.timestamp ?? 0)) {
+        latestByUser.set(userKey, m);
+      }
+    }
+
+    const counts = new Map<string, number>();
+    for (const reaction of latestByUser.values()) {
+      if (!reaction.reactionEmoji) continue;
+      counts.set(reaction.reactionEmoji, (counts.get(reaction.reactionEmoji) ?? 0) + 1);
+    }
+    return Array.from(counts.entries()).map(([emoji, count]) => ({ emoji, count }));
   }
 
   getMessageAvatar(message: CatiaMessageModel): string {
@@ -1147,6 +1206,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
 
     this.selectedMessageRawDetail = null;
+    this.selectedMessageRawReactions = this.collectMessageRawReactions(message);
     this.isLoadingSelectedMessageRawDetail = false;
     this.drawerService.open('drawerMessageRaw');
 
@@ -1187,10 +1247,24 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   closeMessageRawAudit() {
     this.selectedMessageRawDetail = null;
+    this.selectedMessageRawReactions = [];
     this.selectedMessageMediaMetadata = null;
     this.isLoadingSelectedMessageRawDetail = false;
     this.isLoadingSelectedMessageMediaMetadata = false;
     this.drawerService.close('drawerMessageRaw');
+  }
+
+  /**
+   * Devuelve las reacciones que apuntan a ese mensaje (relatedWamid match),
+   * ordenadas por timestamp ascendente para que en la auditoria se lean en el
+   * orden cronologico en que llegaron. Incluye eventos de "quitar reaccion"
+   * (emoji null) por trazabilidad completa.
+   */
+  private collectMessageRawReactions(message: CatiaMessageModel): CatiaMessageModel[] {
+    if (!message?.wamid) return [];
+    return this.messages
+      .filter((m) => m.type === 'REACTION' && m.relatedWamid === message.wamid)
+      .sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0));
   }
 
   loadSelectedMessageMediaMetadata(message?: CatiaMessageModel | null) {
