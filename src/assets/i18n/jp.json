@@ -56,6 +56,7 @@
   "roles-permissions": "ロールと権限",
   "route-permissions": "ルート権限",
   "audit-logs": "監査ログ",
+  "refresh-tokens": "リフレッシュトークン",
   "authentication": "認証",
   "login": "ログイン",
   "basic": "基本",
@@ -394,6 +395,65 @@
         "delete-error": "ロールを削除できませんでした",
         "permission-delete-success": "権限が正常に削除されました",
         "permission-delete-error": "権限 {{name}} を削除できませんでした"
+      }
+    },
+    "refreshTokens": {
+      "title": "リフレッシュトークン",
+      "pagetitle": "管理",
+      "hero": {
+        "badge": "管理",
+        "heading": "アクティブなユーザーセッション",
+        "description": "各リフレッシュトークンはアクティブなセッションを表します。管理者として個別のトークンを削除したり、ユーザーのすべてのセッションを一度に閉じることができます。",
+        "total": "トークン合計",
+        "expired": "期限切れ",
+        "active": "アクティブ"
+      },
+      "filters": {
+        "user-id": "ユーザーID",
+        "user-id-placeholder": "例: 1",
+        "email": "メール",
+        "email-placeholder": "メールで検索...",
+        "jti": "JTI",
+        "jti-placeholder": "JTIの一部...",
+        "revoked": "失効",
+        "expired": "期限切れ",
+        "all": "すべて",
+        "yes": "はい",
+        "no": "いいえ",
+        "apply": "フィルターを適用",
+        "clear": "クリア"
+      },
+      "table": {
+        "header-id": "ID",
+        "header-user": "ユーザー",
+        "header-jti": "JTI",
+        "header-expires": "有効期限",
+        "header-status": "ステータス",
+        "header-actions": "アクション",
+        "system-user": "—",
+        "status-revoked": "失効",
+        "status-expired": "期限切れ",
+        "status-active": "アクティブ",
+        "delete-row": "トークンを削除",
+        "delete-user": "ユーザーのすべてを削除"
+      },
+      "state": {
+        "loading": "トークンを読み込み中...",
+        "empty": "適用されたフィルターでリフレッシュトークンが見つかりませんでした。"
+      },
+      "delete": {
+        "title-row": "このトークンを削除しますか？",
+        "message-row": "ユーザーは更新を試みた際に再度サインインする必要があります。",
+        "title-user": "このユーザーのすべてのトークンを削除しますか？",
+        "message-user": "<strong>{{email}}</strong>のすべてのアクティブセッションが閉じられます。",
+        "confirm": "はい、削除",
+        "cancel": "キャンセル",
+        "success-row": "トークンが削除されました",
+        "success-user": "ユーザーの{{count}}個のトークンが削除されました",
+        "error": "操作を完了できませんでした"
+      },
+      "messages": {
+        "load-error": "リフレッシュトークンを読み込めませんでした"
       }
     },
     "auditLogs": {

@@ -53,6 +53,13 @@ export const MENU: MenuItem[] = [
     parentId: 1.5,
   },
   {
+    id: 2.51,
+    label: 'refresh-tokens',
+    icon: 'key-round',
+    link: '/apps-refresh-tokens',
+    parentId: 1.5,
+  },
+  {
     id: 1.7,
     label: 'CATIA',
     isTitle: true,

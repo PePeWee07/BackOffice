@@ -56,6 +56,7 @@
   "roles-permissions": "Roles and permissions",
   "route-permissions": "Route permissions",
   "audit-logs": "Audit logs",
+  "refresh-tokens": "Refresh tokens",
   "authentication": "Authentication",
   "login": "Login",
   "basic": "Basic",
@@ -395,6 +396,65 @@
         "delete-error": "Could not delete the role",
         "permission-delete-success": "Permission deleted successfully",
         "permission-delete-error": "Could not delete permission {{name}}"
+      }
+    },
+    "refreshTokens": {
+      "title": "Refresh tokens",
+      "pagetitle": "Administration",
+      "hero": {
+        "badge": "Administration",
+        "heading": "Active user sessions",
+        "description": "Each refresh token represents an active session. As an admin you can delete individual tokens or close all sessions of a user at once.",
+        "total": "Total tokens",
+        "expired": "Expired",
+        "active": "Active"
+      },
+      "filters": {
+        "user-id": "User ID",
+        "user-id-placeholder": "E.g.: 1",
+        "email": "Email",
+        "email-placeholder": "Search by email...",
+        "jti": "JTI",
+        "jti-placeholder": "JTI fragment...",
+        "revoked": "Revoked",
+        "expired": "Expired",
+        "all": "All",
+        "yes": "Yes",
+        "no": "No",
+        "apply": "Apply filters",
+        "clear": "Clear"
+      },
+      "table": {
+        "header-id": "ID",
+        "header-user": "User",
+        "header-jti": "JTI",
+        "header-expires": "Expires",
+        "header-status": "Status",
+        "header-actions": "Actions",
+        "system-user": "—",
+        "status-revoked": "Revoked",
+        "status-expired": "Expired",
+        "status-active": "Active",
+        "delete-row": "Delete token",
+        "delete-user": "Delete all from user"
+      },
+      "state": {
+        "loading": "Loading tokens...",
+        "empty": "No refresh tokens found with the applied filters."
+      },
+      "delete": {
+        "title-row": "Delete this token?",
+        "message-row": "The user will have to sign in again when they try to refresh.",
+        "title-user": "Delete ALL tokens for this user?",
+        "message-user": "All active sessions of <strong>{{email}}</strong> will be closed.",
+        "confirm": "Yes, delete",
+        "cancel": "Cancel",
+        "success-row": "Token deleted",
+        "success-user": "{{count}} tokens deleted for the user",
+        "error": "Could not complete the operation"
+      },
+      "messages": {
+        "load-error": "Could not load refresh tokens"
       }
     },
     "auditLogs": {

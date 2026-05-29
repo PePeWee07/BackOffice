@@ -10,6 +10,9 @@ import { CutomDropdownComponent } from '../../Component/customdropdown';
 import { Store } from '@ngrx/store';
 import { getLayout, getSidebarsize } from '../../store/layout/layout-selector';
 import { CommonModule } from '@angular/common';
+import { RoutePermissionService } from '../../core/services/administration/route-permission.service';
+import { TokenStorageService } from '../../core/services/auth/token-storage.service';
+import { JwtToken } from '../../store/Authentication/jwt.model';
 
 
 @Component({
@@ -31,6 +34,8 @@ export class SidebarComponent {
     size: any;
 
     private store = inject(Store)
+    private routePermissionService = inject(RoutePermissionService);
+    private tokenStorage = inject(TokenStorageService);
 
     constructor(
         public translate: TranslateService) {
@@ -59,7 +64,7 @@ export class SidebarComponent {
                     this.updateMenu();
                 }, 1500);
             } else {
-                this.menuItems = MENU;
+                this.menuItems = this.buildMenu();
             }
         })
 
@@ -69,8 +74,14 @@ export class SidebarComponent {
         })
 
         // Initialize the navData and menuItems
-        this.navData = MENU;
+        this.navData = this.buildMenu();
         this.menuItems = this.navData;
+
+        // Cuando la cache de permisos de rutas se carga/actualiza, recomputamos el menu
+        this.routePermissionService.routePermissions$.subscribe(() => {
+            this.navData = this.buildMenu();
+            this.menuItems = this.navData;
+        });
     }
 
 
@@ -83,18 +94,18 @@ export class SidebarComponent {
                 this.updateMenu();
             }, 1500);
         } else {
-            this.menuItems = MENU;
+            this.menuItems = this.buildMenu();
         }
     }
 
 
-    // Display Menu 
+    // Display Menu
     updateMenu() {
         const isMoreMenu = false;
         const navbarHeader = document.querySelector(".navbar-header");
         const navbarNav = document.getElementById("navbar-nav") as any;
 
-        // count width of horizontal menu      
+        // count width of horizontal menu
         const fullWidthOfMenu = navbarHeader!.clientWidth - 150;
 
         const menuWidth = fullWidthOfMenu || 0;
@@ -146,6 +157,101 @@ export class SidebarComponent {
         sidebarOverlay.classList.add("hidden");
         document.documentElement.querySelector('.app-menu')?.classList.add("hidden");
         document.body.classList.remove("overflow-hidden");
+    }
+
+    /**
+     * Construye el menu filtrado segun los roles del usuario actual y el
+     * mapping de permisos de ruta que vive en RoutePermissionService. Items
+     * sin link (titulos, dropdowns) se mantienen si tienen al menos un hijo
+     * visible; titulos sin items debajo se descartan.
+     */
+    private buildMenu(): MenuItem[] {
+        const filtered = this.filterMenu(MENU);
+        return this.dropOrphanTitles(filtered);
+    }
+
+    private filterMenu(items: MenuItem[]): MenuItem[] {
+        const result: MenuItem[] = [];
+        for (const item of items) {
+            // Items con hijos (dropdown): filtra recursivo y conserva solo si quedan hijos visibles.
+            if (item.subItems && item.subItems.length > 0) {
+                const filteredSub = this.filterMenu(item.subItems);
+                if (filteredSub.length > 0) {
+                    result.push({ ...item, subItems: filteredSub });
+                }
+                continue;
+            }
+
+            // Titulo (sin link, sin subItems): siempre pasa en esta etapa; se limpia despues si queda huerfano.
+            if (item.isTitle) {
+                result.push(item);
+                continue;
+            }
+
+            // Item con link: chequear permisos contra la cache.
+            if (item.link) {
+                if (this.isLinkAllowed(item.link)) {
+                    result.push(item);
+                }
+                continue;
+            }
+
+            // Cualquier otro caso (sin link, sin subItems, no titulo) lo dejamos pasar.
+            result.push(item);
+        }
+        return result;
+    }
+
+    private dropOrphanTitles(items: MenuItem[]): MenuItem[] {
+        const result: MenuItem[] = [];
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (!item.isTitle) {
+                result.push(item);
+                continue;
+            }
+            // Buscar si hay algun item no-titulo despues, antes del proximo titulo.
+            let hasChildrenBeforeNextTitle = false;
+            for (let j = i + 1; j < items.length; j++) {
+                if (items[j].isTitle) break;
+                hasChildrenBeforeNextTitle = true;
+                break;
+            }
+            if (hasChildrenBeforeNextTitle) {
+                result.push(item);
+            }
+        }
+        return result;
+    }
+
+    private isLinkAllowed(link: string): boolean {
+        // link viene con prefijo "/" (ej. "/apps-route-permissions"). El cache usa el path
+        // tal cual lo define Angular: "" para la raiz, "apps-route-permissions" para el resto.
+        const path = link.startsWith('/') ? link.slice(1) : link;
+        const required = this.routePermissionService.getRolesForPath(path);
+
+        // Si la cache aun no se cargo o la ruta no esta registrada, mostramos por defecto.
+        // El AuthGuard del lado del routing igual bloqueara si corresponde.
+        if (!required) return true;
+        // Si no tiene roles asignados, es ruta abierta a cualquier autenticado.
+        if (required.length === 0) return true;
+
+        const userRoles = this.getUserRoles();
+        return required.some((role) => {
+            const normalized = role.startsWith('ROLE_') ? role : `ROLE_${role}`;
+            return userRoles.includes(normalized);
+        });
+    }
+
+    private getUserRoles(): string[] {
+        const tokenStr = this.tokenStorage.getToken();
+        if (!tokenStr) return [];
+        const token: JwtToken | null = this.tokenStorage.getDataToken(tokenStr);
+        if (!token?.authorities) return [];
+        return token.authorities
+            .split(',')
+            .map((entry) => entry.trim())
+            .filter((entry) => entry.startsWith('ROLE_'));
     }
 
 }

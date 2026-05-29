@@ -56,6 +56,7 @@
   "roles-permissions": "Roles y permisos",
   "route-permissions": "Permisos de rutas",
   "audit-logs": "Auditorías",
+  "refresh-tokens": "Refresh tokens",
   "authentication": "Autenticación",
   "login": "Iniciar Sesión",
   "basic": "Básico",
@@ -394,6 +395,65 @@
         "delete-error": "No fue posible eliminar el rol",
         "permission-delete-success": "Permiso eliminado correctamente",
         "permission-delete-error": "No fue posible eliminar el permiso {{name}}"
+      }
+    },
+    "refreshTokens": {
+      "title": "Refresh tokens",
+      "pagetitle": "Administración",
+      "hero": {
+        "badge": "Administración",
+        "heading": "Sesiones activas de los usuarios",
+        "description": "Cada refresh token representa una sesión activa. Como administrador puedes eliminar tokens individuales o cerrar de golpe todas las sesiones de un usuario.",
+        "total": "Tokens totales",
+        "expired": "Expirados",
+        "active": "Activos"
+      },
+      "filters": {
+        "user-id": "ID Usuario",
+        "user-id-placeholder": "Ej: 1",
+        "email": "Email",
+        "email-placeholder": "Buscar por correo...",
+        "jti": "JTI",
+        "jti-placeholder": "Fragmento del JTI...",
+        "revoked": "Revocado",
+        "expired": "Expirado",
+        "all": "Todos",
+        "yes": "Sí",
+        "no": "No",
+        "apply": "Aplicar filtros",
+        "clear": "Limpiar"
+      },
+      "table": {
+        "header-id": "ID",
+        "header-user": "Usuario",
+        "header-jti": "JTI",
+        "header-expires": "Expira",
+        "header-status": "Estado",
+        "header-actions": "Acciones",
+        "system-user": "—",
+        "status-revoked": "Revocado",
+        "status-expired": "Expirado",
+        "status-active": "Activo",
+        "delete-row": "Eliminar token",
+        "delete-user": "Eliminar todos del usuario"
+      },
+      "state": {
+        "loading": "Cargando tokens...",
+        "empty": "No se encontraron refresh tokens con los filtros aplicados."
+      },
+      "delete": {
+        "title-row": "¿Eliminar este token?",
+        "message-row": "El usuario tendrá que volver a iniciar sesión cuando intente refrescar.",
+        "title-user": "¿Eliminar TODOS los tokens del usuario?",
+        "message-user": "Se cerrarán todas las sesiones activas de <strong>{{email}}</strong>.",
+        "confirm": "Sí, eliminar",
+        "cancel": "Cancelar",
+        "success-row": "Token eliminado",
+        "success-user": "{{count}} tokens eliminados del usuario",
+        "error": "No fue posible completar la operación"
+      },
+      "messages": {
+        "load-error": "No fue posible cargar los refresh tokens"
       }
     },
     "auditLogs": {

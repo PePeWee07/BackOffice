@@ -35,5 +35,6 @@ export const ROUTE_CATALOG: string[] = [
   'apps-users-role',
   'apps-route-permissions',
   'apps-audit-logs',
+  'apps-refresh-tokens',
   'profile',
 ];
