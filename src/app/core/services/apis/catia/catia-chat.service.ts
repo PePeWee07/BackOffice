@@ -199,6 +199,21 @@ export class CatiaChatService {
     );
   }
 
+  /**
+   * Toggle del takeover humano: pausa o reactiva a CatIA para ese usuario.
+   * Mientras paused=true los mensajes del back-office salen sin que la IA
+   * responda; con paused=false la IA vuelve a tomar el control.
+   */
+  toggleIaPause(whatsappPhone: string, paused: boolean): Observable<string> {
+    const params = new HttpParams()
+      .set('whatsappPhone', whatsappPhone)
+      .set('paused', String(paused));
+    return this.http.patch(`${this.apiURL}/whatsapp/user/ia/pause`, null, {
+      params,
+      responseType: 'text',
+    });
+  }
+
   // WhatsApp Upload File
   uploadWhatsAppMedia(file: File): Observable<string> {
     const formData = new FormData();

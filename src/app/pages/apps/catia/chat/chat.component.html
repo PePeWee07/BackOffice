@@ -358,7 +358,15 @@
                     <img src="{{profile}}" alt="" class="h-10 rounded-full">
                   </div>
                   <div>
-                    <h6>{{ selectedUser ? getUserFullName(selectedUser) : username }}</h6>
+                    <h6 class="flex items-center gap-2">
+                      <span>{{ selectedUser ? getUserFullName(selectedUser) : username }}</span>
+                      @if (selectedUser?.iaPaused) {
+                        <span class="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/20 dark:text-amber-300">
+                          <lucide-angular name="user-cog" class="size-3"></lucide-angular>
+                          Humano
+                        </span>
+                      }
+                    </h6>
                     <div class="flex items-center gap-2">
                       <p class="text-sm text-slate-500 dark:text-zink-200">{{role}}</p>
                       @if (selectedUser) {
@@ -373,7 +381,34 @@
                     </div>
                   </div>
                 </a>
-                <ul class="flex items-center">
+                <ul class="flex items-center gap-1">
+                  @if (selectedUser) {
+                    @if (selectedUser.iaPaused) {
+                      <li>
+                        <button
+                          type="button"
+                          (click)="releaseToIa()"
+                          [disabled]="isTogglingIaPause"
+                          title="Devolver el chat a CatIA"
+                          class="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-medium text-emerald-700 transition hover:bg-emerald-100 disabled:opacity-60 dark:border-emerald-500/40 dark:bg-emerald-500/20 dark:text-emerald-300 dark:hover:bg-emerald-500/30">
+                          <lucide-angular name="bot" class="size-3.5"></lucide-angular>
+                          <span class="hidden md:inline">Devolver a CatIA</span>
+                        </button>
+                      </li>
+                    } @else {
+                      <li>
+                        <button
+                          type="button"
+                          (click)="takeOverChat()"
+                          [disabled]="isTogglingIaPause"
+                          title="Tomar el chat (pausa la IA)"
+                          class="inline-flex items-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-xs font-medium text-amber-700 transition hover:bg-amber-100 disabled:opacity-60 dark:border-amber-500/40 dark:bg-amber-500/20 dark:text-amber-300 dark:hover:bg-amber-500/30">
+                          <lucide-angular name="user-cog" class="size-3.5"></lucide-angular>
+                          <span class="hidden md:inline">Tomar chat</span>
+                        </button>
+                      </li>
+                    }
+                  }
                   <li>
                     <a [appModalTrigger]="'callModal'" href="javascript:void(0);" class="inline-flex items-center justify-center size-10 h-10 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="phone" class="mx-auto transition-all size-4 duration-200 ease-linear fill-slate-100 text-slate-500 dark:fill-zink-600 dark:text-zink-200 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500"></lucide-angular></a>
                   </li>
@@ -390,6 +425,16 @@
                 </ul>
               </div>
             </div><!-- chat-header -->
+
+            @if (selectedUser?.iaPaused) {
+              <div class="flex items-center gap-2 border-b border-amber-200 bg-amber-50 px-5 py-2 text-xs text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-200">
+                <lucide-angular name="user-cog" class="size-4 shrink-0"></lucide-angular>
+                <p>
+                  <strong>Modo soporte humano activo.</strong>
+                  CatIA esta pausada para este usuario; tus mensajes se enviaran como agente.
+                </p>
+              </div>
+            }
 
             <!-- chat-body -->
             <div class="relative bg-slate-50 dark:bg-zink-600/50 grow">
@@ -422,7 +467,11 @@
                   </div>
                 </div>
               }
-              <ngx-simplebar class="h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)]" #messageScrollRef>
+              <ngx-simplebar
+                #messageScrollRef
+                [ngClass]="selectedUser?.iaPaused
+                  ? 'h-[calc(100vh_-_450px)] xl:h-[calc(100vh_-_370px)]'
+                  : 'h-[calc(100vh_-_410px)] xl:h-[calc(100vh_-_330px)]'">
                 <ul class="flex flex-col gap-5 list-none card-body">
                   @if (!selectedUser && !isLoadingMessages) {
                     <li class="text-center text-sm text-slate-500 dark:text-zink-200">
@@ -732,7 +781,7 @@
 
                 <form (ngSubmit)="messageSave()" [formGroup]="formMessage" class="flex items-end gap-2">
                     <div class="grow">
-                        <input type="text" id="inputText" formControlName="chatMsg" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" placeholder="Escribe tu mensaje..." autocomplete="off">
+                        <input type="text" id="inputText" formControlName="chatMsg" [disabled]="!selectedUser?.iaPaused" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" [placeholder]="selectedUser?.iaPaused ? 'Escribe tu mensaje...' : 'Toma el chat primero para responder'" autocomplete="off">
                     </div>
                     <div class="flex gap-2 shrink-0">
                         <button type="button" (click)="toggleAttachmentMenu()" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50" [class.text-custom-500]="pendingImageUploads.length > 0 || showImageUrlComposer || (uploadMode === catiaUploadMode.IMAGE_URL && pendingImageUrl.trim())"><lucide-angular name="plus" [class]="'size-4'"></lucide-angular></button>

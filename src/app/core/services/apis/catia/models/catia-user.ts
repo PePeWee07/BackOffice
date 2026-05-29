@@ -10,6 +10,7 @@ export interface CatiaUserModel {
   limitStrike: number;
   block: boolean;
   blockingReason?: string;
+  iaPaused: boolean;
   validQuestionCount: number;
   identificacion: string;
   chatSessions?: ChatSession[];
@@ -87,6 +88,7 @@ export interface CatiaUserChatUpdateRequest {
   limitStrike?: number;
   block?: boolean;
   blockingReason?: string | null;
+  iaPaused?: boolean;
   validQuestionCount?: number;
   identificacion?: string;
 }

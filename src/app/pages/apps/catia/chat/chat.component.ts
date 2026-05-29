@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as Prism from 'prismjs';
 import { concatMap, from, Subscription, toArray } from 'rxjs';
+import Swal from 'sweetalert2';
 
 import { CatiaChatService } from '../../../../core/services/apis/catia/catia-chat.service';
 import {
@@ -86,6 +87,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   } | null = null;
   formMessage!: UntypedFormGroup;
   isSendingMessage = false;
+  isTogglingIaPause = false;
   uploadMode = CatiaUploadMode.NONE;
   readonly catiaUploadMode = CatiaUploadMode;
   pendingImageUploads: PendingImageUpload[] = [];
@@ -1801,8 +1803,86 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     return this.pendingImageUploads.some((item) => !!item.error);
   }
 
+  /**
+   * Toma el chat: pausa la IA del usuario actual previa confirmacion.
+   * Mientras la IA esta pausada el agente puede escribir mensajes manuales.
+   */
+  async takeOverChat(): Promise<void> {
+    if (!this.selectedUser || this.isTogglingIaPause) return;
+    const phone = this.selectedUser.whatsappPhone?.trim();
+    if (!phone) return;
+
+    const result = await Swal.fire({
+      title: 'Tomar el chat',
+      text: 'Vas a pausar a CatIA para este usuario. Tu podras responderle directamente.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Si, tomar el chat',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#0891b2',
+      reverseButtons: true,
+      focusCancel: true,
+    });
+    if (!result.isConfirmed) return;
+    this.toggleIaPause(true);
+  }
+
+  /**
+   * Devuelve el chat a la IA: la reactiva tras confirmacion.
+   */
+  async releaseToIa(): Promise<void> {
+    if (!this.selectedUser || this.isTogglingIaPause) return;
+    const phone = this.selectedUser.whatsappPhone?.trim();
+    if (!phone) return;
+
+    const result = await Swal.fire({
+      title: 'Devolver a CatIA',
+      text: 'Vas a reactivar la IA para este usuario. Las proximas respuestas seran automaticas.',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Si, reactivar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#16a34a',
+      reverseButtons: true,
+    });
+    if (!result.isConfirmed) return;
+    this.toggleIaPause(false);
+  }
+
+  private toggleIaPause(paused: boolean): void {
+    if (!this.selectedUser) return;
+    const phone = this.selectedUser.whatsappPhone?.trim();
+    if (!phone) return;
+
+    this.isTogglingIaPause = true;
+    this.catiaService.toggleIaPause(phone, paused).subscribe({
+      next: () => {
+        if (this.selectedUser) {
+          this.selectedUser.iaPaused = paused;
+        }
+        this.isTogglingIaPause = false;
+        this.toastr.success(paused ? 'Chat tomado · CatIA en pausa' : 'CatIA reactivada');
+      },
+      error: (err: any) => {
+        this.isTogglingIaPause = false;
+        const message =
+          err?.error?.errors?.[0]?.message ||
+          err?.error?.message ||
+          'No fue posible cambiar el estado de la IA';
+        this.toastr.error(message, 'ERROR');
+      },
+    });
+  }
+
   canSendCurrentMessage(): boolean {
     if (!this.selectedUser || this.isSendingMessage) {
+      return false;
+    }
+
+    // Takeover humano: solo se permite enviar mensajes desde el back-office si
+    // la IA esta pausada para ese usuario. Asi evitamos que CatIA y un agente
+    // contesten en paralelo.
+    if (!this.selectedUser.iaPaused) {
       return false;
     }
 
