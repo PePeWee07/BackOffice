@@ -1301,78 +1301,317 @@
 
 <ng-template #userProfileContent>
   @if (selectedUser) {
-    <div class="text-center">
-        <div class="size-20 mx-auto mt-8 rounded-full bg-slate-100 dark:bg-zink-600 flex items-center justify-center">
-            <img src="assets/images/users/user-dummy-img.jpg" alt="" class="h-20 rounded-full">
+    <!-- Hero: avatar + nombre + chips de estado -->
+    <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200 dark:border-zink-500 bg-gradient-to-br from-slate-50 via-white to-custom-50 dark:from-zink-700 dark:via-zink-700 dark:to-custom-500/10">
+      <div class="px-5 py-5">
+        <div class="flex items-start gap-4">
+          <div class="relative shrink-0">
+            <img src="assets/images/users/user-dummy-img.jpg" alt="" class="size-16 rounded-full ring-2 ring-white dark:ring-zink-600">
+            <span
+              class="absolute bottom-0 right-0 inline-block size-3 rounded-full ring-2 ring-white dark:ring-zink-600"
+              [ngClass]="selectedUser.block ? 'bg-rose-500' : 'bg-emerald-500'"
+              [title]="selectedUser.block ? 'Bloqueado' : 'Activo'"></span>
+          </div>
+          <div class="min-w-0 grow">
+            @if (selectedUser.erpUser?.codigoErp) {
+              <span class="inline-flex items-center rounded-full border border-custom-200 bg-custom-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-custom-700 dark:border-custom-500/40 dark:bg-custom-500/20 dark:text-custom-300">
+                {{ selectedUser.erpUser?.codigoErp }}
+              </span>
+            }
+            <h5 class="mt-1 truncate text-lg font-semibold text-slate-800 dark:text-zink-100">
+              {{ getUserFullName(selectedUser) }}
+            </h5>
+            <p class="truncate text-xs text-slate-500 dark:text-zink-300">
+              {{ getRolesString(selectedUser.erpUser?.rolesUsuario) || 'Sin rol ERP asociado' }}
+            </p>
+          </div>
         </div>
-        <h5 class="mt-4 text-16">{{ getUserFullName(selectedUser) }}</h5>
-        <p class="text-slate-500 dark:text-zink-200">{{ getRolesString(selectedUser.erpUser?.rolesUsuario) }}</p>
-    </div>
 
-    <div class="mt-5 p-4 rounded-lg bg-slate-50 dark:bg-zink-700/40">
-        <p class="mb-3 text-slate-500 dark:text-zink-200">Resumen</p>
-        <div class="flex flex-wrap gap-2">
-            <span class="px-2 py-1 text-xs rounded-md bg-custom-100 text-custom-700 dark:bg-custom-500/20 dark:text-custom-300">
-              Estado: {{ selectedUser.conversationState || 'N/A' }}
-            </span>
-            <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
-              Preguntas válidas: {{ selectedUser.validQuestionCount }}
-            </span>
-            <span class="px-2 py-1 text-xs rounded-md bg-slate-100 text-slate-600 dark:bg-zink-600 dark:text-zink-200">
-              Límite: {{ selectedUser.limitQuestions }}
-            </span>
-            <span class="px-2 py-1 text-xs rounded-md"
-              [ngClass]="selectedUser.block
-                ? 'bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-300'
-                : 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-300'">
-              {{ selectedUser.block ? 'Bloqueado' : 'Activo' }}
-            </span>
-        </div>
-    </div>
-
-    <div class="mt-5">
-        <p class="mb-4 text-slate-500 dark:text-zink-200">Información personal</p>
-        <h6 class="mb-3 font-medium">
-          <lucide-angular name="badge-info" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
-          <span class="align-middle">Identificación: {{ selectedUser.identificacion || selectedUser.erpUser?.identificacion || 'N/A' }}</span>
-        </h6>
-        <h6 class="mb-3 font-medium">
-          <lucide-angular name="phone" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
-          <span class="align-middle">{{ selectedUser.whatsappPhone || selectedUser.erpUser?.numeroCelular || 'N/A' }}</span>
-        </h6>
-        <h6 class="mb-3 font-medium">
-          <lucide-angular name="mail" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
-          <span class="align-middle">{{ selectedUser.erpUser?.emailInstitucional || selectedUser.erpUser?.emailPersonal || 'N/A' }}</span>
-        </h6>
-        <h6 class="font-medium">
-          <lucide-angular name="user" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
-          <span class="align-middle">Sexo: {{ selectedUser.erpUser?.sexo || 'N/A' }}</span>
-        </h6>
-    </div>
-
-    <div class="mt-5">
-        <p class="mb-4 text-slate-500 dark:text-zink-200">Actividad del chat</p>
-        <h6 class="mb-3 font-medium">
-          <lucide-angular name="clock-3" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
-          <span class="align-middle">Primera interacción: {{ formatDateTime(selectedUser.firstInteraction) }}</span>
-        </h6>
-        <h6 class="mb-3 font-medium">
-          <lucide-angular name="history" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
-          <span class="align-middle">Última interacción: {{ formatDateTime(selectedUser.lastInteraction) }}</span>
-        </h6>
-        <h6 class="mb-3 font-medium">
-          <lucide-angular name="refresh-cw" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
-          <span class="align-middle">Próximo reset: {{ formatDateTime(selectedUser.nextResetDate) }}</span>
-        </h6>
-        <h6 class="font-medium">
-          <lucide-angular name="message-square-more" [class]="'inline-block size-4 mr-1 text-slate-500 dark:text-zink-200'"></lucide-angular>
-          <span
-            class="align-middle inline-block max-w-full truncate text-[10px] font-mono"
-            [title]="selectedUser.previousResponseId || 'N/A'">
-            Previous Response ID: {{ selectedUser.previousResponseId || 'N/A' }}
+        <!-- Chips de resumen -->
+        <div class="mt-4 flex flex-wrap gap-1.5">
+          <span class="inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium"
+            [ngClass]="selectedUser.block
+              ? 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-500/40 dark:bg-rose-500/20 dark:text-rose-300'
+              : 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/20 dark:text-emerald-300'">
+            <lucide-angular [name]="selectedUser.block ? 'shield-off' : 'shield-check'" class="size-3"></lucide-angular>
+            {{ selectedUser.block ? 'Bloqueado' : 'Activo' }}
           </span>
-        </h6>
+          @if (selectedUser.iaPaused) {
+            <span class="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/20 dark:text-amber-300">
+              <lucide-angular name="user-cog" class="size-3"></lucide-angular>
+              Modo humano
+            </span>
+          }
+          <span class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200">
+            <lucide-angular name="messages-square" class="size-3"></lucide-angular>
+            {{ selectedUser.conversationState || 'N/A' }}
+          </span>
+        </div>
+
+        <!-- Mini-stats grid -->
+        <div class="mt-4 grid grid-cols-3 gap-2">
+          <div class="rounded-xl bg-white/80 px-3 py-2 ring-1 ring-slate-200 dark:bg-zink-600/80 dark:ring-zink-500">
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 dark:text-zink-300">Válidas</p>
+            <p class="mt-0.5 text-lg font-semibold text-slate-800 dark:text-zink-100">{{ selectedUser.validQuestionCount }}</p>
+          </div>
+          <div class="rounded-xl bg-white/80 px-3 py-2 ring-1 ring-slate-200 dark:bg-zink-600/80 dark:ring-zink-500">
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 dark:text-zink-300">Límite</p>
+            <p class="mt-0.5 text-lg font-semibold text-slate-800 dark:text-zink-100">{{ selectedUser.limitQuestions }}</p>
+          </div>
+          <div class="rounded-xl bg-white/80 px-3 py-2 ring-1 ring-slate-200 dark:bg-zink-600/80 dark:ring-zink-500">
+            <p class="text-[10px] uppercase tracking-wider text-slate-400 dark:text-zink-300">Strikes</p>
+            <p class="mt-0.5 text-lg font-semibold text-slate-800 dark:text-zink-100">{{ selectedUser.limitStrike }}</p>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Identidad y contacto -->
+    <section class="mt-5 rounded-2xl border border-slate-200 bg-white dark:border-zink-500 dark:bg-zink-700">
+      <header class="flex items-center gap-2 border-b border-slate-100 px-4 py-3 dark:border-zink-500">
+        <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+          <lucide-angular name="contact" class="size-4"></lucide-angular>
+        </span>
+        <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">Identidad y contacto</h6>
+      </header>
+      <dl class="divide-y divide-slate-100 dark:divide-zink-500">
+        <div class="grid grid-cols-[110px_1fr] gap-2 px-4 py-2.5">
+          <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+            <lucide-angular name="badge-info" class="size-3.5"></lucide-angular>
+            Identificación
+          </dt>
+          <dd class="text-sm font-medium text-slate-800 dark:text-zink-100 break-words">
+            @if (selectedUser.erpUser?.tipoIdentificacion) {
+              <span class="mr-1 inline-block rounded bg-slate-100 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-slate-500 dark:bg-zink-600 dark:text-zink-300">{{ selectedUser.erpUser?.tipoIdentificacion }}</span>
+            }
+            {{ selectedUser.identificacion || selectedUser.erpUser?.identificacion || 'N/A' }}
+          </dd>
+        </div>
+        <div class="grid grid-cols-[110px_1fr] gap-2 px-4 py-2.5">
+          <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+            <lucide-angular name="phone" class="size-3.5"></lucide-angular>
+            WhatsApp
+          </dt>
+          <dd class="font-mono text-sm text-slate-800 dark:text-zink-100">{{ selectedUser.whatsappPhone || 'N/A' }}</dd>
+        </div>
+        @if (selectedUser.erpUser?.numeroCelular && selectedUser.erpUser?.numeroCelular !== selectedUser.whatsappPhone) {
+          <div class="grid grid-cols-[110px_1fr] gap-2 px-4 py-2.5">
+            <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+              <lucide-angular name="smartphone" class="size-3.5"></lucide-angular>
+              Celular ERP
+            </dt>
+            <dd class="font-mono text-sm text-slate-800 dark:text-zink-100">{{ selectedUser.erpUser?.numeroCelular }}</dd>
+          </div>
+        }
+        @if (selectedUser.erpUser?.emailInstitucional) {
+          <div class="grid grid-cols-[110px_1fr] gap-2 px-4 py-2.5">
+            <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+              <lucide-angular name="mail" class="size-3.5"></lucide-angular>
+              Inst.
+            </dt>
+            <dd class="break-all text-sm text-slate-800 dark:text-zink-100">{{ selectedUser.erpUser?.emailInstitucional }}</dd>
+          </div>
+        }
+        @if (selectedUser.erpUser?.emailPersonal) {
+          <div class="grid grid-cols-[110px_1fr] gap-2 px-4 py-2.5">
+            <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+              <lucide-angular name="at-sign" class="size-3.5"></lucide-angular>
+              Personal
+            </dt>
+            <dd class="break-all text-sm text-slate-800 dark:text-zink-100">{{ selectedUser.erpUser?.emailPersonal }}</dd>
+          </div>
+        }
+        @if (selectedUser.erpUser?.sexo) {
+          <div class="grid grid-cols-[110px_1fr] gap-2 px-4 py-2.5">
+            <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+              <lucide-angular name="user" class="size-3.5"></lucide-angular>
+              Sexo
+            </dt>
+            <dd class="text-sm text-slate-800 dark:text-zink-100">{{ selectedUser.erpUser?.sexo }}</dd>
+          </div>
+        }
+      </dl>
+    </section>
+
+    <!-- Roles ERP detallados -->
+    @if (selectedUser.erpUser?.rolesUsuario && (selectedUser.erpUser?.rolesUsuario)!.length > 0) {
+      <section class="mt-5 rounded-2xl border border-slate-200 bg-white dark:border-zink-500 dark:bg-zink-700">
+        <header class="flex items-center gap-2 border-b border-slate-100 px-4 py-3 dark:border-zink-500">
+          <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+            <lucide-angular name="graduation-cap" class="size-4"></lucide-angular>
+          </span>
+          <h6 class="grow text-sm font-semibold text-slate-700 dark:text-zink-100">Roles ERP</h6>
+          <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+            {{ selectedUser.erpUser?.rolesUsuario?.length }}
+          </span>
+        </header>
+        <div class="p-4 space-y-3">
+          @for (rol of selectedUser.erpUser?.rolesUsuario; track $index) {
+            <article class="rounded-xl border border-slate-200 bg-slate-50/60 p-3 dark:border-zink-500 dark:bg-zink-600/40">
+              <div class="mb-2 flex items-center gap-2">
+                <lucide-angular name="badge-check" class="size-4 text-custom-500"></lucide-angular>
+                <h6 class="text-sm font-semibold uppercase tracking-wide text-slate-800 dark:text-zink-100">
+                  {{ rol.tipoRol }}
+                </h6>
+              </div>
+              @if (rol.detallesRol.length) {
+                <div class="space-y-2">
+                  @for (detalle of rol.detallesRol; track $index) {
+                    <div class="rounded-lg border border-slate-200 bg-white p-2.5 dark:border-zink-500 dark:bg-zink-700">
+                      @if (detalle.nombreRol) {
+                        <p class="mb-2 text-xs font-semibold text-custom-600 dark:text-custom-300">
+                          {{ detalle.nombreRol }}
+                        </p>
+                      }
+                      @if (detalle.nombreCarrera) {
+                        <p class="mb-2 text-sm font-medium text-slate-800 dark:text-zink-100">
+                          {{ detalle.nombreCarrera }}
+                          @if (detalle.idCarrera) {
+                            <span class="ml-1 text-[10px] font-mono text-slate-400 dark:text-zink-400">#{{ detalle.idCarrera }}</span>
+                          }
+                        </p>
+                      }
+                      <div class="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[11px]">
+                        @if (detalle.unidadAcademica) {
+                          <div>
+                            <p class="text-slate-400 dark:text-zink-400">Unidad académica</p>
+                            <p class="text-slate-700 dark:text-zink-200">{{ detalle.unidadAcademica }}</p>
+                          </div>
+                        }
+                        @if (detalle.unidadOrganizativa) {
+                          <div>
+                            <p class="text-slate-400 dark:text-zink-400">Unidad organizativa</p>
+                            <p class="text-slate-700 dark:text-zink-200">{{ detalle.unidadOrganizativa }}</p>
+                          </div>
+                        }
+                        @if (detalle.sede) {
+                          <div>
+                            <p class="text-slate-400 dark:text-zink-400">Sede</p>
+                            <p class="text-slate-700 dark:text-zink-200">{{ detalle.sede }}</p>
+                          </div>
+                        }
+                        @if (detalle.modalidad) {
+                          <div>
+                            <p class="text-slate-400 dark:text-zink-400">Modalidad</p>
+                            <p class="text-slate-700 dark:text-zink-200">{{ detalle.modalidad }}</p>
+                          </div>
+                        }
+                        @if (detalle.curso) {
+                          <div>
+                            <p class="text-slate-400 dark:text-zink-400">Curso</p>
+                            <p class="text-slate-700 dark:text-zink-200">{{ detalle.curso }}</p>
+                          </div>
+                        }
+                        @if (detalle.paralelo) {
+                          <div>
+                            <p class="text-slate-400 dark:text-zink-400">Paralelo</p>
+                            <p class="text-slate-700 dark:text-zink-200">{{ detalle.paralelo }}</p>
+                          </div>
+                        }
+                        @if (detalle.ultimoSemestreActivo) {
+                          <div class="col-span-2">
+                            <p class="text-slate-400 dark:text-zink-400">Último semestre activo</p>
+                            <p class="text-slate-700 dark:text-zink-200">{{ detalle.ultimoSemestreActivo }}</p>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </article>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Tickets si los hay -->
+    @if (selectedUser.userTickets && selectedUser.userTickets.length > 0) {
+      <section class="mt-5 rounded-2xl border border-slate-200 bg-white dark:border-zink-500 dark:bg-zink-700">
+        <header class="flex items-center gap-2 border-b border-slate-100 px-4 py-3 dark:border-zink-500">
+          <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+            <lucide-angular name="ticket" class="size-4"></lucide-angular>
+          </span>
+          <h6 class="grow text-sm font-semibold text-slate-700 dark:text-zink-100">Tickets</h6>
+          <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+            {{ selectedUser.userTickets.length }}
+          </span>
+        </header>
+        <ul class="divide-y divide-slate-100 dark:divide-zink-500">
+          @for (ticket of selectedUser.userTickets; track ticket.id) {
+            <li class="flex items-center gap-2 px-4 py-2.5">
+              <span class="font-mono text-xs text-slate-400 dark:text-zink-400">#{{ ticket.id }}</span>
+              <span class="grow truncate text-sm text-slate-700 dark:text-zink-200">{{ ticket.name }}</span>
+              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600 dark:bg-zink-600 dark:text-zink-200">{{ ticket.status }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <!-- Actividad del chat -->
+    <section class="mt-5 rounded-2xl border border-slate-200 bg-white dark:border-zink-500 dark:bg-zink-700">
+      <header class="flex items-center gap-2 border-b border-slate-100 px-4 py-3 dark:border-zink-500">
+        <span class="inline-flex size-7 items-center justify-center rounded-lg bg-custom-100 text-custom-600 dark:bg-custom-500/20 dark:text-custom-300">
+          <lucide-angular name="activity" class="size-4"></lucide-angular>
+        </span>
+        <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">Actividad del chat</h6>
+      </header>
+      <dl class="divide-y divide-slate-100 dark:divide-zink-500">
+        <div class="grid grid-cols-[130px_1fr] gap-2 px-4 py-2.5">
+          <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+            <lucide-angular name="clock-3" class="size-3.5"></lucide-angular>
+            Primera
+          </dt>
+          <dd class="text-xs text-slate-700 dark:text-zink-200">{{ formatDateTime(selectedUser.firstInteraction) || '—' }}</dd>
+        </div>
+        <div class="grid grid-cols-[130px_1fr] gap-2 px-4 py-2.5">
+          <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+            <lucide-angular name="history" class="size-3.5"></lucide-angular>
+            Última
+          </dt>
+          <dd class="text-xs text-slate-700 dark:text-zink-200">{{ formatDateTime(selectedUser.lastInteraction) || '—' }}</dd>
+        </div>
+        <div class="grid grid-cols-[130px_1fr] gap-2 px-4 py-2.5">
+          <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+            <lucide-angular name="refresh-cw" class="size-3.5"></lucide-angular>
+            Próx. reset
+          </dt>
+          <dd class="text-xs text-slate-700 dark:text-zink-200">{{ formatDateTime(selectedUser.nextResetDate) || '—' }}</dd>
+        </div>
+        @if (selectedUser.chatSessions?.length) {
+          <div class="grid grid-cols-[130px_1fr] gap-2 px-4 py-2.5">
+            <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+              <lucide-angular name="messages-square" class="size-3.5"></lucide-angular>
+              Sesiones
+            </dt>
+            <dd class="text-xs text-slate-700 dark:text-zink-200">{{ selectedUser.chatSessions?.length }} registradas</dd>
+          </div>
+        }
+        <div class="grid grid-cols-[130px_1fr] gap-2 px-4 py-2.5">
+          <dt class="flex items-center gap-1.5 text-xs text-slate-500 dark:text-zink-300">
+            <lucide-angular name="message-square-more" class="size-3.5"></lucide-angular>
+            Prev. Resp. ID
+          </dt>
+          <dd class="flex items-center gap-2 min-w-0">
+            <span
+              class="min-w-0 grow truncate font-mono text-[10px] text-slate-700 dark:text-zink-200"
+              [title]="selectedUser.previousResponseId || 'N/A'">
+              {{ selectedUser.previousResponseId || 'N/A' }}
+            </span>
+            @if (selectedUser.previousResponseId) {
+              <button
+                type="button"
+                (click)="copyText(selectedUser.previousResponseId)"
+                class="shrink-0 inline-flex items-center justify-center size-6 rounded-md bg-slate-100 text-slate-500 hover:text-custom-500 dark:bg-zink-600 dark:text-zink-200"
+                title="Copiar">
+                <lucide-angular name="copy" class="size-3"></lucide-angular>
+              </button>
+            }
+          </dd>
+        </div>
+      </dl>
+    </section>
 
     <div class="mt-5 p-4 rounded-lg border border-slate-200 dark:border-zink-700">
         <div class="flex items-center gap-2 mb-4">
