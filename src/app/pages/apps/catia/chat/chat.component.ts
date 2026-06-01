@@ -32,6 +32,7 @@ import {
   CatiaUserChatQueryParams,
   CatiaUserFindQueryParams,
   CatiaUserModel,
+  ChatSession,
   RolesUsuario,
 } from '../../../../core/services/apis/catia/models/catia-user';
 import {
@@ -139,6 +140,17 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   messageAiResponseMap: Record<number, AiResponse[] | null> = {};
   messageErrorMap: Record<number, MessageError | null> = {};
   messagePricingMap: Record<number, MessagePricing | null> = {};
+
+  // Chat Finder: sesiones del usuario -> historial por rango de fechas
+  chatSessions: ChatSession[] = [];
+  isLoadingSessions = false;
+  selectedSessionIds = new Set<number>();
+  isHistoricalMode = false;
+  historicalRange: { start: string; end: string } | null = null;
+  isLoadingHistoricalRange = false;
+  currentRangePage = 0;
+  totalRangeMessages = 0;
+  hasMoreRangeMessages = false;
 
   searchResults: CatiaUserModel[] = [];
   hasSearchedUser = false;
@@ -564,7 +576,12 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   loadNextMessageHistoryPage() {
-    if (!this.selectedUser || this.isLoadingMessages || !this.hasMoreMessages) {
+    if (
+      this.isHistoricalMode ||
+      !this.selectedUser ||
+      this.isLoadingMessages ||
+      !this.hasMoreMessages
+    ) {
       return;
     }
 
@@ -912,6 +929,16 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       default:
         return `[${message.type}]`;
     }
+  }
+
+  // Texto que acompaña a un mensaje de media (imagen/video/audio/documento).
+  // WhatsApp lo entrega en mediaCaption; usamos textBody como respaldo.
+  getMessageMediaCaption(message: CatiaMessageModel): string {
+    return (message.mediaCaption?.trim() || message.textBody?.trim()) ?? '';
+  }
+
+  hasMessageMediaCaption(message: CatiaMessageModel): boolean {
+    return !!this.getMessageMediaCaption(message);
   }
 
   getMessageTime(value?: number | null): string {
@@ -2367,6 +2394,301 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   toggleChatFinder(): void {
     this.isChatFinderHidden = !this.isChatFinderHidden;
+
+    if (!this.isChatFinderHidden) {
+      this.loadUserSessions();
+    }
+  }
+
+  // Carga las sesiones del usuario seleccionado para el chat-finder.
+  loadUserSessions(force = false): void {
+    const phone = this.selectedUser?.whatsappPhone?.trim();
+
+    if (!phone) {
+      this.chatSessions = [];
+      this.selectedSessionIds.clear();
+      return;
+    }
+
+    if (this.isLoadingSessions) {
+      return;
+    }
+
+    if (!force && this.chatSessions.length > 0) {
+      return;
+    }
+
+    this.isLoadingSessions = true;
+
+    this.catiaService.getSessions(phone).subscribe({
+      next: (sessions) => {
+        // Mas reciente primero para que el usuario vea las ultimas sesiones arriba.
+        this.chatSessions = [...(sessions ?? [])].sort(
+          (a, b) => this.getSessionTime(b) - this.getSessionTime(a)
+        );
+        this.selectedSessionIds.clear();
+        this.isLoadingSessions = false;
+      },
+      error: (err: any) => {
+        this.isLoadingSessions = false;
+        this.chatSessions = [];
+        this.toastr.error('No se pudieron cargar las sesiones del usuario');
+        console.error('Error sessions:', err);
+      },
+    });
+  }
+
+  toggleSessionSelection(session: ChatSession): void {
+    if (this.selectedSessionIds.has(session.id)) {
+      this.selectedSessionIds.delete(session.id);
+    } else {
+      this.selectedSessionIds.add(session.id);
+    }
+  }
+
+  isSessionSelected(session: ChatSession): boolean {
+    return this.selectedSessionIds.has(session.id);
+  }
+
+  clearSessionSelection(): void {
+    this.selectedSessionIds.clear();
+  }
+
+  get selectedSessionCount(): number {
+    return this.selectedSessionIds.size;
+  }
+
+  // Tiempo (epoch ms) de una sesion, tolerante a string o Date.
+  private getSessionTime(session: ChatSession): number {
+    const raw = session?.startTime as unknown;
+
+    if (!raw) {
+      return 0;
+    }
+
+    const date = raw instanceof Date ? raw : new Date(raw as any);
+    const time = date.getTime();
+
+    return Number.isNaN(time) ? 0 : time;
+  }
+
+  // Dia local "YYYY-MM-DD" de una sesion (sin conversion de zona horaria).
+  private getSessionDayKey(session: ChatSession): string | null {
+    const raw = session?.startTime as unknown;
+
+    if (!raw) {
+      return null;
+    }
+
+    if (typeof raw === 'string') {
+      const match = raw.match(/^(\d{4}-\d{2}-\d{2})/);
+      return match ? match[1] : null;
+    }
+
+    const date = raw instanceof Date ? raw : new Date(raw as any);
+
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    const year = date.getFullYear();
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const day = `${date.getDate()}`.padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+
+  // Rango [inicio del dia mas antiguo, fin del dia mas reciente] de las sesiones seleccionadas.
+  getSelectedDateRange(): { start: string; end: string } | null {
+    const days = this.chatSessions
+      .filter((session) => this.selectedSessionIds.has(session.id))
+      .map((session) => this.getSessionDayKey(session))
+      .filter((day): day is string => !!day)
+      .sort();
+
+    if (!days.length) {
+      return null;
+    }
+
+    const minDay = days[0];
+    const maxDay = days[days.length - 1];
+
+    return {
+      start: `${minDay}T00:00:00`,
+      end: `${maxDay}T23:59:59.999`,
+    };
+  }
+
+  get historicalRangePreviewLabel(): string {
+    const range = this.getSelectedDateRange();
+
+    if (!range) {
+      return '';
+    }
+
+    return `${this.formatDateTime(range.start)} → ${this.formatDateTime(range.end)}`;
+  }
+
+  get historicalRangeLabel(): string {
+    if (!this.historicalRange) {
+      return '';
+    }
+
+    return `${this.formatDateTime(this.historicalRange.start)} → ${this.formatDateTime(this.historicalRange.end)}`;
+  }
+
+  // Carga el historial del rango derivado de las sesiones seleccionadas.
+  loadHistoricalRange(): void {
+    if (!this.selectedUser) {
+      this.toastr.info('Selecciona una conversación primero');
+      return;
+    }
+
+    const range = this.getSelectedDateRange();
+
+    if (!range) {
+      this.toastr.info('Selecciona al menos una sesión');
+      return;
+    }
+
+    this.closeMessageStream();
+    this.clearScheduledMessageRefresh();
+    this.hasNewMessageAlert = false;
+    this.newMessageAlertCount = 0;
+    this.latestMessagePreview = '';
+    this.latestMessageType = '';
+
+    this.isHistoricalMode = true;
+    this.historicalRange = range;
+    this.isChatFinderHidden = true;
+
+    // Reset del panel de mensajes
+    this.clearMessageMediaUrls();
+    this.messages = [];
+    this.messageAddressMap = {};
+    this.messageAiResponseMap = {};
+    this.messageMediaUrlMap = {};
+    this.messageMediaLoadingMap = {};
+    this.messageMediaErrorMap = {};
+    this.hasMoreMessages = false;
+    this.isLoadingMessages = false;
+    this.isPrependingMessages = false;
+    this.currentRangePage = 0;
+    this.totalRangeMessages = 0;
+    this.hasMoreRangeMessages = false;
+
+    this.fetchHistoricalRange(0, true);
+  }
+
+  private fetchHistoricalRange(page: number, reset: boolean): void {
+    const phone = this.selectedUser?.whatsappPhone?.trim();
+    const range = this.historicalRange;
+
+    if (!phone || !range) {
+      return;
+    }
+
+    this.isLoadingHistoricalRange = true;
+
+    this.catiaService
+      .getHistoryByRange({
+        phone,
+        start: range.start,
+        end: range.end,
+        page,
+        size: this.messagePageSize,
+        direction: 'asc',
+      })
+      .subscribe({
+        next: (pageMessages) => {
+          // En orden ascendente el contenido ya viene del mas antiguo al mas reciente.
+          const incomingMessages = (pageMessages.content ?? []).map((message) => {
+            const existingIndex = this.findMessageIndex(message);
+            const existingMessage =
+              existingIndex >= 0 ? this.messages[existingIndex] : undefined;
+            return this.mergeMessageState(message, existingMessage);
+          });
+
+          this.messages = reset
+            ? incomingMessages
+            : [...this.messages, ...incomingMessages];
+
+          this.currentRangePage = pageMessages.page.number;
+          this.totalRangeMessages = pageMessages.page.totalElements;
+          this.hasMoreRangeMessages =
+            pageMessages.page.number + 1 < pageMessages.page.totalPages;
+          this.isLoadingHistoricalRange = false;
+          this.ensureLocationMessagesLoaded(incomingMessages);
+
+          if (reset) {
+            setTimeout(() => {
+              this.registerMessageScrollListener();
+
+              const scrollElement =
+                this.messageScrollRef?.SimpleBar?.getScrollElement?.();
+
+              if (scrollElement) {
+                scrollElement.scrollTop = 0;
+              }
+            });
+          }
+        },
+        error: (err: any) => {
+          this.isLoadingHistoricalRange = false;
+          this.toastr.error(
+            'No se pudo cargar el historial del rango seleccionado'
+          );
+          console.error('Error range history:', err);
+        },
+      });
+  }
+
+  loadMoreRangeMessages(): void {
+    if (
+      !this.isHistoricalMode ||
+      this.isLoadingHistoricalRange ||
+      !this.hasMoreRangeMessages
+    ) {
+      return;
+    }
+
+    this.fetchHistoricalRange(this.currentRangePage + 1, false);
+  }
+
+  // Sale del modo historico y vuelve al chat en vivo (recarga + reabre stream).
+  exitHistoricalMode(): void {
+    if (!this.isHistoricalMode) {
+      return;
+    }
+
+    this.isHistoricalMode = false;
+    this.historicalRange = null;
+    this.currentRangePage = 0;
+    this.totalRangeMessages = 0;
+    this.hasMoreRangeMessages = false;
+    this.selectedSessionIds.clear();
+
+    const phone = this.selectedUser?.whatsappPhone?.trim();
+
+    this.loadInitialMessageHistory();
+
+    if (phone) {
+      this.openMessageStream(phone);
+    }
+  }
+
+  // Limpia el estado del chat-finder / modo historico (al cambiar de usuario).
+  private resetChatFinderState(): void {
+    this.isChatFinderHidden = true;
+    this.isHistoricalMode = false;
+    this.historicalRange = null;
+    this.chatSessions = [];
+    this.selectedSessionIds.clear();
+    this.isLoadingSessions = false;
+    this.isLoadingHistoricalRange = false;
+    this.currentRangePage = 0;
+    this.totalRangeMessages = 0;
+    this.hasMoreRangeMessages = false;
   }
 
   // Devuelve un string con los tipos de rol o 'None'
@@ -2440,6 +2762,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   selectChatUser(user: CatiaUserModel) {
     this.closeMessageStream();
     this.clearPendingImageState();
+    this.resetChatFinderState();
     this.selectedUser = user;
     this.username = this.getUserDisplayName(user);
     this.role = this.getRolesString(user.erpUser?.rolesUsuario);

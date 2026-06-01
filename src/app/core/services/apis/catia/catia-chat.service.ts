@@ -7,6 +7,7 @@ import {
   CatiaUserChatQueryParams,
   CatiaUserChatUpdateRequest,
   CatiaUserModel,
+  ChatSession,
 } from './models/catia-user';
 import {
   CatiaSendWhatsAppMessageRequest,
@@ -67,6 +68,52 @@ export class CatiaChatService {
 
     return this.http.get<CatiaPage<CatiaMessageModel>>(
       `${this.apiURL}/messages/history`,
+      { params: httpParams }
+    );
+  }
+
+  // Chat Sessions del usuario (id, conteo de mensajes y fecha de inicio)
+  getSessions(phone: string): Observable<ChatSession[]> {
+    const sanitizedPhone = phone.trim();
+
+    if (!sanitizedPhone) {
+      throw new Error('El telefono es requerido para consultar las sesiones');
+    }
+
+    return this.http.get<ChatSession[]>(`${this.apiURL}/messages/sessions`, {
+      params: new HttpParams().set('phone', sanitizedPhone),
+    });
+  }
+
+  // Messages History por rango de fechas (start/end en ISO LocalDateTime)
+  getHistoryByRange(params: {
+    phone: string;
+    start: string;
+    end: string;
+    page?: number;
+    size?: number;
+    direction?: 'asc' | 'desc';
+  }): Observable<CatiaPage<CatiaMessageModel>> {
+    const phone = params.phone.trim();
+
+    if (!phone) {
+      throw new Error('El telefono es requerido para consultar el historial');
+    }
+
+    if (!params.start?.trim() || !params.end?.trim()) {
+      throw new Error('start y end son requeridos para consultar el rango');
+    }
+
+    const httpParams = new HttpParams()
+      .set('phone', phone)
+      .set('start', params.start.trim())
+      .set('end', params.end.trim())
+      .set('page', (params.page ?? 0).toString())
+      .set('size', (params.size ?? 50).toString())
+      .set('direction', params.direction ?? 'asc');
+
+    return this.http.get<CatiaPage<CatiaMessageModel>>(
+      `${this.apiURL}/messages/history/range`,
       { params: httpParams }
     );
   }
