@@ -37,6 +37,10 @@ import {
 } from '../../../../core/services/apis/catia/models/catia-user';
 import {
   CATIA_ALLOWED_IMAGE_UPLOADS,
+  CATIA_ALLOWED_VIDEO_UPLOADS,
+  CATIA_ALLOWED_DOCUMENT_UPLOADS,
+  CatiaMediaKind,
+  CatiaUploadMimeRule,
   PendingImageUpload,
   CatiaUploadMode,
 } from '../../../../core/services/apis/catia/models/catia-whatsapp';
@@ -94,6 +98,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   pendingImageUploads: PendingImageUpload[] = [];
   pendingImageUrl = '';
   isUploadingMedia = false;
+  // accept dinamico para el unico input de archivo (imagen/video/documento)
+  fileAcceptAttr = 'image/png,image/jpeg,image/jpg';
   showAttachmentMenu = false;
   showImageUrlComposer = false;
   isMenuCollapsed = false; // For Menu Collapse in false
@@ -1703,23 +1709,131 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     this.showAttachmentMenu = !this.showAttachmentMenu;
   }
 
-  openFileAttachmentPicker(fileInput: HTMLInputElement) {
-    if (this.uploadMode !== CatiaUploadMode.IMAGE_FILE) {
-      this.clearPendingImageState();
-    }
+  // ---- Helpers de tipo de media (imagen / video / documento) ----
 
-    this.uploadMode = CatiaUploadMode.IMAGE_FILE;
-    this.showAttachmentMenu = false;
-    this.showImageUrlComposer = false;
-    this.openImageFilePicker(fileInput);
+  get currentMediaKind(): CatiaMediaKind | null {
+    switch (this.uploadMode) {
+      case CatiaUploadMode.IMAGE_FILE:
+      case CatiaUploadMode.IMAGE_URL:
+        return 'IMAGE';
+      case CatiaUploadMode.VIDEO_FILE:
+      case CatiaUploadMode.VIDEO_URL:
+        return 'VIDEO';
+      case CatiaUploadMode.DOCUMENT_FILE:
+      case CatiaUploadMode.DOCUMENT_URL:
+        return 'DOCUMENT';
+      default:
+        return null;
+    }
   }
 
-  openImageUrlComposer() {
-    if (this.uploadMode !== CatiaUploadMode.IMAGE_URL) {
+  isFileUploadMode(): boolean {
+    return (
+      this.uploadMode === CatiaUploadMode.IMAGE_FILE ||
+      this.uploadMode === CatiaUploadMode.VIDEO_FILE ||
+      this.uploadMode === CatiaUploadMode.DOCUMENT_FILE
+    );
+  }
+
+  isUrlUploadMode(): boolean {
+    return (
+      this.uploadMode === CatiaUploadMode.IMAGE_URL ||
+      this.uploadMode === CatiaUploadMode.VIDEO_URL ||
+      this.uploadMode === CatiaUploadMode.DOCUMENT_URL
+    );
+  }
+
+  private fileModeFor(kind: CatiaMediaKind): CatiaUploadMode {
+    switch (kind) {
+      case 'VIDEO':
+        return CatiaUploadMode.VIDEO_FILE;
+      case 'DOCUMENT':
+        return CatiaUploadMode.DOCUMENT_FILE;
+      default:
+        return CatiaUploadMode.IMAGE_FILE;
+    }
+  }
+
+  private urlModeFor(kind: CatiaMediaKind): CatiaUploadMode {
+    switch (kind) {
+      case 'VIDEO':
+        return CatiaUploadMode.VIDEO_URL;
+      case 'DOCUMENT':
+        return CatiaUploadMode.DOCUMENT_URL;
+      default:
+        return CatiaUploadMode.IMAGE_URL;
+    }
+  }
+
+  private getUploadRules(kind: CatiaMediaKind): readonly CatiaUploadMimeRule[] {
+    switch (kind) {
+      case 'VIDEO':
+        return CATIA_ALLOWED_VIDEO_UPLOADS;
+      case 'DOCUMENT':
+        return CATIA_ALLOWED_DOCUMENT_UPLOADS;
+      default:
+        return CATIA_ALLOWED_IMAGE_UPLOADS;
+    }
+  }
+
+  private getAcceptAttr(kind: CatiaMediaKind): string {
+    switch (kind) {
+      case 'VIDEO':
+        return 'video/mp4,video/3gpp';
+      case 'DOCUMENT':
+        return '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,application/pdf';
+      default:
+        return 'image/png,image/jpeg,image/jpg';
+    }
+  }
+
+  private mediaKindLabel(kind: CatiaMediaKind | null, plural = false): string {
+    switch (kind) {
+      case 'VIDEO':
+        return plural ? 'videos' : 'video';
+      case 'DOCUMENT':
+        return plural ? 'documentos' : 'documento';
+      default:
+        return plural ? 'imágenes' : 'imagen';
+    }
+  }
+
+  private mediaKindToType(kind: CatiaMediaKind | null): CatiaMessageType {
+    switch (kind) {
+      case 'VIDEO':
+        return CatiaMessageType.VIDEO;
+      case 'DOCUMENT':
+        return CatiaMessageType.DOCUMENT;
+      default:
+        return CatiaMessageType.IMAGE;
+    }
+  }
+
+  // ---- Aperturas de picker / composer por tipo ----
+
+  openFilePicker(kind: CatiaMediaKind, fileInput: HTMLInputElement) {
+    const mode = this.fileModeFor(kind);
+
+    if (this.uploadMode !== mode) {
       this.clearPendingImageState();
     }
 
-    this.uploadMode = CatiaUploadMode.IMAGE_URL;
+    this.uploadMode = mode;
+    this.fileAcceptAttr = this.getAcceptAttr(kind);
+    this.showAttachmentMenu = false;
+    this.showImageUrlComposer = false;
+    // El accept se aplica via binding; esperamos un tick antes de abrir el dialogo.
+    setTimeout(() => fileInput.click());
+  }
+
+  openUrlComposer(kind: CatiaMediaKind) {
+    const mode = this.urlModeFor(kind);
+
+    if (this.uploadMode !== mode) {
+      this.clearPendingImageState();
+    }
+
+    this.uploadMode = mode;
     this.showAttachmentMenu = false;
     this.showImageUrlComposer = true;
   }
@@ -1727,16 +1841,23 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   closeImageUrlComposer() {
     this.showImageUrlComposer = false;
 
-    if (this.uploadMode === CatiaUploadMode.IMAGE_URL && !this.pendingImageUrl.trim()) {
+    if (this.isUrlUploadMode() && !this.pendingImageUrl.trim()) {
       this.clearPendingImageState();
     }
   }
 
-  openImageFilePicker(fileInput: HTMLInputElement) {
-    fileInput.click();
+  getUrlComposerPlaceholder(): string {
+    switch (this.currentMediaKind) {
+      case 'VIDEO':
+        return 'https://ejemplo.com/video.mp4';
+      case 'DOCUMENT':
+        return 'https://ejemplo.com/documento.pdf';
+      default:
+        return 'https://ejemplo.com/imagen.png';
+    }
   }
 
-  onImageFileSelected(event: Event) {
+  onMediaFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
     input.value = '';
@@ -1745,24 +1866,30 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    this.uploadMode = CatiaUploadMode.IMAGE_FILE;
+    const kind = this.currentMediaKind ?? 'IMAGE';
+    const rules = this.getUploadRules(kind);
     this.showImageUrlComposer = false;
     let addedCount = 0;
 
     files.forEach((file) => {
-      const rule = CATIA_ALLOWED_IMAGE_UPLOADS.find(
-        (item) => item.mimeType === file.type
-      );
+      const fileName = file.name.toLowerCase();
+      // Algunos navegadores no reportan el mime de ciertos documentos:
+      // validamos por mime o, en su defecto, por extension.
+      const rule =
+        rules.find((item) => item.mimeType === file.type) ??
+        rules.find((item) => fileName.endsWith(item.extension));
 
       if (!rule) {
+        const extensions = rules.map((item) => item.extension).join(', ');
         this.toastr.error(
-          `"${file.name}" no es válido. Solo se permiten archivos JPG o PNG.`
+          `"${file.name}" no es válido. Formatos permitidos: ${extensions}.`
         );
         return;
       }
 
       if (file.size > rule.maxBytes) {
-        this.toastr.error(`"${file.name}" supera el límite de 5 MB.`);
+        const maxMb = Math.round(rule.maxBytes / (1024 * 1024));
+        this.toastr.error(`"${file.name}" supera el límite de ${maxMb} MB.`);
         return;
       }
 
@@ -1782,11 +1909,29 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     });
 
     if (addedCount > 0) {
+      const label = this.mediaKindLabel(kind, addedCount > 1);
       this.toastr.success(
         addedCount === 1
-          ? 'Imagen agregada para envío'
-          : `${addedCount} imágenes agregadas para envío`
+          ? `${this.capitalize(label)} agregado para envío`
+          : `${addedCount} ${label} agregados para envío`
       );
+    }
+  }
+
+  private capitalize(value: string): string {
+    return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+  }
+
+  // Deriva un nombre de archivo a partir de la URL (para documentos por URL).
+  private deriveFilenameFromUrl(url: string): string {
+    const stripped = url.split('?')[0].split('#')[0];
+    const segment = stripped.split('/').filter(Boolean).pop() ?? '';
+
+    try {
+      const decoded = decodeURIComponent(segment).trim();
+      return decoded || 'documento';
+    } catch {
+      return segment.trim() || 'documento';
     }
   }
 
@@ -1889,10 +2034,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
   hasPendingAttachment(): boolean {
     return (
-      (this.uploadMode === CatiaUploadMode.IMAGE_FILE &&
-        this.pendingImageUploads.length > 0) ||
-      (this.uploadMode === CatiaUploadMode.IMAGE_URL &&
-        !!this.pendingImageUrl.trim())
+      (this.isFileUploadMode() && this.pendingImageUploads.length > 0) ||
+      (this.isUrlUploadMode() && !!this.pendingImageUrl.trim())
     );
   }
 
@@ -1994,7 +2137,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       return false;
     }
 
-    if (this.uploadMode === CatiaUploadMode.IMAGE_FILE) {
+    if (this.isFileUploadMode()) {
       if (!this.pendingImageUploads.length) {
         return !!messageText;
       }
@@ -2005,7 +2148,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       );
     }
 
-    if (this.uploadMode === CatiaUploadMode.IMAGE_URL) {
+    if (this.isUrlUploadMode()) {
       return !!messageText || !!this.pendingImageUrl.trim();
     }
 
@@ -2013,41 +2156,50 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   }
 
   getPendingAttachmentHint(): string {
-    if (this.uploadMode === CatiaUploadMode.IMAGE_URL) {
-      return 'La imagen se enviará usando la URL indicada.';
+    const kind = this.currentMediaKind;
+    const singular = this.mediaKindLabel(kind, false);
+    const plural = this.mediaKindLabel(kind, true);
+
+    if (this.isUrlUploadMode()) {
+      return `El ${singular} se enviará usando la URL indicada.`;
     }
 
     if (!this.pendingImageUploads.length) {
-      return 'JPG o PNG, máximo 5 MB por imagen.';
+      const rules = kind ? this.getUploadRules(kind) : [];
+      const extensions = rules.map((item) => item.extension).join(', ');
+      const maxMb = rules.length
+        ? Math.round(rules[0].maxBytes / (1024 * 1024))
+        : 0;
+      return `Formatos: ${extensions}. Máximo ${maxMb} MB por archivo.`;
     }
 
     const ready = this.getPendingImageReadyCount();
     const total = this.pendingImageUploads.length;
 
     if (this.isUploadingMedia) {
-      return `Preparando ${ready}/${total} imágenes...`;
+      return `Preparando ${ready}/${total} ${plural}...`;
     }
 
     if (this.hasPendingImageErrors()) {
-      return 'Quita o reemplaza las imágenes con error antes de enviar.';
+      return `Quita o reemplaza los archivos con error antes de enviar.`;
     }
 
     if (total > 1) {
-      return `Listas ${ready}/${total}. El texto se enviará solo con la primera imagen.`;
+      return `Listos ${ready}/${total}. El texto se enviará solo con el primer ${singular}.`;
     }
 
-    return 'Imagen lista para enviar.';
+    return `${this.capitalize(singular)} listo para enviar.`;
   }
 
   // Send Message
   messageSave() {
     const messageText = this.formMessage.get('chatMsg')?.value?.trim() ?? '';
     const destinationPhone = this.selectedUser?.whatsappPhone?.trim();
-    const imageUrl = this.pendingImageUrl.trim();
+    const mediaUrl = this.pendingImageUrl.trim();
 
     if (!messageText && !this.hasPendingAttachment()) {
       this.formMessage.get('chatMsg')?.markAsTouched();
-      this.toastr.info('Escribe un mensaje o adjunta una imagen');
+      this.toastr.info('Escribe un mensaje o adjunta un archivo');
       return;
     }
 
@@ -2078,12 +2230,12 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
     if (!this.canSendCurrentMessage()) {
       if (this.isUploadingMedia) {
-        this.toastr.info('Espera a que todas las imágenes terminen de cargarse');
+        this.toastr.info('Espera a que todos los archivos terminen de cargarse');
         return;
       }
 
       if (this.hasPendingImageErrors()) {
-        this.toastr.error('Hay imágenes con error. Quítalas o vuelve a cargarlas.');
+        this.toastr.error('Hay archivos con error. Quítalos o vuelve a cargarlos.');
         return;
       }
 
@@ -2101,36 +2253,49 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     };
 
     const requests: any[] = [];
+    const kind = this.currentMediaKind;
+    const mediaType = this.mediaKindToType(kind);
 
-    if (
-      this.uploadMode === CatiaUploadMode.IMAGE_FILE &&
-      this.pendingImageUploads.length
-    ) {
+    if (this.isFileUploadMode() && this.pendingImageUploads.length) {
       const readyUploads = this.pendingImageUploads.filter((item) => !!item.mediaId);
 
       readyUploads.forEach((item, index) => {
+        const payload = {
+          ...basePayload,
+          message: index === 0 ? messageText : '',
+          type: mediaType,
+        };
+
+        if (kind === 'VIDEO') {
+          requests.push(this.catiaService.sendVideoById(payload, item.mediaId!));
+        } else if (kind === 'DOCUMENT') {
+          requests.push(
+            this.catiaService.sendDocumentById(payload, item.mediaId!, item.file.name)
+          );
+        } else {
+          requests.push(this.catiaService.sendImageById(payload, item.mediaId!));
+        }
+      });
+    } else if (this.isUrlUploadMode() && mediaUrl) {
+      const payload = {
+        ...basePayload,
+        message: messageText,
+        type: mediaType,
+      };
+
+      if (kind === 'VIDEO') {
+        requests.push(this.catiaService.sendVideoByUrl(payload, mediaUrl));
+      } else if (kind === 'DOCUMENT') {
         requests.push(
-          this.catiaService.sendImageById(
-            {
-              ...basePayload,
-              message: index === 0 ? messageText : '',
-              type: CatiaMessageType.IMAGE,
-            },
-            item.mediaId!
+          this.catiaService.sendDocumentByUrl(
+            payload,
+            mediaUrl,
+            this.deriveFilenameFromUrl(mediaUrl)
           )
         );
-      });
-    } else if (this.uploadMode === CatiaUploadMode.IMAGE_URL && imageUrl) {
-      requests.push(
-        this.catiaService.sendImageByUrl(
-          {
-            ...basePayload,
-            message: messageText,
-            type: CatiaMessageType.IMAGE,
-          },
-          imageUrl
-        )
-      );
+      } else {
+        requests.push(this.catiaService.sendImageByUrl(payload, mediaUrl));
+      }
     } else {
       requests.push(
         this.catiaService.sendWhatsAppMessage({
@@ -2140,6 +2305,8 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
         })
       );
     }
+
+    const sentLabel = this.mediaKindLabel(kind, true);
 
     from(requests)
       .pipe(concatMap((request$) => request$), toArray())
@@ -2157,7 +2324,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
 
           this.toastr.success(
             sentCount > 1
-              ? `Se enviaron ${sentCount} imágenes correctamente`
+              ? `Se enviaron ${sentCount} ${sentLabel} correctamente`
               : 'Mensaje enviado correctamente'
           );
         },
