@@ -16,6 +16,7 @@ import { concatMap, from, Subscription, toArray } from 'rxjs';
 import Swal from 'sweetalert2';
 
 import { CatiaChatService } from '../../../../core/services/apis/catia/catia-chat.service';
+import { CatiaCacheService } from '../../../../core/services/apis/catia/catia-cache.service';
 import {
   AiResponse,
   CatiaMessageModel,
@@ -101,6 +102,9 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   // accept dinamico para el unico input de archivo (imagen/video/documento)
   fileAcceptAttr = 'image/png,image/jpeg,image/jpg';
   showAttachmentMenu = false;
+  // Menu de ajustes de CatIA (engranaje del rail): acciones sobre el microservicio.
+  showCatiaSettingsMenu = false;
+  isFlushingCache = false;
   showImageUrlComposer = false;
   isMenuCollapsed = false; // For Menu Collapse in false
   isChatFinderHidden = true;
@@ -209,6 +213,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     public formBuilder: UntypedFormBuilder,
     public translate: TranslateService,
     private catiaService: CatiaChatService,
+    private catiaCacheService: CatiaCacheService,
     private authenticationService: AuthenticationService,
     private tabContextService: TabContextService,
     private toastr: ToastrService,
@@ -1689,7 +1694,10 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const shouldDisable = !this.selectedUser || this.isSendingMessage;
+    // Se habilita solo cuando hay un usuario seleccionado, no se esta enviando
+    // y la IA esta pausada (takeover humano activo).
+    const shouldDisable =
+      !this.selectedUser || this.isSendingMessage || !this.selectedUser.iaPaused;
 
     if (shouldDisable && chatControl.enabled) {
       chatControl.disable({ emitEvent: false });
@@ -2105,6 +2113,7 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
           this.selectedUser.iaPaused = paused;
         }
         this.isTogglingIaPause = false;
+        this.updateMessageInputState();
         this.toastr.success(paused ? 'Chat tomado · CatIA en pausa' : 'CatIA reactivada');
       },
       error: (err: any) => {
@@ -2557,6 +2566,55 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
   // Colapsar el Menu
   toggleMenuCollapse(): void {
     this.isMenuCollapsed = !this.isMenuCollapsed;
+  }
+
+  toggleCatiaSettingsMenu(): void {
+    this.showCatiaSettingsMenu = !this.showCatiaSettingsMenu;
+  }
+
+  /**
+   * Vacia la cache (Redis) del microservicio CatIA via el proxy del back-end.
+   * Requiere rol ADMIN; pide confirmacion antes de ejecutar.
+   */
+  async flushCatiaCache(): Promise<void> {
+    this.showCatiaSettingsMenu = false;
+
+    if (this.isFlushingCache) {
+      return;
+    }
+
+    const result = await Swal.fire({
+      title: '¿Vaciar caché de CatIA?',
+      text: 'Se eliminarán todas las claves en Redis del microservicio CatIA. Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, vaciar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#d33',
+    });
+
+    if (!result.isConfirmed) {
+      return;
+    }
+
+    this.isFlushingCache = true;
+    this.catiaCacheService.flushCache().subscribe({
+      next: () => {
+        this.isFlushingCache = false;
+        this.toastr.success('Caché de CatIA vaciada correctamente');
+      },
+      error: (err: any) => {
+        this.isFlushingCache = false;
+        const message =
+          err?.error?.errors?.[0]?.message ||
+          err?.error?.message ||
+          (err?.status === 403
+            ? 'No tienes permisos para vaciar la caché (requiere ADMIN)'
+            : 'No se pudo vaciar la caché de CatIA');
+        this.toastr.error(message, 'ERROR');
+        console.error('Error flush cache:', err);
+      },
+    });
   }
 
   toggleChatFinder(): void {

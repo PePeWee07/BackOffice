@@ -23,8 +23,20 @@
                     </app-nav-item>
                 </app-nav>
                 <ul class="flex items-center gap-2 my-auto text-center xl:mb-0 xl:mt-auto xl:pt-4 xl:flex-col">
-                  <li>
-                      <a routerLink="#" class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="settings" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
+                  <li class="relative">
+                      <a href="javascript:void(0);" (click)="toggleCatiaSettingsMenu()" [class.active]="showCatiaSettingsMenu" title="Ajustes de CatIA" class="inline-flex items-center justify-center  w-12 h-12 transition-all duration-200 ease-linear rounded-md group/item"><lucide-angular name="settings" [class]="'mx-auto transition-all size-5 duration-200 ease-linear fill-slate-100 text-slate-500 dark:text-zink-200 dark:fill-zink-500 group-hover/item:text-custom-500 dark:group-hover/item:text-custom-500 group-[.active]/item:fill-custom-100 dark:group-[.active]/item:fill-custom-500/20 group-[.active]/item:text-custom-500 dark:group-[.active]/item:text-custom-500'"></lucide-angular></a>
+
+                      @if (showCatiaSettingsMenu) {
+                        <button type="button" (click)="showCatiaSettingsMenu = false" aria-label="Cerrar menú" class="fixed inset-0 z-40 cursor-default"></button>
+                        <div class="absolute bottom-full left-0 z-50 mb-2 w-56 rounded-2xl border border-slate-200 bg-white p-2 text-left shadow-xl dark:border-zink-700 dark:bg-zink-800">
+                          <p class="px-3 pt-1 pb-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-zink-300">Ajustes CatIA</p>
+                          <button type="button" (click)="flushCatiaCache()" [disabled]="isFlushingCache"
+                            class="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 disabled:opacity-60 dark:text-zink-100 dark:hover:bg-zink-700">
+                            <lucide-angular [name]="isFlushingCache ? 'loader' : 'trash-2'" [class]="'size-4 ' + (isFlushingCache ? 'text-slate-400 animate-spin' : 'text-red-500')"></lucide-angular>
+                            <span>{{ isFlushingCache ? 'Vaciando caché...' : 'Vaciar caché de CatIA' }}</span>
+                          </button>
+                        </div>
+                      }
                   </li>
                   <li class=" md:block">
                     <div class="relative inline-block">
@@ -940,7 +952,7 @@
 
                 <form (ngSubmit)="messageSave()" [formGroup]="formMessage" class="flex items-end gap-2">
                     <div class="grow">
-                        <input type="text" id="inputText" formControlName="chatMsg" [disabled]="!selectedUser?.iaPaused" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" [placeholder]="selectedUser?.iaPaused ? 'Escribe tu mensaje...' : 'Toma el chat primero para responder'" autocomplete="off">
+                        <input type="text" id="inputText" formControlName="chatMsg" class="form-input border-slate-200 dark:border-zink-500 focus:outline-none focus:border-custom-500 disabled:bg-slate-100 dark:disabled:bg-zink-600 disabled:border-slate-300 dark:disabled:border-zink-500 dark:disabled:text-zink-200 disabled:text-slate-500 dark:text-zink-100 dark:bg-zink-700 dark:focus:border-custom-800 placeholder:text-slate-400 dark:placeholder:text-zink-200" [placeholder]="selectedUser?.iaPaused ? 'Escribe tu mensaje...' : 'Toma el chat primero para responder'" autocomplete="off">
                     </div>
                     <div class="flex gap-2 shrink-0">
                         <button type="button" (click)="toggleAttachmentMenu()" class="flex items-center justify-center size-[37.5px] transition-all duration-200 ease-linear p-0 text-slate-500 btn bg-transparent border-transparent hover:text-slate-700 focus:text-slate-700 active:text-slate-700 dark:text-zink-200 dark:hover:text-zink-50 dark:focus:text-zink-50 dark:active:text-zink-50" [class.text-custom-500]="pendingImageUploads.length > 0 || showImageUrlComposer || (isUrlUploadMode() && pendingImageUrl.trim())"><lucide-angular name="plus" [class]="'size-4'"></lucide-angular></button>
