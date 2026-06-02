@@ -2915,14 +2915,38 @@ export class ChatComponent implements AfterViewInit, OnDestroy {
     }
     const date = value instanceof Date ? value : new Date(value);
 
+    if (Number.isNaN(date.getTime())) {
+      return 'N/A';
+    }
+
     const diff = this.nowTimestamp - date.getTime();
     const mins = Math.floor(diff / 1000 / 60);
+
+    if (mins < 1) {
+      return 'hace un momento';
+    }
+
     if (mins < 60) {
       return `${mins} min atrás`;
     }
 
     const hrs = Math.floor(mins / 60);
-    return `${hrs} hora${hrs > 1 ? 's' : ''} atrás`;
+    if (hrs < 24) {
+      return `${hrs} hora${hrs > 1 ? 's' : ''} atrás`;
+    }
+
+    const days = Math.floor(hrs / 24);
+    if (days < 30) {
+      return `${days} día${days > 1 ? 's' : ''} atrás`;
+    }
+
+    const months = Math.floor(days / 30);
+    if (months < 12) {
+      return `${months} mes${months > 1 ? 'es' : ''} atrás`;
+    }
+
+    const years = Math.floor(months / 12);
+    return `${years} año${years > 1 ? 's' : ''} atrás`;
   }
 
   // OnClick User Chat show
