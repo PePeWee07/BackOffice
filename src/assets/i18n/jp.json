@@ -11,6 +11,7 @@
   "product": "製品",
   "apps": "アプリ",
   "chat": "チャット",
+  "Tools": "ツール",
   "administration": "管理",
   "calendar": "カレンダー",
   "default": "デフォルト",
@@ -193,6 +194,89 @@
         "chat": {
           "title": "CatIA",
           "pagetitle": "会話"
+        },
+        "tools": {
+          "title": "アシスタントツール",
+          "pagetitle": "CatIA",
+          "hero": {
+            "badge": "CatIA · ツール",
+            "heading": "アシスタントの機能",
+            "description": "CatIAが呼び出せるツール（OpenAIに送信される関数）、使用できるロール、有効/無効を管理します。",
+            "total": "合計",
+            "enabled": "有効",
+            "disabled": "無効"
+          },
+          "actions": {
+            "filter-placeholder": "ツール名またはロールで絞り込み...",
+            "refresh": "更新",
+            "show-map": "マップを表示",
+            "hide-map": "マップを隠す",
+            "restore": "初期設定に戻す",
+            "restoring": "復元中...",
+            "new-tool": "新規ツール"
+          },
+          "map": {
+            "heading": "モデルに送信されるマップ（デバッグ）",
+            "update": "更新",
+            "loading": "マップを読み込み中..."
+          },
+          "table": {
+            "tool": "ツール",
+            "roles": "許可ロール",
+            "status": "状態",
+            "actions": "操作",
+            "loading": "CatIAのツールを読み込み中...",
+            "empty": "登録されたツールがありません。新規作成するか初期設定に戻してください。",
+            "no-match": "フィルタに一致するツールがありません。",
+            "no-roles": "ロールなし",
+            "id": "ID",
+            "enabled": "有効",
+            "disabled": "無効",
+            "saving": "保存中...",
+            "enable-hint": "クリックで有効化",
+            "disable-hint": "クリックで無効化",
+            "edit": "ロールを編集",
+            "delete": "ツールを削除"
+          },
+          "editor": {
+            "title-new": "新規ツール",
+            "title-edit": "ツールを編集",
+            "name-label": "ツール名",
+            "name-placeholder": "例: consultar_notas",
+            "name-locked": "名前は変更できません。マイクロサービス内の関数を識別します。",
+            "roles-label": "許可ロール",
+            "roles-empty": "まだロールがありません。",
+            "role-placeholder": "ロールを入力してEnter...",
+            "add": "追加",
+            "suggested": "候補:",
+            "enabled": "ツールを有効にする",
+            "cancel": "キャンセル",
+            "save": "保存",
+            "saving": "保存中..."
+          },
+          "messages": {
+            "load-error": "CatIAのツールを読み込めませんでした",
+            "map-error": "権限マップを読み込めませんでした",
+            "name-required": "ツール名を入力してください",
+            "roles-required": "少なくとも1つのロールを追加してください",
+            "save-success": "ツール「{{tool}}」を保存しました",
+            "save-error": "「{{tool}}」を保存できませんでした",
+            "toggle-on": "「{{tool}}」を有効にしました",
+            "toggle-off": "「{{tool}}」を無効にしました",
+            "toggle-error": "ツールの状態を変更できませんでした",
+            "delete-title": "「{{tool}}」を削除しますか？",
+            "delete-text": "このツールの権限が削除され、CatIAは提供を停止します。",
+            "delete-confirm": "はい、削除します",
+            "delete-success": "ツール「{{tool}}」を削除しました",
+            "delete-error": "ツールを削除できませんでした",
+            "restore-title": "ツールを初期設定に戻しますか？",
+            "restore-text": "基本ツールが既定のロールに戻り、有効になります。",
+            "restore-confirm": "はい、復元します",
+            "restore-success": "ツールを初期設定に復元しました",
+            "restore-error": "ツールを復元できませんでした",
+            "cancel": "キャンセル",
+            "forbidden": "この操作の権限がありません（ADMINが必要です）"
+          }
         }
       }
     },

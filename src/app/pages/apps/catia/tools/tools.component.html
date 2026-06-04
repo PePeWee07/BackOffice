@@ -1,0 +1,348 @@
+<app-page-title
+  [title]="'pagesComponent.apps.catia.tools.title' | translate"
+  [pagetitle]="'pagesComponent.apps.catia.tools.pagetitle' | translate"
+></app-page-title>
+
+<section class="space-y-6">
+  <!-- Hero -->
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50 via-white to-violet-50 dark:border-zink-500 dark:from-zink-700 dark:via-zink-700 dark:to-violet-900/30">
+    <div class="grid gap-4 px-6 py-6 lg:grid-cols-[1.4fr_1fr]">
+      <div>
+        <span class="mb-3 inline-flex items-center rounded-full border border-violet-200 bg-violet-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-violet-700 dark:border-violet-500/40 dark:bg-violet-500/20 dark:text-violet-300">
+          {{ 'pagesComponent.apps.catia.tools.hero.badge' | translate }}
+        </span>
+        <h2 class="text-2xl font-semibold text-slate-800 dark:text-zink-100">
+          {{ 'pagesComponent.apps.catia.tools.hero.heading' | translate }}
+        </h2>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-zink-300">
+          {{ 'pagesComponent.apps.catia.tools.hero.description' | translate }}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-3 gap-3">
+        <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-slate-200 dark:bg-zink-600/80 dark:ring-zink-500">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400 dark:text-zink-300">
+            {{ 'pagesComponent.apps.catia.tools.hero.total' | translate }}
+          </p>
+          <p class="mt-2 text-3xl font-semibold text-slate-800 dark:text-zink-100">{{ tools.length }}</p>
+        </article>
+        <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-emerald-200 dark:bg-zink-600/80 dark:ring-emerald-500/30">
+          <p class="text-xs uppercase tracking-[0.2em] text-emerald-500 dark:text-emerald-300">
+            {{ 'pagesComponent.apps.catia.tools.hero.enabled' | translate }}
+          </p>
+          <p class="mt-2 text-3xl font-semibold text-emerald-600 dark:text-emerald-300">{{ enabledCount }}</p>
+        </article>
+        <article class="rounded-2xl bg-white/80 p-4 shadow-sm ring-1 ring-amber-200 dark:bg-zink-600/80 dark:ring-amber-500/30">
+          <p class="text-xs uppercase tracking-[0.2em] text-amber-500 dark:text-amber-300">
+            {{ 'pagesComponent.apps.catia.tools.hero.disabled' | translate }}
+          </p>
+          <p class="mt-2 text-3xl font-semibold text-amber-600 dark:text-amber-300">{{ disabledCount }}</p>
+        </article>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones + filtro -->
+  <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zink-500 dark:bg-zink-700">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center">
+      <div class="relative grow">
+        <input
+          type="text"
+          [(ngModel)]="filterText"
+          [placeholder]="'pagesComponent.apps.catia.tools.actions.filter-placeholder' | translate"
+          class="w-full rounded-xl border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:focus:border-violet-500 dark:focus:ring-violet-500/20" />
+        <lucide-angular name="search" [class]="'absolute left-3 top-2.5 size-4 text-slate-400 dark:text-zink-300'"></lucide-angular>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          (click)="loadTools()"
+          [disabled]="isLoading"
+          class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500">
+          <lucide-angular name="refresh-cw" [class]="'size-4' + (isLoading ? ' animate-spin' : '')"></lucide-angular>
+          {{ 'pagesComponent.apps.catia.tools.actions.refresh' | translate }}
+        </button>
+        <button
+          type="button"
+          (click)="toggleMapView()"
+          class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500"
+          [class.!border-violet-300]="showMap"
+          [class.!text-violet-600]="showMap">
+          <lucide-angular name="braces" [class]="'size-4'"></lucide-angular>
+          {{ (showMap ? 'pagesComponent.apps.catia.tools.actions.hide-map' : 'pagesComponent.apps.catia.tools.actions.show-map') | translate }}
+        </button>
+        <button
+          type="button"
+          (click)="restoreDefaults()"
+          [disabled]="isRestoring"
+          class="inline-flex items-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700 transition hover:bg-amber-100 disabled:opacity-50 dark:border-amber-500/40 dark:bg-amber-500/20 dark:text-amber-300 dark:hover:bg-amber-500/30">
+          <lucide-angular name="rotate-ccw" [class]="'size-4'"></lucide-angular>
+          {{ (isRestoring ? 'pagesComponent.apps.catia.tools.actions.restoring' : 'pagesComponent.apps.catia.tools.actions.restore') | translate }}
+        </button>
+        <button
+          type="button"
+          (click)="openCreateEditor()"
+          class="inline-flex items-center gap-1.5 rounded-xl bg-custom-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-custom-600">
+          <lucide-angular name="plus" [class]="'size-4'"></lucide-angular>
+          {{ 'pagesComponent.apps.catia.tools.actions.new-tool' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mapa de depuración -->
+  @if (showMap) {
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zink-500 dark:bg-zink-700">
+      <div class="mb-3 flex items-center gap-2">
+        <lucide-angular name="braces" [class]="'size-4 text-violet-500'"></lucide-angular>
+        <h6 class="grow text-sm font-semibold text-slate-700 dark:text-zink-100">
+          {{ 'pagesComponent.apps.catia.tools.map.heading' | translate }}
+        </h6>
+        <button
+          type="button"
+          (click)="loadMap()"
+          [disabled]="isLoadingMap"
+          class="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 disabled:opacity-50 dark:text-zink-200 dark:hover:bg-zink-600">
+          <lucide-angular name="refresh-cw" [class]="'size-3.5' + (isLoadingMap ? ' animate-spin' : '')"></lucide-angular>
+          {{ 'pagesComponent.apps.catia.tools.map.update' | translate }}
+        </button>
+      </div>
+      @if (isLoadingMap && !permissionsMap) {
+        <p class="text-sm text-slate-500 dark:text-zink-300">
+          {{ 'pagesComponent.apps.catia.tools.map.loading' | translate }}
+        </p>
+      } @else {
+        <pre class="max-h-80 overflow-auto rounded-xl bg-slate-900 p-4 text-xs leading-5 text-emerald-300">{{ permissionsMapJson }}</pre>
+      }
+    </div>
+  }
+
+  <!-- Tabla de tools -->
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-zink-500 dark:bg-zink-700">
+    @if (isLoading) {
+      <p class="px-6 py-10 text-center text-sm text-slate-500 dark:text-zink-300">
+        {{ 'pagesComponent.apps.catia.tools.table.loading' | translate }}
+      </p>
+    } @else if (filteredTools.length === 0) {
+      <p class="px-6 py-10 text-center text-sm text-slate-500 dark:text-zink-300">
+        @if (tools.length === 0) {
+          {{ 'pagesComponent.apps.catia.tools.table.empty' | translate }}
+        } @else {
+          {{ 'pagesComponent.apps.catia.tools.table.no-match' | translate }}
+        }
+      </p>
+    } @else {
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead>
+            <tr class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-[0.15em] text-slate-500 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-300">
+              <th class="px-6 py-3 font-semibold">{{ 'pagesComponent.apps.catia.tools.table.tool' | translate }}</th>
+              <th class="px-6 py-3 font-semibold">{{ 'pagesComponent.apps.catia.tools.table.roles' | translate }}</th>
+              <th class="px-6 py-3 font-semibold">{{ 'pagesComponent.apps.catia.tools.table.status' | translate }}</th>
+              <th class="px-6 py-3 text-right font-semibold">{{ 'pagesComponent.apps.catia.tools.table.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (tool of filteredTools; track tool.toolName) {
+              <tr class="border-b border-slate-100 last:border-b-0 hover:bg-slate-50/60 dark:border-zink-600 dark:hover:bg-zink-600/40">
+                <td class="px-6 py-3">
+                  <div class="flex items-center gap-2">
+                    <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300">
+                      <lucide-angular name="wrench" [class]="'size-4'"></lucide-angular>
+                    </span>
+                    <div class="min-w-0">
+                      <p class="font-medium text-slate-700 dark:text-zink-100">{{ tool.toolName }}</p>
+                      <p class="text-[11px] text-slate-400 dark:text-zink-300">
+                        {{ 'pagesComponent.apps.catia.tools.table.id' | translate }}: {{ tool.id }}
+                      </p>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-3">
+                  <div class="flex flex-wrap gap-1.5">
+                    @for (role of tool.allowedRoles; track role) {
+                      <span class="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:bg-zink-600 dark:text-zink-200">
+                        {{ role }}
+                      </span>
+                    } @empty {
+                      <span class="text-xs text-slate-400 dark:text-zink-300">
+                        {{ 'pagesComponent.apps.catia.tools.table.no-roles' | translate }}
+                      </span>
+                    }
+                  </div>
+                </td>
+                <td class="px-6 py-3">
+                  <button
+                    type="button"
+                    (click)="toggleEnabled(tool)"
+                    [disabled]="togglingTool === tool.toolName"
+                    [title]="(tool.enabled ? 'pagesComponent.apps.catia.tools.table.disable-hint' : 'pagesComponent.apps.catia.tools.table.enable-hint') | translate"
+                    class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition disabled:opacity-50"
+                    [ngClass]="tool.enabled
+                      ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:hover:bg-emerald-500/30'
+                      : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-zink-600 dark:text-zink-300 dark:hover:bg-zink-500'">
+                    <span class="size-1.5 rounded-full" [ngClass]="tool.enabled ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                    {{ (togglingTool === tool.toolName
+                        ? 'pagesComponent.apps.catia.tools.table.saving'
+                        : (tool.enabled ? 'pagesComponent.apps.catia.tools.table.enabled' : 'pagesComponent.apps.catia.tools.table.disabled')) | translate }}
+                  </button>
+                </td>
+                <td class="px-6 py-3">
+                  <div class="flex items-center justify-end gap-1.5">
+                    <button
+                      type="button"
+                      (click)="openEditEditor(tool)"
+                      [title]="'pagesComponent.apps.catia.tools.table.edit' | translate"
+                      class="inline-flex size-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-custom-600 dark:text-zink-200 dark:hover:bg-zink-600">
+                      <lucide-angular name="pencil" [class]="'size-4'"></lucide-angular>
+                    </button>
+                    <button
+                      type="button"
+                      (click)="deleteTool(tool)"
+                      [disabled]="deletingTool === tool.toolName"
+                      [title]="'pagesComponent.apps.catia.tools.table.delete' | translate"
+                      class="inline-flex size-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50 dark:text-zink-200 dark:hover:bg-red-500/20 dark:hover:text-red-400">
+                      <lucide-angular [name]="deletingTool === tool.toolName ? 'loader' : 'trash-2'" [class]="'size-4' + (deletingTool === tool.toolName ? ' animate-spin' : '')"></lucide-angular>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Editor modal (crear / editar tool) -->
+@if (isEditorOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <button type="button" (click)="closeEditor()" aria-label="Cerrar" class="absolute inset-0 cursor-default bg-slate-900/40"></button>
+    <div class="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:bg-zink-700">
+      <div class="mb-4 flex items-center gap-2">
+        <span class="flex size-9 items-center justify-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-300">
+          <lucide-angular name="wrench" [class]="'size-4'"></lucide-angular>
+        </span>
+        <h6 class="grow text-base font-semibold text-slate-800 dark:text-zink-100">
+          {{ (editingTool ? 'pagesComponent.apps.catia.tools.editor.title-edit' : 'pagesComponent.apps.catia.tools.editor.title-new') | translate }}
+        </h6>
+        <button
+          type="button"
+          (click)="closeEditor()"
+          class="inline-flex size-8 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 dark:text-zink-200 dark:hover:bg-zink-600">
+          <lucide-angular name="x" [class]="'size-4'"></lucide-angular>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+            {{ 'pagesComponent.apps.catia.tools.editor.name-label' | translate }}
+          </label>
+          <input
+            type="text"
+            [(ngModel)]="editorToolName"
+            [disabled]="!!editingTool"
+            [placeholder]="'pagesComponent.apps.catia.tools.editor.name-placeholder' | translate"
+            class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-100 disabled:bg-slate-100 disabled:text-slate-500 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300 dark:disabled:bg-zink-500" />
+          @if (editingTool) {
+            <p class="text-[11px] text-slate-400 dark:text-zink-300">
+              {{ 'pagesComponent.apps.catia.tools.editor.name-locked' | translate }}
+            </p>
+          }
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+            {{ 'pagesComponent.apps.catia.tools.editor.roles-label' | translate }}
+          </label>
+
+          @if (editorRoles.length > 0) {
+            <div class="flex flex-wrap gap-1.5">
+              @for (role of editorRoles; track role) {
+                <span class="inline-flex items-center gap-1 rounded-full bg-custom-100 py-0.5 pl-2.5 pr-1 text-xs font-medium text-custom-700 dark:bg-custom-500/20 dark:text-custom-300">
+                  {{ role }}
+                  <button
+                    type="button"
+                    (click)="removeEditorRole(role)"
+                    class="inline-flex size-4 items-center justify-center rounded-full hover:bg-custom-200 dark:hover:bg-custom-500/30">
+                    <lucide-angular name="x" [class]="'size-3'"></lucide-angular>
+                  </button>
+                </span>
+              }
+            </div>
+          } @else {
+            <p class="text-xs text-slate-400 dark:text-zink-300">
+              {{ 'pagesComponent.apps.catia.tools.editor.roles-empty' | translate }}
+            </p>
+          }
+
+          <div class="flex gap-2">
+            <input
+              type="text"
+              [(ngModel)]="editorRoleInput"
+              (keydown.enter)="$event.preventDefault(); addEditorRole(editorRoleInput)"
+              [placeholder]="'pagesComponent.apps.catia.tools.editor.role-placeholder' | translate"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300" />
+            <button
+              type="button"
+              (click)="addEditorRole(editorRoleInput)"
+              class="shrink-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500">
+              {{ 'pagesComponent.apps.catia.tools.editor.add' | translate }}
+            </button>
+          </div>
+
+          @if (suggestedRoles.length > 0) {
+            <div class="flex flex-wrap items-center gap-1.5 pt-1">
+              <span class="text-[11px] text-slate-400 dark:text-zink-300">
+                {{ 'pagesComponent.apps.catia.tools.editor.suggested' | translate }}
+              </span>
+              @for (role of suggestedRoles; track role) {
+                <button
+                  type="button"
+                  (click)="addEditorRole(role)"
+                  class="inline-flex items-center gap-1 rounded-full border border-dashed border-slate-300 px-2.5 py-0.5 text-xs text-slate-500 transition hover:border-custom-400 hover:text-custom-600 dark:border-zink-400 dark:text-zink-300 dark:hover:border-custom-500 dark:hover:text-custom-400">
+                  <lucide-angular name="plus" [class]="'size-3'"></lucide-angular>
+                  {{ role }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700 dark:text-zink-100">
+          <input
+            type="checkbox"
+            [(ngModel)]="editorEnabled"
+            class="size-4 rounded border-slate-300 text-custom-500 focus:ring-custom-500 dark:border-zink-500 dark:bg-zink-600" />
+          {{ 'pagesComponent.apps.catia.tools.editor.enabled' | translate }}
+        </label>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-2">
+        <button
+          type="button"
+          (click)="closeEditor()"
+          [disabled]="isSaving"
+          class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500">
+          {{ 'pagesComponent.apps.catia.tools.editor.cancel' | translate }}
+        </button>
+        <button
+          type="button"
+          (click)="saveEditor()"
+          [disabled]="isSaving"
+          class="inline-flex items-center gap-1.5 rounded-xl bg-custom-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-custom-600 disabled:opacity-60">
+          @if (isSaving) {
+            <lucide-angular name="loader" [class]="'size-4 animate-spin'"></lucide-angular>
+            {{ 'pagesComponent.apps.catia.tools.editor.saving' | translate }}
+          } @else {
+            <lucide-angular name="check" [class]="'size-4'"></lucide-angular>
+            {{ 'pagesComponent.apps.catia.tools.editor.save' | translate }}
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { IndexComponent } from './dashboard/index/index.component';
 import { ChatComponent } from './apps/catia/chat/chat.component';
+import { CatiaToolsComponent } from './apps/catia/tools/tools.component';
 import { ListComponent } from './ecommerce/products/list/list.component';
 import { GridComponent } from './ecommerce/products/grid/grid.component';
 import { OverviewComponent } from './ecommerce/products/overview/overview.component';
@@ -43,6 +44,7 @@ import { MultiMonthStackComponent } from './calendar/multi-month-stack/multi-mon
 export const PAGE_ROUTES: Route[] = [
   { path: '', component: IndexComponent },
   { path: 'apps-chat', component: ChatComponent },
+  { path: 'apps-catia-tools', component: CatiaToolsComponent },
   { path: 'apps-calendar', component: CalendarComponent },
   { path: 'apps-calendar-month-grid', component: MonthGridComponent },
   {

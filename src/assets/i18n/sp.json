@@ -11,6 +11,7 @@
   "product": "Producto",
   "apps": "Aplicaciones",
   "chat": "Chat",
+  "Tools": "Tools",
   "administration": "Administración",
   "calendar": "Calendario",
   "default": "Por Defecto",
@@ -193,6 +194,89 @@
         "chat": {
           "title": "CatIA",
           "pagetitle": "Conversaciones"
+        },
+        "tools": {
+          "title": "Tools del asistente",
+          "pagetitle": "CatIA",
+          "hero": {
+            "badge": "CatIA · Tools",
+            "heading": "Funcionalidades del asistente",
+            "description": "Gestiona las tools que CatIA puede invocar (funciones enviadas a OpenAI), qué roles pueden usarlas y si están habilitadas.",
+            "total": "Total",
+            "enabled": "Habilitadas",
+            "disabled": "Deshabilitadas"
+          },
+          "actions": {
+            "filter-placeholder": "Filtrar por nombre de tool o rol...",
+            "refresh": "Refrescar",
+            "show-map": "Ver mapa",
+            "hide-map": "Ocultar mapa",
+            "restore": "Restaurar fábrica",
+            "restoring": "Restaurando...",
+            "new-tool": "Nueva tool"
+          },
+          "map": {
+            "heading": "Mapa enviado al modelo (depuración)",
+            "update": "Actualizar",
+            "loading": "Cargando mapa..."
+          },
+          "table": {
+            "tool": "Tool",
+            "roles": "Roles permitidos",
+            "status": "Estado",
+            "actions": "Acciones",
+            "loading": "Cargando tools de CatIA...",
+            "empty": "No hay tools registradas. Crea una nueva o restaura las de fábrica.",
+            "no-match": "Ninguna tool coincide con el filtro.",
+            "no-roles": "Sin roles",
+            "id": "ID",
+            "enabled": "Habilitada",
+            "disabled": "Deshabilitada",
+            "saving": "Guardando...",
+            "enable-hint": "Click para habilitar",
+            "disable-hint": "Click para deshabilitar",
+            "edit": "Editar roles",
+            "delete": "Eliminar tool"
+          },
+          "editor": {
+            "title-new": "Nueva tool",
+            "title-edit": "Editar tool",
+            "name-label": "Nombre de la tool",
+            "name-placeholder": "ej: consultar_notas",
+            "name-locked": "El nombre no se puede cambiar; identifica la función en el microservicio.",
+            "roles-label": "Roles permitidos",
+            "roles-empty": "Aún no agregas roles.",
+            "role-placeholder": "Escribe un rol y Enter...",
+            "add": "Agregar",
+            "suggested": "Sugeridos:",
+            "enabled": "Tool habilitada",
+            "cancel": "Cancelar",
+            "save": "Guardar",
+            "saving": "Guardando..."
+          },
+          "messages": {
+            "load-error": "No se pudieron cargar las tools de CatIA",
+            "map-error": "No se pudo cargar el mapa de permisos",
+            "name-required": "Indica el nombre de la tool",
+            "roles-required": "Agrega al menos un rol permitido",
+            "save-success": "Tool \"{{tool}}\" guardada correctamente",
+            "save-error": "No se pudo guardar \"{{tool}}\"",
+            "toggle-on": "\"{{tool}}\" habilitada",
+            "toggle-off": "\"{{tool}}\" deshabilitada",
+            "toggle-error": "No se pudo cambiar el estado de la tool",
+            "delete-title": "¿Eliminar \"{{tool}}\"?",
+            "delete-text": "Se quitará el permiso de esta tool y CatIA dejará de ofrecerla.",
+            "delete-confirm": "Sí, eliminar",
+            "delete-success": "Tool \"{{tool}}\" eliminada",
+            "delete-error": "No se pudo eliminar la tool",
+            "restore-title": "¿Restaurar tools de fábrica?",
+            "restore-text": "Las tools básicas volverán a sus roles por defecto y quedarán habilitadas.",
+            "restore-confirm": "Sí, restaurar",
+            "restore-success": "Tools restauradas a valores de fábrica",
+            "restore-error": "No se pudieron restaurar las tools",
+            "cancel": "Cancelar",
+            "forbidden": "No tienes permisos para esta acción (requiere ADMIN)"
+          }
         }
       }
     },
@@ -672,7 +756,7 @@
       }
     },
     "layouts": {
-      "customizer":{
+      "customizer": {
         "title": "Personalizador de Temas",
         "description": "Elige tus temas y diseños.",
         "layout": {
@@ -718,10 +802,10 @@
         "topbarColor": "Color de la barra superior",
         "reset": "Restablecer a los valores predeterminados"
       },
-      "footer":{},
-      "layout":{},
-      "sidebar":{},
-      "topbar":{
+      "footer": {},
+      "layout": {},
+      "sidebar": {},
+      "topbar": {
         "title": "Web Admistrativa",
         "dropdown": {
           "profile": "Perfil",

@@ -11,6 +11,7 @@
   "product": "Product",
   "apps": "Apps",
   "chat": "Chat",
+  "Tools": "Tools",
   "administration": "Administration",
   "calendar": "Calendar",
   "default": "Default",
@@ -194,6 +195,89 @@
         "chat": {
           "title": "CatIA",
           "pagetitle": "Chat"
+        },
+        "tools": {
+          "title": "Assistant Tools",
+          "pagetitle": "CatIA",
+          "hero": {
+            "badge": "CatIA · Tools",
+            "heading": "Assistant capabilities",
+            "description": "Manage the tools CatIA can invoke (functions sent to OpenAI), which roles can use them and whether they are enabled.",
+            "total": "Total",
+            "enabled": "Enabled",
+            "disabled": "Disabled"
+          },
+          "actions": {
+            "filter-placeholder": "Filter by tool name or role...",
+            "refresh": "Refresh",
+            "show-map": "Show map",
+            "hide-map": "Hide map",
+            "restore": "Restore defaults",
+            "restoring": "Restoring...",
+            "new-tool": "New tool"
+          },
+          "map": {
+            "heading": "Map sent to the model (debug)",
+            "update": "Update",
+            "loading": "Loading map..."
+          },
+          "table": {
+            "tool": "Tool",
+            "roles": "Allowed roles",
+            "status": "Status",
+            "actions": "Actions",
+            "loading": "Loading CatIA tools...",
+            "empty": "No tools registered. Create one or restore defaults.",
+            "no-match": "No tool matches the filter.",
+            "no-roles": "No roles",
+            "id": "ID",
+            "enabled": "Enabled",
+            "disabled": "Disabled",
+            "saving": "Saving...",
+            "enable-hint": "Click to enable",
+            "disable-hint": "Click to disable",
+            "edit": "Edit roles",
+            "delete": "Delete tool"
+          },
+          "editor": {
+            "title-new": "New tool",
+            "title-edit": "Edit tool",
+            "name-label": "Tool name",
+            "name-placeholder": "e.g. consultar_notas",
+            "name-locked": "The name cannot be changed; it identifies the function in the microservice.",
+            "roles-label": "Allowed roles",
+            "roles-empty": "No roles added yet.",
+            "role-placeholder": "Type a role and press Enter...",
+            "add": "Add",
+            "suggested": "Suggested:",
+            "enabled": "Tool enabled",
+            "cancel": "Cancel",
+            "save": "Save",
+            "saving": "Saving..."
+          },
+          "messages": {
+            "load-error": "Could not load CatIA tools",
+            "map-error": "Could not load the permissions map",
+            "name-required": "Enter the tool name",
+            "roles-required": "Add at least one allowed role",
+            "save-success": "Tool \"{{tool}}\" saved successfully",
+            "save-error": "Could not save \"{{tool}}\"",
+            "toggle-on": "\"{{tool}}\" enabled",
+            "toggle-off": "\"{{tool}}\" disabled",
+            "toggle-error": "Could not change the tool status",
+            "delete-title": "Delete \"{{tool}}\"?",
+            "delete-text": "The tool permission will be removed and CatIA will stop offering it.",
+            "delete-confirm": "Yes, delete",
+            "delete-success": "Tool \"{{tool}}\" deleted",
+            "delete-error": "Could not delete the tool",
+            "restore-title": "Restore default tools?",
+            "restore-text": "Basic tools will return to their default roles and be enabled.",
+            "restore-confirm": "Yes, restore",
+            "restore-success": "Tools restored to factory defaults",
+            "restore-error": "Could not restore tools",
+            "cancel": "Cancel",
+            "forbidden": "You don't have permission for this action (requires ADMIN)"
+          }
         }
       }
     },

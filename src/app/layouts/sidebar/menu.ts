@@ -72,6 +72,13 @@ export const MENU: MenuItem[] = [
     parentId: 1.7,
   },
   {
+    id: 2.2,
+    label: 'Tools',
+    icon: 'wrench',
+    link: '/apps-catia-tools',
+    parentId: 1.7,
+  },
+  {
     id: 2,
     label: 'apps',
     isTitle: true,
