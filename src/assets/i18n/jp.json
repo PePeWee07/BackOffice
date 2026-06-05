@@ -236,7 +236,8 @@
             "enable-hint": "クリックで有効化",
             "disable-hint": "クリックで無効化",
             "edit": "ロールを編集",
-            "delete": "ツールを削除"
+            "delete": "ツールを削除",
+            "cooldown": "クールダウン"
           },
           "editor": {
             "title-new": "新規ツール",
@@ -275,7 +276,20 @@
             "restore-success": "ツールを初期設定に復元しました",
             "restore-error": "ツールを復元できませんでした",
             "cancel": "キャンセル",
-            "forbidden": "この操作の権限がありません（ADMINが必要です）"
+            "forbidden": "この操作の権限がありません（ADMINが必要です）",
+            "cooldown-invalid": "クールダウンは0以上で指定してください"
+          },
+          "cooldown": {
+            "label": "クールダウン（秒）",
+            "placeholder": "例: 700",
+            "hint": "このツールの呼び出し間の最小待機時間。0または空欄＝クールダウンなし。",
+            "none": "クールダウンなし",
+            "units": {
+              "d": "日",
+              "h": "時間",
+              "m": "分",
+              "s": "秒"
+            }
           }
         }
       }

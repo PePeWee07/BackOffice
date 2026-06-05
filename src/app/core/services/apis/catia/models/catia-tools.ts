@@ -3,11 +3,14 @@ export interface CatiaToolPermission {
   toolName: string;
   allowedRoles: string[];
   enabled: boolean;
+  // Tiempo de enfriamiento entre invocaciones (en segundos); 0/null = sin enfriamiento
+  cooldownSeconds?: number | null;
 }
 
 export interface CatiaToolPermissionUpsertRequest {
   allowedRoles: string[];
   enabled?: boolean | null;
+  cooldownSeconds?: number | null;
 }
 
 // Mapa tal cual se envía al modelo (toolName -> roles permitidos)

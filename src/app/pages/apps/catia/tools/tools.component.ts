@@ -62,6 +62,7 @@ export class CatiaToolsComponent implements OnInit {
   editorRoles: string[] = [];
   editorEnabled = true;
   editorRoleInput = '';
+  editorCooldownSeconds: number | null = null;
 
   togglingTool: string | null = null;
   deletingTool: string | null = null;
@@ -164,6 +165,7 @@ export class CatiaToolsComponent implements OnInit {
     this.editorRoles = [];
     this.editorEnabled = true;
     this.editorRoleInput = '';
+    this.editorCooldownSeconds = null;
     this.isEditorOpen = true;
   }
 
@@ -173,6 +175,7 @@ export class CatiaToolsComponent implements OnInit {
     this.editorRoles = [...(tool.allowedRoles ?? [])];
     this.editorEnabled = tool.enabled;
     this.editorRoleInput = '';
+    this.editorCooldownSeconds = tool.cooldownSeconds ?? null;
     this.isEditorOpen = true;
   }
 
@@ -220,12 +223,20 @@ export class CatiaToolsComponent implements OnInit {
       return;
     }
 
+    const cooldown = this.normalizeCooldown(this.editorCooldownSeconds);
+
+    if (cooldown !== null && cooldown < 0) {
+      this.toastr.info(this.t('messages.cooldown-invalid'));
+      return;
+    }
+
     this.isSaving = true;
 
     this.toolsService
       .upsertToolPermission(toolName, {
         allowedRoles: this.editorRoles,
         enabled: this.editorEnabled,
+        cooldownSeconds: cooldown,
       })
       .subscribe({
         next: () => {
@@ -346,6 +357,56 @@ export class CatiaToolsComponent implements OnInit {
         console.error('Error restore tools:', err);
       },
     });
+  }
+
+  // Convierte segundos a un texto legible: 700 -> "11 min 40 s".
+  // Devuelve la clave 'sin enfriamiento' para 0/null/valores inválidos.
+  formatCooldown(seconds?: number | null): string {
+    const total = this.normalizeCooldown(seconds);
+
+    if (total === null || total <= 0) {
+      return this.t('cooldown.none');
+    }
+
+    const days = Math.floor(total / 86400);
+    const hours = Math.floor((total % 86400) / 3600);
+    const minutes = Math.floor((total % 3600) / 60);
+    const secs = total % 60;
+
+    const parts: string[] = [];
+
+    if (days) {
+      parts.push(`${days} ${this.t('cooldown.units.d')}`);
+    }
+
+    if (hours) {
+      parts.push(`${hours} ${this.t('cooldown.units.h')}`);
+    }
+
+    if (minutes) {
+      parts.push(`${minutes} ${this.t('cooldown.units.m')}`);
+    }
+
+    if (secs) {
+      parts.push(`${secs} ${this.t('cooldown.units.s')}`);
+    }
+
+    return parts.join(' ');
+  }
+
+  hasCooldown(tool: CatiaToolPermission): boolean {
+    const value = this.normalizeCooldown(tool.cooldownSeconds);
+    return value !== null && value > 0;
+  }
+
+  private normalizeCooldown(seconds?: number | null): number | null {
+    if (seconds === null || seconds === undefined || `${seconds}` === '') {
+      return null;
+    }
+
+    const value = Math.floor(Number(seconds));
+
+    return Number.isNaN(value) ? null : value;
   }
 
   private sortTools(tools?: CatiaToolPermission[] | null): CatiaToolPermission[] {

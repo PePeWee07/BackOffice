@@ -237,7 +237,8 @@
             "enable-hint": "Click to enable",
             "disable-hint": "Click to disable",
             "edit": "Edit roles",
-            "delete": "Delete tool"
+            "delete": "Delete tool",
+            "cooldown": "Cooldown"
           },
           "editor": {
             "title-new": "New tool",
@@ -276,7 +277,20 @@
             "restore-success": "Tools restored to factory defaults",
             "restore-error": "Could not restore tools",
             "cancel": "Cancel",
-            "forbidden": "You don't have permission for this action (requires ADMIN)"
+            "forbidden": "You don't have permission for this action (requires ADMIN)",
+            "cooldown-invalid": "Cooldown must be 0 or greater"
+          },
+          "cooldown": {
+            "label": "Cooldown (seconds)",
+            "placeholder": "e.g. 700",
+            "hint": "Minimum wait time between invocations of this tool. 0 or empty = no cooldown.",
+            "none": "No cooldown",
+            "units": {
+              "d": "d",
+              "h": "h",
+              "m": "min",
+              "s": "s"
+            }
           }
         }
       }

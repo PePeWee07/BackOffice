@@ -140,6 +140,7 @@
               <th class="px-6 py-3 font-semibold">{{ 'pagesComponent.apps.catia.tools.table.tool' | translate }}</th>
               <th class="px-6 py-3 font-semibold">{{ 'pagesComponent.apps.catia.tools.table.roles' | translate }}</th>
               <th class="px-6 py-3 font-semibold">{{ 'pagesComponent.apps.catia.tools.table.status' | translate }}</th>
+              <th class="px-6 py-3 font-semibold">{{ 'pagesComponent.apps.catia.tools.table.cooldown' | translate }}</th>
               <th class="px-6 py-3 text-right font-semibold">{{ 'pagesComponent.apps.catia.tools.table.actions' | translate }}</th>
             </tr>
           </thead>
@@ -187,6 +188,19 @@
                         ? 'pagesComponent.apps.catia.tools.table.saving'
                         : (tool.enabled ? 'pagesComponent.apps.catia.tools.table.enabled' : 'pagesComponent.apps.catia.tools.table.disabled')) | translate }}
                   </button>
+                </td>
+                <td class="px-6 py-3">
+                  @if (hasCooldown(tool)) {
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-medium text-sky-700 dark:bg-sky-500/20 dark:text-sky-300"
+                      [title]="tool.cooldownSeconds + ' s'">
+                      <lucide-angular name="timer" [class]="'size-3.5'"></lucide-angular>
+                      {{ formatCooldown(tool.cooldownSeconds) }}
+                    </span>
+                  } @else {
+                    <span class="text-xs text-slate-400 dark:text-zink-300">
+                      {{ 'pagesComponent.apps.catia.tools.cooldown.none' | translate }}
+                    </span>
+                  }
                 </td>
                 <td class="px-6 py-3">
                   <div class="flex items-center justify-end gap-1.5">
@@ -310,6 +324,32 @@
               }
             </div>
           }
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+            {{ 'pagesComponent.apps.catia.tools.cooldown.label' | translate }}
+          </label>
+          <div class="flex items-center gap-3">
+            <div class="relative w-40 shrink-0">
+              <input
+                type="number"
+                min="0"
+                step="1"
+                [(ngModel)]="editorCooldownSeconds"
+                [placeholder]="'pagesComponent.apps.catia.tools.cooldown.placeholder' | translate"
+                class="w-full rounded-xl border border-slate-200 bg-white py-2 pl-3 pr-9 text-sm text-slate-700 placeholder:text-slate-400 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300" />
+              <span class="absolute right-3 top-2.5 text-xs text-slate-400 dark:text-zink-300">s</span>
+            </div>
+            <p class="inline-flex items-center gap-1.5 text-sm"
+              [ngClass]="(editorCooldownSeconds ?? 0) > 0 ? 'text-sky-600 dark:text-sky-300' : 'text-slate-400 dark:text-zink-300'">
+              <lucide-angular name="timer" [class]="'size-4'"></lucide-angular>
+              <span>≈ {{ formatCooldown(editorCooldownSeconds) }}</span>
+            </p>
+          </div>
+          <p class="text-[11px] text-slate-400 dark:text-zink-300">
+            {{ 'pagesComponent.apps.catia.tools.cooldown.hint' | translate }}
+          </p>
         </div>
 
         <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700 dark:text-zink-100">

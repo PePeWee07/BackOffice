@@ -236,7 +236,8 @@
             "enable-hint": "Click para habilitar",
             "disable-hint": "Click para deshabilitar",
             "edit": "Editar roles",
-            "delete": "Eliminar tool"
+            "delete": "Eliminar tool",
+            "cooldown": "Enfriamiento"
           },
           "editor": {
             "title-new": "Nueva tool",
@@ -275,7 +276,20 @@
             "restore-success": "Tools restauradas a valores de fábrica",
             "restore-error": "No se pudieron restaurar las tools",
             "cancel": "Cancelar",
-            "forbidden": "No tienes permisos para esta acción (requiere ADMIN)"
+            "forbidden": "No tienes permisos para esta acción (requiere ADMIN)",
+            "cooldown-invalid": "El enfriamiento debe ser 0 o mayor"
+          },
+          "cooldown": {
+            "label": "Enfriamiento (segundos)",
+            "placeholder": "ej: 700",
+            "hint": "Tiempo mínimo de espera entre invocaciones de esta tool. 0 o vacío = sin enfriamiento.",
+            "none": "Sin enfriamiento",
+            "units": {
+              "d": "d",
+              "h": "h",
+              "m": "min",
+              "s": "s"
+            }
           }
         }
       }
