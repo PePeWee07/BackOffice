@@ -74,6 +74,15 @@
         </button>
         <button
           type="button"
+          (click)="syncFromConfig()"
+          [disabled]="isSyncing"
+          [title]="'pagesComponent.apps.catia.tools.actions.sync-hint' | translate"
+          class="inline-flex items-center gap-1.5 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-sm font-medium text-sky-700 transition hover:bg-sky-100 disabled:opacity-50 dark:border-sky-500/40 dark:bg-sky-500/20 dark:text-sky-300 dark:hover:bg-sky-500/30">
+          <lucide-angular name="refresh-ccw" [class]="'size-4' + (isSyncing ? ' animate-spin' : '')"></lucide-angular>
+          {{ (isSyncing ? 'pagesComponent.apps.catia.tools.actions.syncing' : 'pagesComponent.apps.catia.tools.actions.sync') | translate }}
+        </button>
+        <button
+          type="button"
           (click)="restoreDefaults()"
           [disabled]="isRestoring"
           class="inline-flex items-center gap-1.5 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700 transition hover:bg-amber-100 disabled:opacity-50 dark:border-amber-500/40 dark:bg-amber-500/20 dark:text-amber-300 dark:hover:bg-amber-500/30">

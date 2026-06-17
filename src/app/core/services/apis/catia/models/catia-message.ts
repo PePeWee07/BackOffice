@@ -59,9 +59,6 @@ export interface AiResponse {
   previousResponseId?: string;
   createdAt: number;
   model: string;
-  promptId?: string;
-  promptVariables?: string;
-  promptVersion?: string;
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;

@@ -12,6 +12,7 @@
   "apps": "Aplicaciones",
   "chat": "Chat",
   "Tools": "Tools",
+  "ai-prompt": "Prompt IA",
   "administration": "Administración",
   "calendar": "Calendario",
   "default": "Por Defecto",
@@ -213,7 +214,10 @@
             "hide-map": "Ocultar mapa",
             "restore": "Restaurar fábrica",
             "restoring": "Restaurando...",
-            "new-tool": "Nueva tool"
+            "new-tool": "Nueva tool",
+            "sync": "Sincronizar desde config",
+            "syncing": "Sincronizando...",
+            "sync-hint": "Crea las tools faltantes (deshabilitadas, sin roles) desde la config activa. Respeta las existentes y no borra nada."
           },
           "map": {
             "heading": "Mapa enviado al modelo (depuración)",
@@ -277,7 +281,9 @@
             "restore-error": "No se pudieron restaurar las tools",
             "cancel": "Cancelar",
             "forbidden": "No tienes permisos para esta acción (requiere ADMIN)",
-            "cooldown-invalid": "El enfriamiento debe ser 0 o mayor"
+            "cooldown-invalid": "El enfriamiento debe ser 0 o mayor",
+            "sync-success": "Tools sincronizadas desde la config activa",
+            "sync-error": "No se pudieron sincronizar las tools"
           },
           "cooldown": {
             "label": "Enfriamiento (segundos)",
@@ -290,6 +296,69 @@
               "m": "min",
               "s": "s"
             }
+          }
+        },
+        "aiPrompt": {
+          "title": "Configuración del Prompt IA",
+          "pagetitle": "CatIA",
+          "loading": "Cargando configuración...",
+          "empty": "Todavía no existe una configuración activa.",
+          "seed": "Crear configuración por defecto",
+          "seeding": "Creando...",
+          "hero": {
+            "badge": "CatIA · Prompt IA",
+            "heading": "Configuración del prompt del asistente",
+            "description": "Administra el prompt activo (instrucciones, modelo y parámetros). Los cambios se aplican en caliente, sin redesplegar.",
+            "name": "Nombre",
+            "active": "Activa",
+            "updated": "Última actualización"
+          },
+          "modelType": {
+            "question": "¿Es un modelo de razonamiento?",
+            "hint": "Elige el tipo de modelo para que el formulario muestre solo los parámetros que soporta (como el Playground de OpenAI).",
+            "reasoning": "Razonamiento",
+            "classic": "Clásico"
+          },
+          "params": {
+            "heading": "Parámetros del modelo"
+          },
+          "advanced": {
+            "heading": "Avanzado (JSON)",
+            "replace-warning": "Los objetos y arrays se reemplazan completos, no se fusionan. Envía el valor completo."
+          },
+          "fields": {
+            "model": "Modelo",
+            "instructions": "Instrucciones",
+            "instructions-placeholder": "Actúa como CatIA, ...",
+            "tools": "Tools (array JSON)",
+            "include": "Include (array JSON)",
+            "text-format": "Formato de texto (JSON)",
+            "effort": "Esfuerzo de razonamiento",
+            "summary": "Resumen de razonamiento",
+            "verbosity": "Verbosidad",
+            "temperature": "Temperatura",
+            "top-p": "Top P",
+            "max-tokens": "Máx. tokens de salida",
+            "max-tokens-placeholder": "vacío = sin límite",
+            "max-tokens-hint": "Déjalo vacío para sin límite.",
+            "store": "Guardar respuestas (store)"
+          },
+          "actions": {
+            "reload": "Recargar",
+            "save": "Guardar cambios",
+            "saving": "Guardando..."
+          },
+          "messages": {
+            "load-error": "No se pudo cargar la configuración",
+            "model-required": "Indica el modelo",
+            "save-success": "Configuración guardada",
+            "save-error": "No se pudo guardar la configuración",
+            "seed-success": "Configuración por defecto creada",
+            "seed-error": "No se pudo crear la configuración por defecto",
+            "json-invalid": "JSON inválido",
+            "json-field-invalid": "JSON inválido en \"{{field}}\"",
+            "json-array-expected": "\"{{field}}\" debe ser un array JSON",
+            "forbidden": "No tienes permisos para esta acción (requiere ADMIN)"
           }
         }
       }

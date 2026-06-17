@@ -79,6 +79,13 @@ export const MENU: MenuItem[] = [
     parentId: 1.7,
   },
   {
+    id: 2.3,
+    label: 'ai-prompt',
+    icon: 'sparkles',
+    link: '/apps-catia-prompt',
+    parentId: 1.7,
+  },
+  {
     id: 2,
     label: 'apps',
     isTitle: true,

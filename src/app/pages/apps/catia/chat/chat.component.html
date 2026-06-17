@@ -1252,16 +1252,6 @@
                           <p class="mt-1 text-xs font-mono break-all">{{ response.previousResponseId || 'N/A' }}</p>
                         </div>
                         <div>
-                          <p class="text-xs text-slate-500 dark:text-zink-300">Prompt ID / versión</p>
-                          <p class="mt-1 text-xs font-mono break-all">
-                            {{ response.promptId || 'N/A' }} - {{ response.promptVersion || 'N/A' }}
-                          </p>
-                        </div>
-                        <div>
-                          <p class="text-xs text-slate-500 dark:text-zink-300">Prompt Variables</p>
-                          <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.promptVariables) }}</pre>
-                        </div>
-                        <div>
                           <p class="text-xs text-slate-500 dark:text-zink-300">Metadata</p>
                           <pre class="mt-1 p-3 text-xs whitespace-pre-wrap break-words rounded-md bg-slate-50 dark:bg-zink-700/40">{{ formatStructuredText(response.metadata) }}</pre>
                         </div>

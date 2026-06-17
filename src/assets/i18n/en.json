@@ -12,6 +12,7 @@
   "apps": "Apps",
   "chat": "Chat",
   "Tools": "Tools",
+  "ai-prompt": "AI Prompt",
   "administration": "Administration",
   "calendar": "Calendar",
   "default": "Default",
@@ -214,7 +215,10 @@
             "hide-map": "Hide map",
             "restore": "Restore defaults",
             "restoring": "Restoring...",
-            "new-tool": "New tool"
+            "new-tool": "New tool",
+            "sync": "Sync from config",
+            "syncing": "Syncing...",
+            "sync-hint": "Creates missing tools (disabled, no roles) from the active config. Respects existing ones and deletes nothing."
           },
           "map": {
             "heading": "Map sent to the model (debug)",
@@ -278,7 +282,9 @@
             "restore-error": "Could not restore tools",
             "cancel": "Cancel",
             "forbidden": "You don't have permission for this action (requires ADMIN)",
-            "cooldown-invalid": "Cooldown must be 0 or greater"
+            "cooldown-invalid": "Cooldown must be 0 or greater",
+            "sync-success": "Tools synced from the active config",
+            "sync-error": "Could not sync the tools"
           },
           "cooldown": {
             "label": "Cooldown (seconds)",
@@ -291,6 +297,69 @@
               "m": "min",
               "s": "s"
             }
+          }
+        },
+        "aiPrompt": {
+          "title": "AI Prompt Configuration",
+          "pagetitle": "CatIA",
+          "loading": "Loading configuration...",
+          "empty": "There is no active configuration yet.",
+          "seed": "Create default config",
+          "seeding": "Creating...",
+          "hero": {
+            "badge": "CatIA · AI Prompt",
+            "heading": "Assistant prompt configuration",
+            "description": "Manage the active prompt (instructions, model and parameters). Changes apply hot, without redeploying.",
+            "name": "Name",
+            "active": "Active",
+            "updated": "Last updated"
+          },
+          "modelType": {
+            "question": "Is it a reasoning model?",
+            "hint": "Choose the model type so the form shows only the parameters it supports (like the OpenAI Playground).",
+            "reasoning": "Reasoning",
+            "classic": "Classic"
+          },
+          "params": {
+            "heading": "Model parameters"
+          },
+          "advanced": {
+            "heading": "Advanced (JSON)",
+            "replace-warning": "Objects and arrays are replaced completely, not merged. Send the full value."
+          },
+          "fields": {
+            "model": "Model",
+            "instructions": "Instructions",
+            "instructions-placeholder": "Act as CatIA, ...",
+            "tools": "Tools (JSON array)",
+            "include": "Include (JSON array)",
+            "text-format": "Text format (JSON)",
+            "effort": "Reasoning effort",
+            "summary": "Reasoning summary",
+            "verbosity": "Verbosity",
+            "temperature": "Temperature",
+            "top-p": "Top P",
+            "max-tokens": "Max output tokens",
+            "max-tokens-placeholder": "empty = no limit",
+            "max-tokens-hint": "Leave empty for no limit.",
+            "store": "Store responses (store)"
+          },
+          "actions": {
+            "reload": "Reload",
+            "save": "Save changes",
+            "saving": "Saving..."
+          },
+          "messages": {
+            "load-error": "Could not load the configuration",
+            "model-required": "Enter the model",
+            "save-success": "Configuration saved",
+            "save-error": "Could not save the configuration",
+            "seed-success": "Default configuration created",
+            "seed-error": "Could not create the default configuration",
+            "json-invalid": "Invalid JSON",
+            "json-field-invalid": "Invalid JSON in \"{{field}}\"",
+            "json-array-expected": "\"{{field}}\" must be a JSON array",
+            "forbidden": "You don't have permission for this action (requires ADMIN)"
           }
         }
       }

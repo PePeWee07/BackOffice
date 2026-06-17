@@ -12,6 +12,7 @@
   "apps": "アプリ",
   "chat": "チャット",
   "Tools": "ツール",
+  "ai-prompt": "AIプロンプト",
   "administration": "管理",
   "calendar": "カレンダー",
   "default": "デフォルト",
@@ -213,7 +214,10 @@
             "hide-map": "マップを隠す",
             "restore": "初期設定に戻す",
             "restoring": "復元中...",
-            "new-tool": "新規ツール"
+            "new-tool": "新規ツール",
+            "sync": "設定から同期",
+            "syncing": "同期中...",
+            "sync-hint": "有効な設定から不足しているツールを作成します（無効・ロールなし）。既存は尊重し、削除はしません。"
           },
           "map": {
             "heading": "モデルに送信されるマップ（デバッグ）",
@@ -277,7 +281,9 @@
             "restore-error": "ツールを復元できませんでした",
             "cancel": "キャンセル",
             "forbidden": "この操作の権限がありません（ADMINが必要です）",
-            "cooldown-invalid": "クールダウンは0以上で指定してください"
+            "cooldown-invalid": "クールダウンは0以上で指定してください",
+            "sync-success": "有効な設定からツールを同期しました",
+            "sync-error": "ツールを同期できませんでした"
           },
           "cooldown": {
             "label": "クールダウン（秒）",
@@ -290,6 +296,69 @@
               "m": "分",
               "s": "秒"
             }
+          }
+        },
+        "aiPrompt": {
+          "title": "AIプロンプト設定",
+          "pagetitle": "CatIA",
+          "loading": "設定を読み込み中...",
+          "empty": "有効な設定がまだありません。",
+          "seed": "既定の設定を作成",
+          "seeding": "作成中...",
+          "hero": {
+            "badge": "CatIA · AIプロンプト",
+            "heading": "アシスタントのプロンプト設定",
+            "description": "有効なプロンプト（指示・モデル・パラメータ）を管理します。変更は再デプロイなしで即時反映されます。",
+            "name": "名前",
+            "active": "有効",
+            "updated": "最終更新"
+          },
+          "modelType": {
+            "question": "推論モデルですか？",
+            "hint": "モデルの種類を選ぶと、対応するパラメータのみが表示されます（OpenAI Playgroundと同様）。",
+            "reasoning": "推論",
+            "classic": "クラシック"
+          },
+          "params": {
+            "heading": "モデルパラメータ"
+          },
+          "advanced": {
+            "heading": "詳細設定（JSON）",
+            "replace-warning": "オブジェクトと配列は結合されず、完全に置き換えられます。値全体を送信してください。"
+          },
+          "fields": {
+            "model": "モデル",
+            "instructions": "指示",
+            "instructions-placeholder": "CatIAとして振る舞う、...",
+            "tools": "Tools（JSON配列）",
+            "include": "Include（JSON配列）",
+            "text-format": "テキスト形式（JSON）",
+            "effort": "推論の強度",
+            "summary": "推論の要約",
+            "verbosity": "詳細度",
+            "temperature": "Temperature",
+            "top-p": "Top P",
+            "max-tokens": "最大出力トークン",
+            "max-tokens-placeholder": "空欄＝無制限",
+            "max-tokens-hint": "無制限にするには空欄にします。",
+            "store": "応答を保存（store）"
+          },
+          "actions": {
+            "reload": "再読み込み",
+            "save": "変更を保存",
+            "saving": "保存中..."
+          },
+          "messages": {
+            "load-error": "設定を読み込めませんでした",
+            "model-required": "モデルを入力してください",
+            "save-success": "設定を保存しました",
+            "save-error": "設定を保存できませんでした",
+            "seed-success": "既定の設定を作成しました",
+            "seed-error": "既定の設定を作成できませんでした",
+            "json-invalid": "無効なJSON",
+            "json-field-invalid": "「{{field}}」のJSONが無効です",
+            "json-array-expected": "「{{field}}」はJSON配列である必要があります",
+            "forbidden": "この操作の権限がありません（ADMINが必要です）"
           }
         }
       }

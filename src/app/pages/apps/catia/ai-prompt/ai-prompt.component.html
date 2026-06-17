@@ -1,0 +1,316 @@
+<app-page-title
+  [title]="'pagesComponent.apps.catia.aiPrompt.title' | translate"
+  [pagetitle]="'pagesComponent.apps.catia.aiPrompt.pagetitle' | translate"
+></app-page-title>
+
+<section class="space-y-6">
+  <!-- Hero -->
+  <div class="overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50 via-white to-indigo-50 dark:border-zink-500 dark:from-zink-700 dark:via-zink-700 dark:to-indigo-900/30">
+    <div class="flex flex-col gap-4 px-6 py-6 lg:flex-row lg:items-center">
+      <div class="grow">
+        <span class="mb-3 inline-flex items-center rounded-full border border-indigo-200 bg-indigo-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-700 dark:border-indigo-500/40 dark:bg-indigo-500/20 dark:text-indigo-300">
+          {{ 'pagesComponent.apps.catia.aiPrompt.hero.badge' | translate }}
+        </span>
+        <h2 class="text-2xl font-semibold text-slate-800 dark:text-zink-100">
+          {{ 'pagesComponent.apps.catia.aiPrompt.hero.heading' | translate }}
+        </h2>
+        <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500 dark:text-zink-300">
+          {{ 'pagesComponent.apps.catia.aiPrompt.hero.description' | translate }}
+        </p>
+      </div>
+
+      @if (hasConfig && config) {
+        <div class="flex shrink-0 flex-wrap gap-2">
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-slate-600 ring-1 ring-slate-200 dark:bg-zink-600/80 dark:text-zink-200 dark:ring-zink-500">
+            {{ 'pagesComponent.apps.catia.aiPrompt.hero.name' | translate }}: {{ config.name || '—' }}
+          </span>
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-xs font-medium text-slate-600 ring-1 ring-slate-200 dark:bg-zink-600/80 dark:text-zink-200 dark:ring-zink-500">
+            v{{ config.version ?? '—' }}
+          </span>
+          @if (config.active) {
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
+              <span class="size-1.5 rounded-full bg-emerald-500"></span>
+              {{ 'pagesComponent.apps.catia.aiPrompt.hero.active' | translate }}
+            </span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  @if (isLoading) {
+    <div class="rounded-2xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500 shadow-sm dark:border-zink-500 dark:bg-zink-700 dark:text-zink-300">
+      {{ 'pagesComponent.apps.catia.aiPrompt.loading' | translate }}
+    </div>
+  } @else if (!hasConfig) {
+    <!-- Sin configuración: seed default -->
+    <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm dark:border-zink-500 dark:bg-zink-700">
+      <lucide-angular name="settings-2" [class]="'mx-auto size-10 text-slate-300 dark:text-zink-400'"></lucide-angular>
+      <p class="mt-3 text-sm text-slate-500 dark:text-zink-300">
+        {{ 'pagesComponent.apps.catia.aiPrompt.empty' | translate }}
+      </p>
+      <button
+        type="button"
+        (click)="seedDefault()"
+        [disabled]="isSeeding"
+        class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-custom-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-custom-600 disabled:opacity-60">
+        <lucide-angular [name]="isSeeding ? 'loader' : 'sparkles'" [class]="'size-4' + (isSeeding ? ' animate-spin' : '')"></lucide-angular>
+        {{ (isSeeding ? 'pagesComponent.apps.catia.aiPrompt.seeding' : 'pagesComponent.apps.catia.aiPrompt.seed') | translate }}
+      </button>
+    </div>
+  } @else {
+    <!-- Tipo de modelo -->
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zink-500 dark:bg-zink-700">
+      <div class="flex flex-col gap-3 md:flex-row md:items-center">
+        <div class="grow">
+          <p class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+            {{ 'pagesComponent.apps.catia.aiPrompt.modelType.question' | translate }}
+          </p>
+          <p class="mt-0.5 text-xs text-slate-500 dark:text-zink-300">
+            {{ 'pagesComponent.apps.catia.aiPrompt.modelType.hint' | translate }}
+          </p>
+        </div>
+        <div class="inline-flex shrink-0 rounded-xl bg-slate-100 p-1 dark:bg-zink-600">
+          <button
+            type="button"
+            (click)="setReasoningModel(true)"
+            class="rounded-lg px-4 py-1.5 text-sm font-medium transition"
+            [ngClass]="isReasoningModel ? 'bg-white text-custom-600 shadow-sm dark:bg-zink-700 dark:text-custom-400' : 'text-slate-500 dark:text-zink-200'">
+            {{ 'pagesComponent.apps.catia.aiPrompt.modelType.reasoning' | translate }}
+          </button>
+          <button
+            type="button"
+            (click)="setReasoningModel(false)"
+            class="rounded-lg px-4 py-1.5 text-sm font-medium transition"
+            [ngClass]="!isReasoningModel ? 'bg-white text-custom-600 shadow-sm dark:bg-zink-700 dark:text-custom-400' : 'text-slate-500 dark:text-zink-200'">
+            {{ 'pagesComponent.apps.catia.aiPrompt.modelType.classic' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+      <!-- Columna principal -->
+      <div class="space-y-6">
+        <!-- Modelo + instrucciones -->
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zink-500 dark:bg-zink-700">
+          <div class="space-y-4">
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                {{ 'pagesComponent.apps.catia.aiPrompt.fields.model' | translate }}
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="model"
+                placeholder="gpt-5.4-mini-2026-03-17"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 font-mono text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300" />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                {{ 'pagesComponent.apps.catia.aiPrompt.fields.instructions' | translate }}
+              </label>
+              <textarea
+                [(ngModel)]="instructions"
+                rows="14"
+                [placeholder]="'pagesComponent.apps.catia.aiPrompt.fields.instructions-placeholder' | translate"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm leading-6 text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Editores JSON avanzados -->
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zink-500 dark:bg-zink-700">
+          <div class="mb-3 flex items-center gap-2">
+            <lucide-angular name="braces" [class]="'size-4 text-indigo-500'"></lucide-angular>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ 'pagesComponent.apps.catia.aiPrompt.advanced.heading' | translate }}
+            </h6>
+          </div>
+          <p class="mb-3 inline-flex items-start gap-1.5 rounded-lg bg-amber-50 px-3 py-2 text-[11px] text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+            <lucide-angular name="alert-triangle" [class]="'size-3.5 mt-0.5 shrink-0'"></lucide-angular>
+            {{ 'pagesComponent.apps.catia.aiPrompt.advanced.replace-warning' | translate }}
+          </p>
+
+          <div class="space-y-4">
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                {{ 'pagesComponent.apps.catia.aiPrompt.fields.tools' | translate }}
+              </label>
+              <textarea
+                [(ngModel)]="toolsJson"
+                rows="6"
+                spellcheck="false"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-xs leading-5 text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-800 dark:text-zink-100"></textarea>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                {{ 'pagesComponent.apps.catia.aiPrompt.fields.include' | translate }}
+              </label>
+              <textarea
+                [(ngModel)]="includeJson"
+                rows="4"
+                spellcheck="false"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-xs leading-5 text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-800 dark:text-zink-100"></textarea>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                {{ 'pagesComponent.apps.catia.aiPrompt.fields.text-format' | translate }}
+              </label>
+              <textarea
+                [(ngModel)]="textFormatJson"
+                rows="3"
+                spellcheck="false"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 font-mono text-xs leading-5 text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-800 dark:text-zink-100"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna parámetros -->
+      <div class="space-y-6">
+        <!-- Parámetros del modelo -->
+        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zink-500 dark:bg-zink-700">
+          <div class="mb-3 flex items-center gap-2">
+            <lucide-angular name="sliders-horizontal" [class]="'size-4 text-indigo-500'"></lucide-angular>
+            <h6 class="text-sm font-semibold text-slate-700 dark:text-zink-100">
+              {{ 'pagesComponent.apps.catia.aiPrompt.params.heading' | translate }}
+            </h6>
+          </div>
+
+          <div class="space-y-4">
+            @if (isReasoningModel) {
+              <!-- Razonamiento -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                  {{ 'pagesComponent.apps.catia.aiPrompt.fields.effort' | translate }}
+                </label>
+                <select
+                  [(ngModel)]="reasoningEffort"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100">
+                  @for (opt of efforts; track opt) {
+                    <option [value]="opt">{{ opt }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="space-y-1.5">
+                <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                  {{ 'pagesComponent.apps.catia.aiPrompt.fields.summary' | translate }}
+                </label>
+                <select
+                  [(ngModel)]="reasoningSummary"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100">
+                  @for (opt of summaries; track opt) {
+                    <option [value]="opt">{{ opt }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="space-y-1.5">
+                <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                  {{ 'pagesComponent.apps.catia.aiPrompt.fields.verbosity' | translate }}
+                </label>
+                <select
+                  [(ngModel)]="verbosity"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100">
+                  @for (opt of verbosities; track opt) {
+                    <option [value]="opt">{{ opt }}</option>
+                  }
+                </select>
+              </div>
+            } @else {
+              <!-- Clásico -->
+              <div class="space-y-1.5">
+                <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                  {{ 'pagesComponent.apps.catia.aiPrompt.fields.temperature' | translate }}
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="2"
+                  [(ngModel)]="temperature"
+                  placeholder="1.0"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300" />
+              </div>
+
+              <div class="space-y-1.5">
+                <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                  {{ 'pagesComponent.apps.catia.aiPrompt.fields.top-p' | translate }}
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  max="1"
+                  [(ngModel)]="topP"
+                  placeholder="0.98"
+                  class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300" />
+              </div>
+            }
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500 dark:text-zink-300">
+                {{ 'pagesComponent.apps.catia.aiPrompt.fields.max-tokens' | translate }}
+              </label>
+              <input
+                type="number"
+                min="1"
+                step="1"
+                [(ngModel)]="maxOutputTokens"
+                [placeholder]="'pagesComponent.apps.catia.aiPrompt.fields.max-tokens-placeholder' | translate"
+                class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-100 dark:placeholder:text-zink-300" />
+              <p class="text-[11px] text-slate-400 dark:text-zink-300">
+                {{ 'pagesComponent.apps.catia.aiPrompt.fields.max-tokens-hint' | translate }}
+              </p>
+            </div>
+
+            <label class="flex cursor-pointer items-center gap-2 text-sm text-slate-700 dark:text-zink-100">
+              <input
+                type="checkbox"
+                [(ngModel)]="store"
+                class="size-4 rounded border-slate-300 text-custom-500 focus:ring-custom-500 dark:border-zink-500 dark:bg-zink-600" />
+              {{ 'pagesComponent.apps.catia.aiPrompt.fields.store' | translate }}
+            </label>
+          </div>
+        </div>
+
+        <!-- Info -->
+        @if (config) {
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 text-xs text-slate-500 shadow-sm dark:border-zink-500 dark:bg-zink-700 dark:text-zink-300">
+            <p>{{ 'pagesComponent.apps.catia.aiPrompt.hero.updated' | translate }}: {{ formatDateTime(config.updatedAt) }}</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="flex items-center justify-end gap-2">
+      <button
+        type="button"
+        (click)="loadConfig()"
+        [disabled]="isLoading || isSaving"
+        class="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50 dark:border-zink-500 dark:bg-zink-600 dark:text-zink-200 dark:hover:bg-zink-500">
+        <lucide-angular name="refresh-cw" [class]="'size-4'"></lucide-angular>
+        {{ 'pagesComponent.apps.catia.aiPrompt.actions.reload' | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="save()"
+        [disabled]="isSaving"
+        class="inline-flex items-center gap-1.5 rounded-xl bg-custom-500 px-5 py-2 text-sm font-medium text-white transition hover:bg-custom-600 disabled:opacity-60">
+        @if (isSaving) {
+          <lucide-angular name="loader" [class]="'size-4 animate-spin'"></lucide-angular>
+          {{ 'pagesComponent.apps.catia.aiPrompt.actions.saving' | translate }}
+        } @else {
+          <lucide-angular name="save" [class]="'size-4'"></lucide-angular>
+          {{ 'pagesComponent.apps.catia.aiPrompt.actions.save' | translate }}
+        }
+      </button>
+    </div>
+  }
+</section>

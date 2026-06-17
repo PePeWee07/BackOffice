@@ -67,6 +67,7 @@ export class CatiaToolsComponent implements OnInit {
   togglingTool: string | null = null;
   deletingTool: string | null = null;
   isRestoring = false;
+  isSyncing = false;
 
   ngOnInit(): void {
     this.loadTools();
@@ -407,6 +408,29 @@ export class CatiaToolsComponent implements OnInit {
     const value = Math.floor(Number(seconds));
 
     return Number.isNaN(value) ? null : value;
+  }
+
+  // Sincroniza la tabla de permisos con las function tools de la config activa.
+  // No destructivo: crea las faltantes (deshabilitadas, sin roles) y no borra nada.
+  syncFromConfig(): void {
+    if (this.isSyncing) {
+      return;
+    }
+
+    this.isSyncing = true;
+
+    this.toolsService.syncFromConfig().subscribe({
+      next: () => {
+        this.isSyncing = false;
+        this.toastr.success(this.t('messages.sync-success'));
+        this.loadTools();
+      },
+      error: (err: any) => {
+        this.isSyncing = false;
+        this.toastr.error(this.extractError(err, this.t('messages.sync-error')));
+        console.error('Error sync tools:', err);
+      },
+    });
   }
 
   private sortTools(tools?: CatiaToolPermission[] | null): CatiaToolPermission[] {

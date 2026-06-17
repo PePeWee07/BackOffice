@@ -2,6 +2,7 @@ export const ROUTE_CATALOG: string[] = [
   '',
   'apps-chat',
   'apps-catia-tools',
+  'apps-catia-prompt',
   'apps-calendar',
   'apps-calendar-month-grid',
   'apps-calendar-multi-month-stack',

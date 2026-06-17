@@ -81,4 +81,13 @@ export class CatiaToolsService {
       null
     );
   }
+
+  // Sincroniza la tabla con las function tools de la config activa.
+  // Crea las faltantes (deshabilitadas, sin roles), respeta las existentes, no borra.
+  syncFromConfig(): Observable<CatiaToolPermission[]> {
+    return this.http.post<CatiaToolPermission[]>(
+      `${this.apiURL}/sync-from-config`,
+      null
+    );
+  }
 }
